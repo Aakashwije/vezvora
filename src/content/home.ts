@@ -8,7 +8,12 @@ export const heroStats: HeroStat[] = [
   { value: "4.9", suffix: "/5", label: "Avg. rating" },
 ];
 
-export const trustLogos = ["Northwind", "Kaido", "OVERTON", "meridian", "Flux•"];
+export const trustLogos = [
+  { name: "ICC", src: "/ICC.jpeg" },
+  { name: "Intimate Hygiene", src: "/Intimate.png" },
+  { name: "UD Travels", src: "/ud.png" },
+  { name: "Elitewing Travels", src: "/elitewing.jpg" },
+];
 
 export type HomeService = { icon: IconName; title: string; desc: string };
 
