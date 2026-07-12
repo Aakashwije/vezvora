@@ -47,6 +47,9 @@
   align-items: stretch;
   padding-bottom: 20px;
 }
+.tiers > :last-child {
+  grid-column: 2;
+}
 .tier {
   position: relative;
   overflow: hidden;
@@ -197,6 +200,9 @@
     grid-template-columns: 1fr;
     max-width: 460px;
     margin-inline: auto;
+  }
+  .tiers > :last-child {
+    grid-column: auto;
   }
 }
 @media (max-width: 620px) {

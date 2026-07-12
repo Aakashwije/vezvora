@@ -1,16 +1,22 @@
-import { Fragment } from "react";
-import Link from "next/link";
+import { CountUp } from "@/components/motion/CountUp";
+import { LiquidWobble } from "@/components/motion/LiquidWobble";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
+import { CtaSection } from "@/components/sections/CtaSection";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { CtaSection } from "@/components/sections/CtaSection";
-import { CountUp } from "@/components/motion/CountUp";
-import { LiquidWobble } from "@/components/motion/LiquidWobble";
-import { Reveal } from "@/components/motion/Reveal";
-import { Stagger, StaggerItem } from "@/components/motion/Stagger";
-import { heroStats, trustLogos, homeServices, processSteps } from "@/content/home";
+import {
+  heroStats,
+  homeServices,
+  processSteps,
+  trustLogos,
+} from "@/content/home";
+import Image from "next/image";
+import Link from "next/link";
+import { Fragment } from "react";
 import styles from "./page.module.css";
 
 const heroBars = [
@@ -19,7 +25,11 @@ const heroBars = [
   { h: 50, fill: "#eff3ec", delay: "0.19s" },
   { h: 73, fill: "linear-gradient(180deg,#9fce22,#3bb85e)", delay: "0.26s" },
   { h: 64, fill: "#e7f0e3", delay: "0.33s" },
-  { h: 88, fill: "linear-gradient(180deg,#8ec21a,#28b85f 55%,#2fd3c4)", delay: "0.4s" },
+  {
+    h: 88,
+    fill: "linear-gradient(180deg,#8ec21a,#28b85f 55%,#2fd3c4)",
+    delay: "0.4s",
+  },
   { h: 70, fill: "#e7f0e3", delay: "0.47s" },
 ];
 
@@ -45,9 +55,21 @@ export default function HomePage() {
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroBlob} aria-hidden />
-        <svg className={styles.heroShape} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <svg
+          className={styles.heroShape}
+          viewBox="0 0 48 48"
+          fill="none"
+          aria-hidden="true"
+        >
           <defs>
-            <linearGradient id="heroChevron" x1="6" y1="42" x2="42" y2="6" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id="heroChevron"
+              x1="6"
+              y1="42"
+              x2="42"
+              y2="6"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop stopColor="#8EC21A" />
               <stop offset="0.55" stopColor="#28B85F" />
               <stop offset="1" stopColor="#2FD3C4" />
@@ -77,13 +99,18 @@ export default function HomePage() {
             </StaggerItem>
             <StaggerItem>
               <p className={styles.lead}>
-                We design and engineer high-performance mobile apps, web platforms,
-                and custom systems built to accelerate growth and scale without
-                friction.
+                We design and engineer high-performance mobile apps, web
+                platforms, and custom systems built to accelerate growth and
+                scale without friction.
               </p>
             </StaggerItem>
             <StaggerItem className={styles.heroActions}>
-              <Button href="/contact" variant="accent" icon="arrow_forward" iconSize={19}>
+              <Button
+                href="/contact"
+                variant="accent"
+                icon="arrow_forward"
+                iconSize={19}
+              >
                 Start a project
               </Button>
               <Button href="/work" variant="outline">
@@ -97,7 +124,9 @@ export default function HomePage() {
                   <div>
                     <div className={styles.statValue}>
                       <CountUp value={stat.value} />
-                      {stat.suffix && <span className={styles.statSuffix}>{stat.suffix}</span>}
+                      {stat.suffix && (
+                        <span className={styles.statSuffix}>{stat.suffix}</span>
+                      )}
                     </div>
                     <div className={styles.statLabel}>{stat.label}</div>
                   </div>
@@ -107,7 +136,12 @@ export default function HomePage() {
           </Stagger>
 
           {/* Dashboard mock */}
-          <Reveal mode="mount" delay={0.45} duration={0.8} className={styles.mock}>
+          <Reveal
+            mode="mount"
+            delay={0.45}
+            duration={0.8}
+            className={styles.mock}
+          >
             <LiquidWobble>
               <div className={styles.mockCard}>
                 <div className={styles.mockTop}>
@@ -134,7 +168,11 @@ export default function HomePage() {
                       <span
                         key={i}
                         className={styles.chartBar}
-                        style={{ height: `${bar.h}%`, background: bar.fill, animationDelay: bar.delay }}
+                        style={{
+                          height: `${bar.h}%`,
+                          background: bar.fill,
+                          animationDelay: bar.delay,
+                        }}
                       />
                     ))}
                   </div>
@@ -159,11 +197,19 @@ export default function HomePage() {
       {/* TRUST */}
       <section className={styles.trust}>
         <Reveal variant="fadeIn" className={`container ${styles.trustInner}`}>
-          <span className={styles.trustLabel}>Trusted by teams building the future</span>
+          <span className={styles.trustLabel}>
+            Trusted by teams building the future
+          </span>
           <div className={styles.trustLogos}>
             {trustLogos.map((logo) => (
-              <span key={logo} className={styles.trustLogo}>
-                {logo}
+              <span key={logo.name} className={styles.trustLogo}>
+                <Image
+                  src={logo.src}
+                  alt={`${logo.name} logo`}
+                  fill
+                  sizes="170px"
+                  className={styles.trustLogoImage}
+                />
               </span>
             ))}
           </div>
@@ -178,7 +224,7 @@ export default function HomePage() {
               className={styles.servicesHead}
               eyebrow="What we do"
               title="Engineering excellence, end to end."
-              intro="Comprehensive digital solutions built for scale, speed, and reliability — from first sketch to production."
+              intro="Comprehensive digital solutions built for scale, speed, and reliability - from first sketch to production."
             />
           </Reveal>
           <Stagger className={styles.grid4} stagger={0.09}>
@@ -215,13 +261,16 @@ export default function HomePage() {
                 </h2>
                 <p className={styles.featuredText}>
                   We re-architected a legacy operations suite into a real-time
-                  platform handling millions of daily events — cutting load times
-                  by 71% and unlocking a new revenue line.
+                  platform handling millions of daily events — cutting load
+                  times by 71% and unlocking a new revenue line.
                 </p>
                 <div className={styles.featuredStats}>
                   {featuredStats.map((stat) => (
                     <div key={stat.label}>
-                      <div className={styles.fStatValue} style={{ color: stat.color }}>
+                      <div
+                        className={styles.fStatValue}
+                        style={{ color: stat.color }}
+                      >
                         <CountUp value={stat.value} />
                       </div>
                       <div className={styles.fStatLabel}>{stat.label}</div>
@@ -302,7 +351,11 @@ export default function HomePage() {
           </>
         }
         text="Tell us where you want to go. We'll map the fastest engineering path to get there."
-        action={{ label: "Book a call", href: "/contact", icon: "arrow_outward" }}
+        action={{
+          label: "Book a call",
+          href: "/contact",
+          icon: "arrow_outward",
+        }}
       />
     </>
   );
