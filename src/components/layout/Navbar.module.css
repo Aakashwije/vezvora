@@ -2,10 +2,21 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(250, 251, 248, 0.72);
+  background: transparent;
+  border-bottom: 1px solid transparent;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(236, 238, 234, 0.9);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Glassmorphism once the page is scrolled */
+.scrolled {
+  background: rgba(250, 251, 248, 0.78);
+  border-bottom-color: rgba(236, 238, 234, 0.9);
+  box-shadow: 0 8px 30px -18px rgba(35, 45, 50, 0.14);
 }
 
 .inner {
@@ -21,6 +32,17 @@
   flex-shrink: 0;
 }
 
+.brandMark {
+  display: inline-flex;
+}
+
+.brandMark img {
+  transition: filter 0.3s ease;
+}
+.brand:hover .brandMark img {
+  filter: drop-shadow(0 0 10px rgba(40, 184, 95, 0.45));
+}
+
 .links {
   display: flex;
   align-items: center;
@@ -28,9 +50,11 @@
 }
 
 .link {
+  position: relative;
   font-size: 14px;
   font-weight: 500;
   color: var(--muted);
+  padding-block: 4px;
   transition: color 0.15s ease;
 }
 .link:hover {
@@ -39,6 +63,17 @@
 .active {
   color: var(--ink);
   font-weight: 600;
+}
+
+/* Animated gradient underline shared between active links */
+.underline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--grad-accent);
 }
 
 .cta {
@@ -59,9 +94,12 @@
   cursor: pointer;
 }
 
-/* Mobile drop panel */
+/* Mobile drop panel (animated by Framer Motion) */
 .mobile {
   display: none;
+  overflow: hidden;
+  background: rgba(250, 251, 248, 0.98);
+  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 880px) {
@@ -74,14 +112,6 @@
   }
   .mobile {
     display: block;
-    overflow: hidden;
-    max-height: 0;
-    background: rgba(250, 251, 248, 0.98);
-    transition: max-height 0.28s ease;
-  }
-  .mobileOpen {
-    max-height: 380px;
-    border-top: 1px solid var(--border);
   }
   .mobileLinks {
     display: flex;
@@ -89,6 +119,7 @@
     padding: 10px var(--gutter) 24px;
   }
   .mobileLink {
+    display: block;
     font-size: 16px;
     font-weight: 600;
     color: var(--muted);
@@ -100,6 +131,5 @@
   }
   .mobileCta {
     margin-top: 18px;
-    align-self: flex-start;
   }
 }

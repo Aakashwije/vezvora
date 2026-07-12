@@ -19,6 +19,7 @@
   );
   filter: blur(10px);
   pointer-events: none;
+  animation: orbFloat 18s ease-in-out infinite alternate;
 }
 .heroInner {
   position: relative;

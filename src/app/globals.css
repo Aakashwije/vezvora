@@ -136,6 +136,41 @@ img {
 }
 
 /* ---- Motion ---- */
+
+/* Slow ambient drift for decorative gradient orbs (8–20s loops) */
+@keyframes orbFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-24px, 18px, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(14px, -14px, 0) scale(0.98);
+  }
+}
+
+/* Gentle drift for abstract brand shapes */
+@keyframes shapeDrift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-8deg);
+  }
+  100% {
+    transform: translate3d(-18px, 26px, 0) rotate(4deg);
+  }
+}
+
+/* Soft breathing glow for the featured pricing card */
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 30px 56px -28px rgba(40, 184, 95, 0.35);
+  }
+  50% {
+    box-shadow: 0 30px 64px -24px rgba(40, 184, 95, 0.5);
+  }
+}
+
 @keyframes floaty {
   0%,
   100% {

@@ -4,6 +4,8 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { CtaSection } from "@/components/sections/CtaSection";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { services } from "@/content/services";
 import styles from "./services.module.css";
 
@@ -18,22 +20,29 @@ export default function ServicesPage() {
     <>
       <section className={styles.hero}>
         <div className={styles.heroBlob} aria-hidden />
-        <div className={`container ${styles.heroInner}`}>
-          <Eyebrow>What we do</Eyebrow>
-          <h1 className={styles.h1}>
-            Engineered for <span className="gradientText">impact</span>.
-          </h1>
-          <p className={styles.lead}>
-            We design and build premium software that drives growth, streamlines
-            operations, and delivers crystalline user experiences — end to end.
-          </p>
-        </div>
+        <Stagger mode="mount" stagger={0.1} delay={0.1} className={`container ${styles.heroInner}`}>
+          <StaggerItem>
+            <Eyebrow>What we do</Eyebrow>
+          </StaggerItem>
+          <StaggerItem duration={0.7}>
+            <h1 className={styles.h1}>
+              Engineered for <span className="gradientText">impact</span>.
+            </h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className={styles.lead}>
+              We design and build premium software that drives growth, streamlines
+              operations, and delivers crystalline user experiences — end to end.
+            </p>
+          </StaggerItem>
+        </Stagger>
       </section>
 
       <div className="container">
         <div className={styles.list}>
           {services.map((service) => (
-            <article key={service.title} className={styles.card}>
+            <Reveal key={service.title} amount={0.15}>
+              <article className={styles.card}>
               <div className={styles.cardGrid}>
                 <div>
                   <div className={styles.cardHead}>
@@ -85,7 +94,8 @@ export default function ServicesPage() {
                   </div>
                 </div>
               </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

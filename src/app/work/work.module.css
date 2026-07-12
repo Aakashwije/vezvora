@@ -24,6 +24,7 @@
   margin-bottom: 36px;
 }
 .filter {
+  position: relative;
   padding: 9px 18px;
   border-radius: var(--pill);
   font-family: var(--font-ui);
@@ -34,18 +35,30 @@
   color: var(--muted);
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 .filter:hover {
   border-color: var(--border-strong);
 }
 .filterActive,
 .filterActive:hover {
-  background: rgba(40, 184, 95, 0.1);
   color: var(--green-deep);
-  border-color: rgba(40, 184, 95, 0.25);
+  border-color: transparent;
+  background: transparent;
+}
+
+/* Sliding pill indicator (Framer Motion layoutId) */
+.filterPill {
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--pill);
+  background: rgba(40, 184, 95, 0.1);
+  border: 1px solid rgba(40, 184, 95, 0.25);
+}
+.filterLabel {
+  position: relative;
+  z-index: 1;
 }
 
 .grid {
@@ -60,13 +73,14 @@
   border-radius: 22px;
   overflow: hidden;
   box-shadow: var(--shadow-card);
+  /* Lift is animated by Framer Motion; CSS handles color/shadow */
   transition:
-    transform 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 .card:hover {
   border-color: #cfe6c2;
-  transform: translateY(-4px);
+  box-shadow: 0 26px 52px -26px rgba(40, 184, 95, 0.24);
 }
 .thumb {
   position: relative;
@@ -85,10 +99,17 @@
     transparent 2px,
     transparent 13px
   );
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .thumbIcon {
   position: relative;
   color: rgba(255, 255, 255, 0.9);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Slow zoom of the artwork on hover */
+.card:hover .thumbPattern,
+.card:hover .thumbIcon {
+  transform: scale(1.06);
 }
 .tag {
   position: absolute;
@@ -106,6 +127,10 @@
 }
 .body {
   padding: 24px 24px 26px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card:hover .body {
+  transform: translateY(-2px);
 }
 .name {
   font-size: 21px;
@@ -147,8 +172,11 @@
   color: var(--green-deep);
   white-space: nowrap;
 }
-.caseLink:hover {
-  gap: 8px;
+.caseLink svg {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.caseLink:hover svg {
+  transform: translateX(3px);
 }
 .loadWrap {
   display: flex;

@@ -6,6 +6,9 @@ import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CtaSection } from "@/components/sections/CtaSection";
+import { CountUp } from "@/components/motion/CountUp";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { heroStats, trustLogos, homeServices, processSteps } from "@/content/home";
 import styles from "./page.module.css";
 
@@ -41,49 +44,69 @@ export default function HomePage() {
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroBlob} aria-hidden />
+        <svg className={styles.heroShape} viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="heroChevron" x1="6" y1="42" x2="42" y2="6" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#8EC21A" />
+              <stop offset="0.55" stopColor="#28B85F" />
+              <stop offset="1" stopColor="#2FD3C4" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M8 12 L24 34 L40 12"
+            stroke="url(#heroChevron)"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         <div className={`container ${styles.heroGrid}`}>
-          <div>
-            <div className={styles.badge}>
+          <Stagger mode="mount" stagger={0.1} delay={0.15}>
+            <StaggerItem className={styles.badge}>
               <span className={styles.badgeDot} aria-hidden />
               <span className={styles.badgeText}>
                 Now booking Q3 engineering partnerships
               </span>
-            </div>
-            <h1 className={styles.h1}>
-              Software that moves your business{" "}
-              <span className="gradientText">forward</span>.
-            </h1>
-            <p className={styles.lead}>
-              We design and engineer high-performance mobile apps, web platforms,
-              and custom systems built to accelerate growth and scale without
-              friction.
-            </p>
-            <div className={styles.heroActions}>
+            </StaggerItem>
+            <StaggerItem duration={0.7}>
+              <h1 className={styles.h1}>
+                Software that moves your business{" "}
+                <span className="gradientText">forward</span>.
+              </h1>
+            </StaggerItem>
+            <StaggerItem>
+              <p className={styles.lead}>
+                We design and engineer high-performance mobile apps, web platforms,
+                and custom systems built to accelerate growth and scale without
+                friction.
+              </p>
+            </StaggerItem>
+            <StaggerItem className={styles.heroActions}>
               <Button href="/contact" variant="accent" icon="arrow_forward" iconSize={19}>
                 Start a project
               </Button>
               <Button href="/work" variant="outline">
                 View our work
               </Button>
-            </div>
-            <div className={styles.stats}>
+            </StaggerItem>
+            <StaggerItem className={styles.stats}>
               {heroStats.map((stat, i) => (
                 <Fragment key={stat.label}>
                   {i > 0 && <span className={styles.statDivider} aria-hidden />}
                   <div>
                     <div className={styles.statValue}>
-                      {stat.value}
+                      <CountUp value={stat.value} />
                       {stat.suffix && <span className={styles.statSuffix}>{stat.suffix}</span>}
                     </div>
                     <div className={styles.statLabel}>{stat.label}</div>
                   </div>
                 </Fragment>
               ))}
-            </div>
-          </div>
+            </StaggerItem>
+          </Stagger>
 
           {/* Dashboard mock */}
-          <div className={styles.mock}>
+          <Reveal mode="mount" delay={0.45} duration={0.8} className={styles.mock}>
             <div className={styles.mockCard}>
               <div className={styles.mockTop}>
                 <div className={styles.dots}>
@@ -135,13 +158,13 @@ export default function HomePage() {
                 <div className={styles.floatValue}>–63% faster</div>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* TRUST */}
       <section className={styles.trust}>
-        <div className={`container ${styles.trustInner}`}>
+        <Reveal variant="fadeIn" className={`container ${styles.trustInner}`}>
           <span className={styles.trustLabel}>Trusted by teams building the future</span>
           <div className={styles.trustLogos}>
             {trustLogos.map((logo) => (
@@ -150,38 +173,45 @@ export default function HomePage() {
               </span>
             ))}
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* SERVICES */}
       <section className={styles.services}>
         <div className="container">
-          <SectionHeading
-            className={styles.servicesHead}
-            eyebrow="What we do"
-            title="Engineering excellence, end to end."
-            intro="Comprehensive digital solutions built for scale, speed, and reliability — from first sketch to production."
-          />
-          <div className={styles.grid4}>
+          <Reveal>
+            <SectionHeading
+              className={styles.servicesHead}
+              eyebrow="What we do"
+              title="Engineering excellence, end to end."
+              intro="Comprehensive digital solutions built for scale, speed, and reliability — from first sketch to production."
+            />
+          </Reveal>
+          <Stagger className={styles.grid4} stagger={0.09}>
             {homeServices.map((service) => (
-              <article key={service.title} className={styles.serviceCard}>
-                <IconBadge name={service.icon} />
+              <StaggerItem
+                key={service.title}
+                as="article"
+                className={styles.serviceCard}
+                hoverLift
+              >
+                <IconBadge name={service.icon} className={styles.serviceIcon} />
                 <h3 className={styles.serviceTitle}>{service.title}</h3>
                 <p className={styles.serviceDesc}>{service.desc}</p>
                 <Link href="/services" className={styles.serviceLink}>
                   Learn more
                   <Icon name="arrow_forward" size={16} />
                 </Link>
-              </article>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
       {/* FEATURED WORK */}
       <section className={styles.featured}>
         <div className="container">
-          <div className={styles.featuredBand}>
+          <Reveal duration={0.7} className={styles.featuredBand}>
             <div className={styles.featuredBlob} aria-hidden />
             <div className={styles.featuredGrid}>
               <div className={styles.featuredCopy}>
@@ -198,7 +228,7 @@ export default function HomePage() {
                   {featuredStats.map((stat) => (
                     <div key={stat.label}>
                       <div className={styles.fStatValue} style={{ color: stat.color }}>
-                        {stat.value}
+                        <CountUp value={stat.value} />
                       </div>
                       <div className={styles.fStatLabel}>{stat.label}</div>
                     </div>
@@ -242,27 +272,30 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* PROCESS */}
       <section className={styles.process}>
         <div className="container">
-          <SectionHeading
-            className={styles.processHead}
-            eyebrow="How we work"
-            title="A process engineered for momentum."
-          />
-          <div className={styles.processGrid}>
+          <Reveal>
+            <SectionHeading
+              className={styles.processHead}
+              eyebrow="How we work"
+              title="A process engineered for momentum."
+            />
+          </Reveal>
+          <Reveal variant="drawLine" className={styles.processLine} />
+          <Stagger className={styles.processGrid} stagger={0.1}>
             {processSteps.map((step) => (
-              <div key={step.num} className={styles.processCell}>
+              <StaggerItem key={step.num} className={styles.processCell}>
                 <div className={styles.processNum}>{step.num}</div>
                 <h3 className={styles.processTitle}>{step.title}</h3>
                 <p className={styles.processDesc}>{step.desc}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 

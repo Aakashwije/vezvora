@@ -83,6 +83,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(47, 211, 196, 0.24), transparent 68%);
   pointer-events: none;
+  animation: orbFloat 14s ease-in-out infinite alternate;
 }
 .stat {
   position: relative;
