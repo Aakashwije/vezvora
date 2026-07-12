@@ -218,39 +218,6 @@
   font-weight: 700;
   margin-top: 3px;
 }
-.floatChip {
-  position: absolute;
-  bottom: -22px;
-  left: -26px;
-  background: var(--surface);
-  border: 1px solid #ebede9;
-  border-radius: 16px;
-  padding: 13px 16px;
-  box-shadow: 0 18px 34px -12px rgba(35, 45, 50, 0.22);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  animation: floaty 5s ease-in-out infinite;
-}
-.floatIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  background: var(--grad-accent);
-  color: var(--ink-on-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.floatLabel {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  color: var(--faint);
-}
-.floatValue {
-  font-size: 15px;
-  font-weight: 700;
-}
 
 /* ============ TRUST ============ */
 .trust {
@@ -594,8 +561,5 @@
     border-right: none;
     padding: 26px 0;
     border-bottom: 1px solid var(--border);
-  }
-  .floatChip {
-    left: 0;
   }
 }

@@ -151,15 +151,6 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <div className={styles.floatChip}>
-                <span className={styles.floatIcon}>
-                  <Icon name="bolt" size={22} />
-                </span>
-                <div>
-                  <div className={styles.floatLabel}>Deploy time</div>
-                  <div className={styles.floatValue}>–63% faster</div>
-                </div>
-              </div>
             </LiquidWobble>
           </Reveal>
         </div>
