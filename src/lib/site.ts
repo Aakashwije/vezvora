@@ -12,9 +12,10 @@ export const siteConfig = {
   tagline: "Engineering digital momentum.",
   description:
     "We build the platforms that power tomorrow's leading enterprises.",
-  email: "hello@vezvora.com",
-  phone: "+1 (800) 123-4567",
-  office: "100 Innovation Drive, SF",
+  email: "vezvoraa@gmail.com",
+  phone: "+94 71 357 9967",
+  whatsappUrl: "https://wa.me/94713579967",
+  office: "193/12 , Prasanna Uyana , Mattegoda , Sri Lanka",
 };
 
 /** Primary navigation — order matters and drives the active state. */
