@@ -32,7 +32,10 @@ export function LiquidWobble({ children, className, intensity = 1 }: LiquidWobbl
   // oscillates a few times before settling.
   const wobble = useSpring(velocity, { stiffness: 320, damping: 7, mass: 1.2 });
 
-  const range = 2400 / intensity;
+  // Guard against zero/negative/non-finite intensity, which would make the
+  // transform input range invalid (non-ascending or NaN/Infinity).
+  const safeIntensity = Number.isFinite(intensity) && intensity > 0 ? intensity : 1;
+  const range = 2400 / safeIntensity;
   // Stretch along the scroll axis, squash across it (volume-preserving,
   // like a droplet being pulled), plus a directional lean.
   const scaleY = useTransform(wobble, [-range, 0, range], [1.08, 1, 1.08]);
