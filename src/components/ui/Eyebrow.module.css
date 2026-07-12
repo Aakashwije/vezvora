@@ -1,0 +1,16 @@
+.eyebrow {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.green {
+  color: var(--green);
+}
+
+.light {
+  color: #8ee0a0;
+}

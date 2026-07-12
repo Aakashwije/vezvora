@@ -1,0 +1,168 @@
+.hero {
+  position: relative;
+  padding: 80px 0 56px;
+  text-align: center;
+}
+.heroBlob {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 560px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(47, 211, 196, 0.16),
+    rgba(183, 222, 29, 0.08) 45%,
+    transparent 70%
+  );
+  filter: blur(10px);
+  pointer-events: none;
+}
+.heroInner {
+  position: relative;
+  z-index: 1;
+}
+.h1 {
+  font-size: 60px;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 16px 0 20px;
+}
+.lead {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 20px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  padding: 44px;
+  box-shadow: var(--shadow-card);
+}
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.cardTitle {
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+.tagline {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green-deep);
+  letter-spacing: -0.01em;
+  margin-bottom: 22px;
+}
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.blockLabel {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint-2);
+  margin-bottom: 5px;
+}
+.blockText {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.startBtn {
+  margin-top: 28px;
+}
+
+.panel {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  border-radius: 20px;
+  padding: 30px;
+}
+.panelGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+.deliverables {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.deliverable {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.deliverableIcon {
+  color: var(--green);
+  flex-shrink: 0;
+}
+.stack {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.panelDivider {
+  height: 1px;
+  background: var(--border-2);
+  margin: 18px 0;
+}
+.timeline {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 860px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .card {
+    padding: 32px;
+  }
+}
+@media (max-width: 620px) {
+  .hero {
+    padding: 52px 0 36px;
+  }
+  .h1 {
+    font-size: 38px;
+  }
+  .card {
+    padding: 24px;
+  }
+  .panelGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="vez-icon" x1="6" y1="42" x2="42" y2="6" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8EC21A" />
+      <stop offset="0.55" stop-color="#28B85F" />
+      <stop offset="1" stop-color="#2FD3C4" />
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="#23282F" />
+  <path d="M11 14 L24 34 L37 14" fill="none" stroke="url(#vez-icon)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M18 21 L24 31 L30 21" fill="none" stroke="#C6E85A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,39 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.center {
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: 44px;
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-top: 14px;
+  color: var(--ink);
+}
+
+.intro {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 16px;
+}
+
+.dark .title {
+  color: #fff;
+}
+.dark .intro {
+  color: rgba(255, 255, 255, 0.66);
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 32px;
+    line-height: 1.12;
+  }
+}
