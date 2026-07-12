@@ -7,6 +7,7 @@ import { IconBadge } from "@/components/ui/IconBadge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CtaSection } from "@/components/sections/CtaSection";
 import { CountUp } from "@/components/motion/CountUp";
+import { LiquidWobble } from "@/components/motion/LiquidWobble";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { heroStats, trustLogos, homeServices, processSteps } from "@/content/home";
@@ -107,57 +108,59 @@ export default function HomePage() {
 
           {/* Dashboard mock */}
           <Reveal mode="mount" delay={0.45} duration={0.8} className={styles.mock}>
-            <div className={styles.mockCard}>
-              <div className={styles.mockTop}>
-                <div className={styles.dots}>
-                  <span className={styles.dot} />
-                  <span className={styles.dot} />
-                  <span className={styles.dot} />
-                </div>
-                <span className={styles.mockUrl}>app.vezvora.io</span>
-              </div>
-              <div className={styles.mockBody}>
-                <div className={styles.mockHead}>
-                  <div>
-                    <div className={styles.mockKpiLabel}>Monthly growth</div>
-                    <div className={styles.mockKpiValue}>+124.8%</div>
+            <LiquidWobble>
+              <div className={styles.mockCard}>
+                <div className={styles.mockTop}>
+                  <div className={styles.dots}>
+                    <span className={styles.dot} />
+                    <span className={styles.dot} />
+                    <span className={styles.dot} />
                   </div>
-                  <span className={styles.mockDelta}>
-                    <Icon name="arrow_upward" size={15} />
-                    18.2%
-                  </span>
+                  <span className={styles.mockUrl}>app.vezvora.io</span>
                 </div>
-                <div className={styles.chart}>
-                  {heroBars.map((bar, i) => (
-                    <span
-                      key={i}
-                      className={styles.chartBar}
-                      style={{ height: `${bar.h}%`, background: bar.fill, animationDelay: bar.delay }}
-                    />
-                  ))}
-                </div>
-                <div className={styles.mockDivider} />
-                <div className={styles.miniStats}>
-                  <div className={styles.miniStat}>
-                    <div className={styles.miniLabel}>Active users</div>
-                    <div className={styles.miniValue}>48,209</div>
+                <div className={styles.mockBody}>
+                  <div className={styles.mockHead}>
+                    <div>
+                      <div className={styles.mockKpiLabel}>Monthly growth</div>
+                      <div className={styles.mockKpiValue}>+124.8%</div>
+                    </div>
+                    <span className={styles.mockDelta}>
+                      <Icon name="arrow_upward" size={15} />
+                      18.2%
+                    </span>
                   </div>
-                  <div className={styles.miniStat}>
-                    <div className={styles.miniLabel}>Uptime</div>
-                    <div className={styles.miniValue}>99.98%</div>
+                  <div className={styles.chart}>
+                    {heroBars.map((bar, i) => (
+                      <span
+                        key={i}
+                        className={styles.chartBar}
+                        style={{ height: `${bar.h}%`, background: bar.fill, animationDelay: bar.delay }}
+                      />
+                    ))}
+                  </div>
+                  <div className={styles.mockDivider} />
+                  <div className={styles.miniStats}>
+                    <div className={styles.miniStat}>
+                      <div className={styles.miniLabel}>Active users</div>
+                      <div className={styles.miniValue}>48,209</div>
+                    </div>
+                    <div className={styles.miniStat}>
+                      <div className={styles.miniLabel}>Uptime</div>
+                      <div className={styles.miniValue}>99.98%</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className={styles.floatChip}>
-              <span className={styles.floatIcon}>
-                <Icon name="bolt" size={22} />
-              </span>
-              <div>
-                <div className={styles.floatLabel}>Deploy time</div>
-                <div className={styles.floatValue}>–63% faster</div>
+              <div className={styles.floatChip}>
+                <span className={styles.floatIcon}>
+                  <Icon name="bolt" size={22} />
+                </span>
+                <div>
+                  <div className={styles.floatLabel}>Deploy time</div>
+                  <div className={styles.floatValue}>–63% faster</div>
+                </div>
               </div>
-            </div>
+            </LiquidWobble>
           </Reveal>
         </div>
       </section>
