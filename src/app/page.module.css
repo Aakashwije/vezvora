@@ -19,6 +19,19 @@
   filter: blur(20px);
   z-index: 0;
   pointer-events: none;
+  animation: orbFloat 18s ease-in-out infinite alternate;
+}
+/* Abstract brand chevron drifting slowly behind the hero */
+.heroShape {
+  position: absolute;
+  top: 6%;
+  right: 4%;
+  width: 220px;
+  height: 220px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+  animation: shapeDrift 16s ease-in-out infinite alternate;
 }
 .heroGrid {
   position: relative;
@@ -295,13 +308,20 @@
   border-radius: 20px;
   padding: 26px 24px 28px;
   box-shadow: var(--shadow-card);
+  /* Lift is animated by Framer Motion; CSS handles color/shadow */
   transition:
-    transform 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 .serviceCard:hover {
   border-color: #cfe6c2;
-  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -24px rgba(40, 184, 95, 0.22);
+}
+.serviceIcon {
+  transition: box-shadow 0.3s ease;
+}
+.serviceCard:hover .serviceIcon {
+  box-shadow: 0 0 24px rgba(47, 211, 196, 0.35);
 }
 .serviceTitle {
   font-size: 19px;
@@ -323,8 +343,11 @@
   font-weight: 600;
   color: var(--green-deep);
 }
-.serviceLink:hover {
-  gap: 9px;
+.serviceLink svg {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.serviceLink:hover svg {
+  transform: translateX(3px);
 }
 
 /* ============ FEATURED WORK ============ */
@@ -347,6 +370,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(47, 211, 196, 0.28), transparent 68%);
   pointer-events: none;
+  animation: orbFloat 14s ease-in-out infinite alternate;
 }
 .featuredGrid {
   position: relative;
@@ -472,6 +496,15 @@
 .processHead {
   max-width: 640px;
   margin-bottom: 52px;
+}
+/* Gradient timeline line that draws in on scroll */
+.processLine {
+  height: 2px;
+  border-radius: 2px;
+  background: var(--grad-accent);
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 1;
 }
 .processGrid {
   display: grid;

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { contactChannels } from "@/content/contact";
 import { ContactForm } from "./ContactForm";
 import styles from "./contact.module.css";
@@ -16,22 +18,32 @@ export default function ContactPage() {
   return (
     <div className="container">
       <section className={styles.hero}>
-        <Eyebrow>Contact</Eyebrow>
-        <h1 className={styles.h1}>
-          Let&apos;s build something{" "}
-          <span className="gradientText">exceptional</span> together.
-        </h1>
-        <p className={styles.lead}>
-          Tell us about your vision and our team will get back to you with
-          actionable insights — usually within 12 hours.
-        </p>
+        <Stagger mode="mount" stagger={0.1} delay={0.1}>
+          <StaggerItem>
+            <Eyebrow>Contact</Eyebrow>
+          </StaggerItem>
+          <StaggerItem duration={0.7}>
+            <h1 className={styles.h1}>
+              Let&apos;s build something{" "}
+              <span className="gradientText">exceptional</span> together.
+            </h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className={styles.lead}>
+              Tell us about your vision and our team will get back to you with
+              actionable insights — usually within 12 hours.
+            </p>
+          </StaggerItem>
+        </Stagger>
       </section>
 
       <section className={styles.grid}>
-        <ContactForm />
+        <Reveal mode="mount" delay={0.3}>
+          <ContactForm />
+        </Reveal>
 
-        <aside className={styles.side}>
-          <div className={styles.sideCard}>
+        <Stagger mode="mount" stagger={0.12} delay={0.4} className={styles.side}>
+          <StaggerItem className={styles.sideCard}>
             <h2 className={styles.sideTitle}>Get in touch</h2>
             <div className={styles.channels}>
               {contactChannels.map((channel) => (
@@ -44,9 +56,9 @@ export default function ContactPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </StaggerItem>
 
-          <div className={styles.responseCard}>
+          <StaggerItem className={styles.responseCard}>
             <span className={styles.responseIcon}>
               <Icon name="schedule" size={21} />
             </span>
@@ -54,8 +66,8 @@ export default function ContactPage() {
               <div className={styles.responseLabel}>Response time</div>
               <div className={styles.responseText}>We respond within 12 hours.</div>
             </div>
-          </div>
-        </aside>
+          </StaggerItem>
+        </Stagger>
       </section>
     </div>
   );

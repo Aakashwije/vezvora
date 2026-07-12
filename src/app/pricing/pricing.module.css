@@ -19,6 +19,7 @@
   );
   filter: blur(10px);
   pointer-events: none;
+  animation: orbFloat 18s ease-in-out infinite alternate;
 }
 .heroInner {
   position: relative;
@@ -60,6 +61,8 @@
 .tierFeatured {
   border-color: #9fce22;
   box-shadow: 0 30px 56px -28px rgba(40, 184, 95, 0.35);
+  /* Subtle breathing glow on the highlighted tier */
+  animation: glowPulse 6s ease-in-out infinite;
 }
 .tierDark {
   background: var(--grad-dark);

@@ -1,6 +1,23 @@
 .footer {
-  border-top: 1px solid var(--border);
+  position: relative;
   margin-top: 40px;
+}
+
+/* Subtle brand-gradient hairline along the top edge */
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--border),
+    rgba(40, 184, 95, 0.4) 35%,
+    rgba(47, 211, 196, 0.45) 60%,
+    var(--border)
+  );
 }
 
 .top {
@@ -17,6 +34,13 @@
 .brandLink {
   display: inline-flex;
   margin-bottom: 16px;
+}
+
+.brandLink img {
+  transition: filter 0.3s ease;
+}
+.brandLink:hover img {
+  filter: drop-shadow(0 0 10px rgba(40, 184, 95, 0.4));
 }
 
 .about {
@@ -44,11 +68,19 @@
 .colLink {
   font-size: 14.5px;
   color: var(--muted);
-  transition: color 0.15s ease;
   width: fit-content;
+  /* Underline grows in smoothly on hover */
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition:
+    color 0.15s ease,
+    background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .colLink:hover {
   color: var(--green-hover);
+  background-size: 100% 1px;
 }
 
 .bottom {

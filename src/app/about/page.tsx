@@ -5,6 +5,9 @@ import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CtaSection } from "@/components/sections/CtaSection";
+import { CountUp } from "@/components/motion/CountUp";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { aboutStats, aboutValues } from "@/content/about";
 import styles from "./about.module.css";
 
@@ -18,67 +21,82 @@ export default function AboutPage() {
   return (
     <>
       <section className={`container ${styles.hero}`}>
-        <div>
-          <Eyebrow>About Vezvora</Eyebrow>
-          <h1 className={styles.h1}>
-            We build the software that powers modern{" "}
-            <span className="gradientText">enterprise</span>.
-          </h1>
-          <p className={styles.lead}>
-            Vezvora engineers high-performance, scalable solutions for businesses
-            demanding precision and reliability. We are the architects of your
-            digital future.
-          </p>
-          <div className={styles.actions}>
+        <Stagger mode="mount" stagger={0.1} delay={0.1}>
+          <StaggerItem>
+            <Eyebrow>About Vezvora</Eyebrow>
+          </StaggerItem>
+          <StaggerItem duration={0.7}>
+            <h1 className={styles.h1}>
+              We build the software that powers modern{" "}
+              <span className="gradientText">enterprise</span>.
+            </h1>
+          </StaggerItem>
+          <StaggerItem>
+            <p className={styles.lead}>
+              Vezvora engineers high-performance, scalable solutions for businesses
+              demanding precision and reliability. We are the architects of your
+              digital future.
+            </p>
+          </StaggerItem>
+          <StaggerItem className={styles.actions}>
             <Button href="/contact" variant="accent" size="sm">
               Our mission
             </Button>
             <Button href="/work" variant="outline" size="sm">
               See our work
             </Button>
-          </div>
-        </div>
-        <div className={styles.visual}>
+          </StaggerItem>
+        </Stagger>
+        <Reveal mode="mount" variant="scaleIn" delay={0.35} className={styles.visual}>
           <span className={styles.visualPattern} aria-hidden />
           <span className={styles.visualIcon}>
             <Icon name="architecture" size={96} strokeWidth={1.5} />
           </span>
           <span className={styles.visualNote}>[ team / office photo ]</span>
-        </div>
+        </Reveal>
       </section>
 
       <section className={styles.statsWrap}>
         <div className="container">
-          <div className={styles.stats}>
-            <span className={styles.statsBlob} aria-hidden />
-            {aboutStats.map((stat) => (
-              <div key={stat.label} className={styles.stat}>
-                <div className={styles.statValue} style={{ color: stat.tone }}>
-                  {stat.value}
+          <Reveal>
+            <div className={styles.stats}>
+              <span className={styles.statsBlob} aria-hidden />
+              {aboutStats.map((stat) => (
+                <div key={stat.label} className={styles.stat}>
+                  <div className={styles.statValue} style={{ color: stat.tone }}>
+                    <CountUp value={stat.value} />
+                  </div>
+                  <div className={styles.statLabel}>{stat.label}</div>
                 </div>
-                <div className={styles.statLabel}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
       <section className={styles.values}>
         <div className="container">
-          <SectionHeading
-            className={styles.valuesHead}
-            eyebrow="How we operate"
-            title="Principles that shape everything we ship."
-          />
-          <div className={styles.valuesGrid}>
+          <Reveal>
+            <SectionHeading
+              className={styles.valuesHead}
+              eyebrow="How we operate"
+              title="Principles that shape everything we ship."
+            />
+          </Reveal>
+          <Stagger className={styles.valuesGrid} stagger={0.1}>
             {aboutValues.map((value) => (
-              <article key={value.title} className={styles.valueCard}>
+              <StaggerItem
+                key={value.title}
+                as="article"
+                className={styles.valueCard}
+                hoverLift
+              >
                 <IconBadge name={value.icon} size={48} iconSize={25} radius={13} />
                 <h3 className={styles.valueTitle}>{value.title}</h3>
                 <p className={styles.valueDesc}>{value.desc}</p>
-              </article>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
