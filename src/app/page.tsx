@@ -116,7 +116,7 @@ export default function HomePage() {
                     <span className={styles.dot} />
                     <span className={styles.dot} />
                   </div>
-                  <span className={styles.mockUrl}>app.vezvora.io</span>
+                  <span className={styles.mockUrl}>www.vezvora.com</span>
                 </div>
                 <div className={styles.mockBody}>
                   <div className={styles.mockHead}>
