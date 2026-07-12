@@ -116,7 +116,7 @@ export default function HomePage() {
                     <span className={styles.dot} />
                     <span className={styles.dot} />
                   </div>
-                  <span className={styles.mockUrl}>app.vezvora.io</span>
+                  <span className={styles.mockUrl}>www.vezvora.com</span>
                 </div>
                 <div className={styles.mockBody}>
                   <div className={styles.mockHead}>
@@ -149,15 +149,6 @@ export default function HomePage() {
                       <div className={styles.miniValue}>99.98%</div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className={styles.floatChip}>
-                <span className={styles.floatIcon}>
-                  <Icon name="bolt" size={22} />
-                </span>
-                <div>
-                  <div className={styles.floatLabel}>Deploy time</div>
-                  <div className={styles.floatValue}>–63% faster</div>
                 </div>
               </div>
             </LiquidWobble>
