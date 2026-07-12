@@ -207,7 +207,7 @@ export default function HomePage() {
                   src={logo.src}
                   alt={`${logo.name} logo`}
                   fill
-                  sizes="170px"
+                  sizes="(max-width: 620px) 145px, 170px"
                   className={styles.trustLogoImage}
                 />
               </span>

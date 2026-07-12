@@ -267,7 +267,7 @@
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.7);
   box-shadow: 0 10px 28px -20px rgba(35, 45, 50, 0.65);
-  animation: trustLogoFloat 3.6s ease-in-out infinite;
+  animation: trust-logo-float 3.6s ease-in-out infinite;
   transition:
     background 0.25s ease,
     box-shadow 0.25s ease;
@@ -302,7 +302,7 @@
   transform: scale(1.75);
 }
 
-@keyframes trustLogoFloat {
+@keyframes trust-logo-float {
   0%,
   100% {
     transform: translateY(0);
