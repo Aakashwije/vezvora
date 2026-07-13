@@ -16,4 +16,9 @@ export const projectTypes = [
   "Technical consulting",
 ];
 
-export const budgetRanges = ["$10k – $50k", "$50k – $150k", "$150k+"];
+export const budgetRanges = [
+  "LKR 50,000 – 100,000",
+  "LKR 100,000 – 150,000",
+  "LKR 150,000 – 200,000",
+  "LKR 200,000+",
+];
