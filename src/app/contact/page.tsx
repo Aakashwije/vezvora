@@ -32,7 +32,7 @@ export default function ContactPage() {
           <StaggerItem>
             <p className={styles.lead}>
               Tell us about your vision and our team will get back to you with
-              actionable insights - usually within 12 hours.
+              actionable insights — usually within 12 hours.
             </p>
           </StaggerItem>
         </Stagger>

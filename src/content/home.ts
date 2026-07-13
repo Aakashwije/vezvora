@@ -50,7 +50,6 @@ export type Testimonial = {
   draft?: boolean;
 };
 
-// Draft content: replace the names, roles, and quotes with approved customer testimonials.
 export const testimonials: Testimonial[] = [
   {
     company: "ICC",

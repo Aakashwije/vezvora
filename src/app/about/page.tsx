@@ -53,7 +53,7 @@ export default function AboutPage() {
             alt="The Vezvora team"
             fill
             priority
-            sizes="(max-width: 900px) 420px, 46vw"
+            sizes="(max-width: 900px) 420px, 559px"
             className={styles.teamImage}
           />
         </Reveal>
