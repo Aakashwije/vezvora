@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import { Reveal } from "@/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
-import { Reveal } from "@/components/motion/Reveal";
-import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { contactChannels } from "@/content/contact";
+import { siteConfig } from "@/lib/site";
+import type { Metadata } from "next";
 import { ContactForm } from "./ContactForm";
 import styles from "./contact.module.css";
 
@@ -42,13 +43,23 @@ export default function ContactPage() {
           <ContactForm />
         </Reveal>
 
-        <Stagger mode="mount" stagger={0.12} delay={0.4} className={styles.side}>
+        <Stagger
+          mode="mount"
+          stagger={0.12}
+          delay={0.4}
+          className={styles.side}
+        >
           <StaggerItem className={styles.sideCard}>
             <h2 className={styles.sideTitle}>Get in touch</h2>
             <div className={styles.channels}>
               {contactChannels.map((channel) => (
                 <div key={channel.label} className={styles.channel}>
-                  <IconBadge name={channel.icon} size={42} iconSize={21} radius={11} />
+                  <IconBadge
+                    name={channel.icon}
+                    size={42}
+                    iconSize={21}
+                    radius={11}
+                  />
                   <div>
                     <div className={styles.channelLabel}>{channel.label}</div>
                     <div className={styles.channelValue}>{channel.value}</div>
@@ -56,6 +67,19 @@ export default function ContactPage() {
                 </div>
               ))}
             </div>
+            <a
+              href={siteConfig.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.whatsappLink}
+              aria-label={`Chat with Vezvora on WhatsApp at ${siteConfig.phone}`}
+            >
+              <Icon name="call" size={19} />
+              <span>
+                Chat on WhatsApp
+                <small>{siteConfig.phone}</small>
+              </span>
+            </a>
           </StaggerItem>
 
           <StaggerItem className={styles.responseCard}>
@@ -64,7 +88,9 @@ export default function ContactPage() {
             </span>
             <div>
               <div className={styles.responseLabel}>Response time</div>
-              <div className={styles.responseText}>We respond within 12 hours.</div>
+              <div className={styles.responseText}>
+                We respond within 12 hours.
+              </div>
             </div>
           </StaggerItem>
         </Stagger>

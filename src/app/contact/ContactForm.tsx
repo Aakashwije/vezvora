@@ -69,7 +69,7 @@ export function ContactForm() {
                   name="name"
                   type="text"
                   className={styles.control}
-                  placeholder="Jane Doe"
+                  placeholder="Sahan Perera"
                   autoComplete="name"
                   required
                 />
@@ -83,7 +83,7 @@ export function ContactForm() {
                   name="email"
                   type="email"
                   className={styles.control}
-                  placeholder="jane@company.com"
+                  placeholder="sahan@company.lk"
                   autoComplete="email"
                   required
                 />
@@ -99,7 +99,7 @@ export function ContactForm() {
                 name="company"
                 type="text"
                 className={styles.control}
-                placeholder="Acme Corp"
+                placeholder="Lanka Digital"
                 autoComplete="organization"
               />
             </div>

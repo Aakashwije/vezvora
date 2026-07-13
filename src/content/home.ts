@@ -40,6 +40,44 @@ export const homeServices: HomeService[] = [
   },
 ];
 
+export type Testimonial = {
+  company: string;
+  logo: string;
+  name: string;
+  role: string;
+  quote: string;
+  featured?: boolean;
+  draft?: boolean;
+};
+
+export const testimonials: Testimonial[] = [
+  {
+    company: "ICC",
+    logo: "/ICC.jpeg",
+    name: "Dr. Upul Wijesekara",
+    role: "GM – Buildings",
+    quote:
+      "Vezvora replaced our web-based procurement process with a secure mobile workflow and admin dashboard. Real-time updates, conflict-free meeting scheduling, task assignment, internal communication, and centralized site files have made our day-to-day work 90% more productive.",
+  },
+  {
+    company: "Intimate Hygiene",
+    logo: "/Intimate.png",
+    name: "Inoka Gunn",
+    role: "Director",
+    quote:
+      "Vezvora built our complete SaaS ordering platform with payment integration, analytics, dispatch, order tracking, and ML-powered forecasting. We now process 100+ orders per day, the platform has remained fully operational, and the team's service and expertise have been excellent throughout.",
+    featured: true,
+  },
+  {
+    company: "Elitewing Travels",
+    logo: "/elitewing.jpg",
+    name: "Thisean Bandara",
+    role: "CEO",
+    quote:
+      "Vezvora built a tourism website that has become our primary marketing and enquiry channel. Customers quickly understand what Sri Lanka offers and regularly praise the convincing experience. The website now plays a central role in turning interest into enquiries.",
+  },
+];
+
 export type ProcessStep = { num: string; title: string; desc: string };
 
 export const processSteps: ProcessStep[] = [

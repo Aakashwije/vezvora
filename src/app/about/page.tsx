@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CtaSection } from "@/components/sections/CtaSection";
@@ -48,11 +48,14 @@ export default function AboutPage() {
           </StaggerItem>
         </Stagger>
         <Reveal mode="mount" variant="scaleIn" delay={0.35} className={styles.visual}>
-          <span className={styles.visualPattern} aria-hidden />
-          <span className={styles.visualIcon}>
-            <Icon name="architecture" size={96} strokeWidth={1.5} />
-          </span>
-          <span className={styles.visualNote}>[ team / office photo ]</span>
+          <Image
+            src="/team.png"
+            alt="The Vezvora team"
+            fill
+            priority
+            sizes="(max-width: 900px) 420px, 559px"
+            className={styles.teamImage}
+          />
         </Reveal>
       </section>
 
