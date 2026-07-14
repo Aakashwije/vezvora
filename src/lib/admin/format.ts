@@ -28,8 +28,11 @@ export function formatDateTime(iso: string): string {
 }
 
 function csvCell(value: string): string {
-  const needsQuotes = /[",\n]/.test(value);
-  const escaped = value.replace(/"/g, '""');
+  // Neutralize spreadsheet formula injection: a leading =, +, -, or @ makes
+  // Excel/Sheets evaluate the cell. Prefix with a quote so it stays literal.
+  const safe = /^[=+\-@]/.test(value) ? `'${value}` : value;
+  const needsQuotes = /[",\n]/.test(safe);
+  const escaped = safe.replace(/"/g, '""');
   return needsQuotes ? `"${escaped}"` : escaped;
 }
 

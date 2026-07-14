@@ -154,13 +154,6 @@
   color: var(--faint);
   text-align: center;
 }
-.hint code {
-  font-family: ui-monospace, monospace;
-  background: var(--surface-muted);
-  padding: 1px 6px;
-  border-radius: 5px;
-  color: var(--ink-soft);
-}
 .back {
   margin-top: 14px;
   text-align: center;

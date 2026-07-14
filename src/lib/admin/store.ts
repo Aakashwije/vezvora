@@ -21,7 +21,11 @@ type Store<T> = {
   hydrate: () => void;
 };
 
-function createStore<T>(key: string, seed: T): Store<T> {
+function createStore<T>(
+  key: string,
+  seed: T,
+  isValid: (value: unknown) => value is T,
+): Store<T> {
   let state = seed;
   let hydrated = false;
   const listeners = new Set<() => void>();
@@ -33,7 +37,10 @@ function createStore<T>(key: string, seed: T): Store<T> {
     hydrated = true;
     try {
       const raw = window.localStorage.getItem(key);
-      if (raw) state = JSON.parse(raw) as T;
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+        if (isValid(parsed)) state = parsed; // else keep seed
+      }
     } catch {
       /* ignore corrupt storage */
     }
@@ -65,9 +72,16 @@ function createStore<T>(key: string, seed: T): Store<T> {
   };
 }
 
-const leadsStore = createStore<Lead[]>("vz_admin_leads", seedLeads);
-const projectsStore = createStore<ManagedProject[]>("vz_admin_projects", seedProjects);
-const settingsStore = createStore<SiteSettings>("vz_admin_settings", seedSettings);
+const isLeadArray = (v: unknown): v is Lead[] =>
+  Array.isArray(v) && v.every((l) => l && typeof l === "object" && "id" in l && "status" in l);
+const isProjectArray = (v: unknown): v is ManagedProject[] =>
+  Array.isArray(v) && v.every((p) => p && typeof p === "object" && "id" in p && "order" in p);
+const isSettings = (v: unknown): v is SiteSettings =>
+  Boolean(v) && typeof v === "object" && "email" in (v as object);
+
+const leadsStore = createStore<Lead[]>("vz_admin_leads", seedLeads, isLeadArray);
+const projectsStore = createStore<ManagedProject[]>("vz_admin_projects", seedProjects, isProjectArray);
+const settingsStore = createStore<SiteSettings>("vz_admin_settings", seedSettings, isSettings);
 
 function useStore<T>(store: Store<T>): T {
   return useSyncExternalStore(store.subscribe, store.get, store.getServer);
@@ -206,11 +220,16 @@ export const projectsRepo = {
     const idx = list.findIndex((p) => p.id === id);
     const swap = idx + direction;
     if (idx === -1 || swap < 0 || swap >= list.length) return;
-    [list[idx].order, list[swap].order] = [list[swap].order, list[idx].order];
+    // Replace the two entries with new objects (don't mutate shared state).
+    const orderA = list[idx].order;
+    const orderB = list[swap].order;
+    list[idx] = { ...list[idx], order: orderB };
+    list[swap] = { ...list[swap], order: orderA };
     projectsStore.set(list);
   },
 
   blankProject(): ManagedProject {
+    projectsStore.hydrate();
     return {
       id: uid("pr"),
       name: "",
@@ -231,6 +250,7 @@ export const projectsRepo = {
 
 export const settingsRepo = {
   save(settings: SiteSettings) {
+    settingsStore.hydrate();
     settingsStore.set(settings);
   },
 };

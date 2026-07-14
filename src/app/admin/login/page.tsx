@@ -28,11 +28,7 @@ export default function LoginPage() {
 
         <LoginForm />
 
-        <p className={styles.hint}>
-          Demo access — password <code>vezvora</code>
-          <br />
-          (set <code>ADMIN_PASSWORD</code> to override)
-        </p>
+        <p className={styles.hint}>Authorized personnel only.</p>
         <p className={styles.back}>
           <Link href="/">← Back to site</Link>
         </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArrowRight, TriangleAlert } from "lucide-react";
 import { login, type LoginState } from "@/lib/admin/auth-actions";
 import styles from "./login.module.css";
@@ -9,9 +10,11 @@ const initialState: LoginState = {};
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(login, initialState);
+  const from = useSearchParams().get("from") ?? "/admin";
 
   return (
     <form className={styles.form} action={formAction}>
+      <input type="hidden" name="from" value={from} />
       <div className={styles.field}>
         <label className={styles.label} htmlFor="email">
           Email
@@ -23,7 +26,6 @@ export function LoginForm() {
           className={styles.input}
           placeholder="you@vezvora.com"
           autoComplete="username"
-          defaultValue="vezvoraa@gmail.com"
           required
         />
       </div>

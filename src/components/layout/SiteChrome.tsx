@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { isAdminRoute } from "@/lib/routes";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 
@@ -12,9 +13,8 @@ import { Footer } from "./Footer";
  */
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
 
-  if (isAdmin) {
+  if (isAdminRoute(pathname)) {
     return <>{children}</>;
   }
 

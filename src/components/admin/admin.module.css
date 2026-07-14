@@ -573,7 +573,7 @@
 .kvValue {
   font-size: 14.5px;
   font-weight: 600;
-  word-break: break-word;
+  overflow-wrap: break-word;
 }
 .messageBox {
   background: var(--surface-muted);
