@@ -50,7 +50,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     title: "Legal",
     links: [
       { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
+      { label: "Terms", href: "/terms" },
     ],
   },
 ];

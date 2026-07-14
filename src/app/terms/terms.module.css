@@ -1,0 +1,77 @@
+.hero {
+  max-width: 760px;
+  padding: 64px 0 12px;
+}
+.h1 {
+  font-size: 52px;
+  line-height: 1.06;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 16px 0 14px;
+}
+.updated {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--faint);
+  margin-bottom: 22px;
+}
+.lead {
+  font-size: 18px;
+  line-height: 1.62;
+  color: var(--muted);
+}
+
+.body {
+  max-width: 760px;
+  padding: 32px 0 72px;
+}
+.section {
+  padding: 26px 0;
+  border-top: 1px solid var(--border);
+}
+.sectionTitle {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin-bottom: 14px;
+}
+.paragraph {
+  font-size: 16px;
+  line-height: 1.68;
+  color: var(--ink-soft);
+}
+.paragraph + .paragraph {
+  margin-top: 14px;
+}
+.contact {
+  margin-top: 12px;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-card);
+}
+.contact .sectionTitle {
+  margin-bottom: 10px;
+}
+.link {
+  color: var(--green-deep);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.link:hover {
+  color: var(--green);
+}
+
+@media (max-width: 620px) {
+  .hero {
+    padding: 44px 0 8px;
+  }
+  .h1 {
+    font-size: 36px;
+  }
+  .contact {
+    padding: 24px;
+  }
+}
