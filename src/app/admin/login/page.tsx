@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { LoginForm } from "./LoginForm";
 import styles from "./login.module.css";
 
@@ -26,7 +27,9 @@ export default function LoginPage() {
         <h1 className={styles.heading}>Welcome back</h1>
         <p className={styles.sub}>Sign in to manage leads, content, and settings.</p>
 
-        <LoginForm />
+        <Suspense>
+          <LoginForm />
+        </Suspense>
 
         <p className={styles.hint}>Authorized personnel only.</p>
         <p className={styles.back}>
