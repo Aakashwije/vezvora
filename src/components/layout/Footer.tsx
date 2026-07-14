@@ -84,7 +84,11 @@ export function Footer() {
             © {year} {siteConfig.name}. All rights reserved.
           </span>
           <div className={styles.social}>
-            <a className={styles.socialLink} href="#" aria-label="Vezvora on X">
+            <a
+              className={styles.socialLink}
+              href="https://x.com/Vezvora"
+              aria-label="Vezvora on X"
+            >
               <XIcon />
             </a>
             <a
