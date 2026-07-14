@@ -93,7 +93,7 @@ export function Footer() {
             </a>
             <a
               className={styles.socialLink}
-              href="https://www.linkedin.com/company/vezvora/about/?viewAsMember=true"
+              href="https://www.linkedin.com/company/vezvora/"
               aria-label="Vezvora on LinkedIn"
             >
               <LinkedInIcon />
