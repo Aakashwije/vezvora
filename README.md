@@ -293,6 +293,48 @@ vezvora/
 
 ---
 
+## 🔐 Admin Console
+
+A private operations console lives under `/admin`, sharing the marketing design
+system (deep-slate sidebar, lime accents, Motion). Every `/admin/*` route is
+gated by middleware; the marketing chrome is swapped out via `SiteChrome`.
+
+| Route              | Purpose                                                                 |
+| ------------------ | ----------------------------------------------------------------------- |
+| `/admin/login`     | Server-action login → `httpOnly` session cookie                          |
+| `/admin`           | Dashboard — KPIs, pipeline funnel, project-type & lead breakdown, recent leads |
+| `/admin/leads`     | Leads inbox — search, status/owner filters, pipeline, detail drawer (notes, assignment, WhatsApp/email quick-reply), CSV export |
+| `/admin/content`   | Work CMS — add / edit / reorder / feature-toggle / delete projects       |
+| `/admin/settings`  | Site details, SEO defaults, and team                                     |
+
+**Auth.** `src/middleware.ts` redirects unauthenticated `/admin/*` requests to
+login; a server action (`src/lib/admin/auth-actions.ts`) validates credentials
+and sets the session cookie. Demo password is `vezvora` (override with
+the `ADMIN_PASSWORD` env var, e.g. in an untracked `.env.local`). Swap the credential check for a real user
+store + hashed passwords for production.
+
+**Data layer.** The console reads/writes through a small repository interface
+(`src/lib/admin/store.ts` — `leadsRepo`, `projectsRepo`, `settingsRepo`), backed
+by a reactive localStorage store for this prototype. Components depend only on
+the hooks/mutations, so moving to a real API/DB is an internals-only change.
+
+Public contact submissions flow straight into the console:
+
+```mermaid
+sequenceDiagram
+    participant V as Visitor
+    participant F as Contact form
+    participant R as leadsRepo
+    participant A as Admin · /admin/leads
+    V->>F: Submit inquiry
+    F->>R: leadsRepo.create({ name, email, … })
+    R->>R: persist + notify subscribers
+    A-->>R: useLeads() (reactive)
+    Note over A: New lead appears at top of the inbox
+```
+
+---
+
 ## 🎨 Design System
 
 All theming is driven by CSS custom properties in
