@@ -10,7 +10,6 @@ import {
 } from "motion/react";
 import { CountUp } from "@/components/motion/CountUp";
 import { LiquidWobble } from "@/components/motion/LiquidWobble";
-import { LiveMetric } from "@/components/motion/LiveMetric";
 import { Reveal } from "@/components/motion/Reveal";
 import { Icon } from "@/components/ui/Icon";
 import styles from "./HeroMock.module.css";
@@ -28,14 +27,10 @@ const bars = [
 /** Max card tilt, degrees. */
 const TILT = 3;
 
-const formatUsers = (v: number) => Math.round(v).toLocaleString("en-US");
-const formatUptime = (v: number) => `${Math.min(99.99, v).toFixed(2)}%`;
-
 /**
  * Hero dashboard mock. Keeps the LiquidWobble scroll effect, and layers
  * on a cursor-tracked 3D tilt with hover pop, a cursor-following green
- * glow, spring-rising chart bars, a count-up KPI, and mini stats that
- * stream like a live feed while hovered.
+ * glow, spring-rising chart bars, and a count-up KPI.
  */
 export function HeroMock({ className }: { className?: string }) {
   const reduceMotion = useReducedMotion();
@@ -146,23 +141,11 @@ export function HeroMock({ className }: { className?: string }) {
               <div className={styles.miniStats}>
                 <div className={styles.miniStat}>
                   <div className={styles.miniLabel}>Active users</div>
-                  <LiveMetric
-                    base={48209}
-                    jitter={260}
-                    format={formatUsers}
-                    active={hovered && !reduceMotion}
-                    className={styles.miniValue}
-                  />
+                  <div className={styles.miniValue}>48,209</div>
                 </div>
                 <div className={styles.miniStat}>
                   <div className={styles.miniLabel}>Uptime</div>
-                  <LiveMetric
-                    base={99.98}
-                    jitter={0.02}
-                    format={formatUptime}
-                    active={hovered && !reduceMotion}
-                    className={styles.miniValue}
-                  />
+                  <div className={styles.miniValue}>99.98%</div>
                 </div>
               </div>
             </div>

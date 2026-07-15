@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/Button";
 import { CountUp } from "@/components/motion/CountUp";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { LiveMetric } from "@/components/motion/LiveMetric";
 import { Reveal } from "@/components/motion/Reveal";
 import styles from "./FeaturedWork.module.css";
 
@@ -34,15 +33,11 @@ const stats = [
 /** Max card tilt, degrees. */
 const TILT = 3.2;
 
-const formatThroughput = (v: number) => `${v.toFixed(1)}k/s`;
-const formatLatency = (v: number) => `${Math.round(v)}ms`;
-
 /**
  * "Featured work" — dark case-study band with cursor-tracked 3D tilt.
  * The dashboard mock sits on its own depth layer (translateZ) and pops
- * forward on hover; a cursor-following radial glow lights the band, the
- * chart bars spring up on scroll, and the dashboard metrics stream like
- * a live feed while hovered.
+ * forward on hover; a cursor-following radial glow lights the band and
+ * the chart bars spring up on scroll.
  */
 export function FeaturedWork() {
   const reduceMotion = useReducedMotion();
@@ -162,23 +157,11 @@ export function FeaturedWork() {
                   <div className={styles.fmGrid}>
                     <div className={styles.fmCell}>
                       <div className={styles.fmCellLabel}>Throughput</div>
-                      <LiveMetric
-                        base={28.4}
-                        jitter={0.8}
-                        format={formatThroughput}
-                        active={hovered && !reduceMotion}
-                        className={styles.fmCellValue}
-                      />
+                      <div className={styles.fmCellValue}>28.4k/s</div>
                     </div>
                     <div className={styles.fmCell}>
                       <div className={styles.fmCellLabel}>Latency</div>
-                      <LiveMetric
-                        base={42}
-                        jitter={4}
-                        format={formatLatency}
-                        active={hovered && !reduceMotion}
-                        className={styles.fmCellValue}
-                      />
+                      <div className={styles.fmCellValue}>42ms</div>
                     </div>
                   </div>
                   <div className={styles.fmChartWrap}>
