@@ -1,0 +1,268 @@
+/* "Featured work" — 3D-tilting dark case-study band */
+
+.featured {
+  padding: 70px 0;
+}
+
+/* Perspective root: parent of the tilting band */
+.perspective {
+  perspective: 1100px;
+}
+
+.band {
+  position: relative;
+  background: var(--grad-dark);
+  border-radius: 32px;
+  padding: 60px;
+  will-change: transform;
+}
+
+/* Glow layers live in their own clipped box so the band itself never
+   clips — overflow on the band would flatten the mock's 3D depth. */
+.clip {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(47, 211, 196, 0.28), transparent 68%);
+  animation: orbFloat 14s ease-in-out infinite alternate;
+}
+
+/* Cursor-following radial glow (background set from a motion template) */
+.cursorGlow {
+  position: absolute;
+  inset: 0;
+}
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 56px;
+  align-items: center;
+  transform-style: preserve-3d;
+}
+
+.copy {
+  max-width: 520px;
+}
+
+.title {
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 16px 0 18px;
+}
+
+.text {
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.66);
+  margin-bottom: 30px;
+}
+
+.stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+
+.stat {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat:hover {
+  transform: translateY(-3px);
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.statLabel {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 2px;
+}
+
+/* CTA: stronger lift + ambient green glow on top of the shared Button
+   hover (doubled class beats the base .btn/.accent specificity) */
+.cta.cta:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 14px 36px rgba(40, 184, 95, 0.5),
+    0 0 64px -6px rgba(47, 211, 196, 0.45);
+}
+
+.cta.cta:hover svg {
+  transform: translateX(4px);
+}
+
+/* ---- Dashboard mock (own 3D depth layer) ---- */
+
+.mockWrap {
+  transform-style: preserve-3d;
+}
+
+.mock {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow:
+    0 34px 70px -18px rgba(0, 0, 0, 0.55),
+    0 10px 28px rgba(0, 0, 0, 0.3);
+  will-change: transform;
+}
+
+.fmHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.fmTitle {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fmLive {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green-deep);
+  background: rgba(40, 184, 95, 0.1);
+  padding: 4px 9px;
+  border-radius: var(--pill);
+}
+
+.fmLiveDot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+/* Continuous radar pulse behind the Live dot */
+.fmLiveDot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulseRing 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+.fmGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.fmCell {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 12px 13px;
+}
+
+.fmCellLabel {
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  color: var(--faint);
+}
+
+.fmCellValue {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.fmChartWrap {
+  background: var(--surface-muted);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.fmChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 70px;
+  /* Faint gridlines for realism */
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 16px,
+    rgba(35, 40, 47, 0.045) 16px 17px
+  );
+}
+
+.fmBar {
+  flex: 1;
+  border-radius: 4px;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 980px) {
+  .band {
+    padding: 44px 32px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .copy {
+    max-width: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .featured {
+    padding: 48px 0;
+  }
+  .band {
+    padding: 36px 22px;
+    border-radius: var(--r-xl);
+  }
+  .title {
+    font-size: 30px;
+  }
+  .stats {
+    gap: 22px;
+  }
+}
