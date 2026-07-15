@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { cx } from "@/lib/cx";
 import { EASE } from "@/lib/animations";
+import { leadsRepo } from "@/lib/admin/store";
 import { projectTypes, budgetRanges } from "@/content/contact";
 import styles from "./contact.module.css";
 
@@ -16,8 +17,18 @@ export function ContactForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Front-end demo: native validation gates submission; wire to an API route
-    // or form service here when the backend is ready.
+    // Capture the submission as a lead so it lands in the admin inbox.
+    // (Swap leadsRepo for an API route when the backend is ready.)
+    const data = new FormData(event.currentTarget);
+    leadsRepo.create({
+      name: String(data.get("name") ?? ""),
+      email: String(data.get("email") ?? ""),
+      company: String(data.get("company") ?? ""),
+      projectType: String(data.get("projectType") ?? ""),
+      budget: String(data.get("budget") ?? ""),
+      message: String(data.get("message") ?? ""),
+      source: "Contact page",
+    });
     setStatus("sending");
     window.setTimeout(() => setStatus("success"), 900);
   }
