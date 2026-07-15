@@ -3,6 +3,7 @@ import { cx } from "@/lib/cx";
 import { Button } from "@/components/ui/Button";
 import type { IconName } from "@/components/ui/Icon";
 import { Reveal } from "@/components/motion/Reveal";
+import { LiquidWobble } from "@/components/motion/LiquidWobble";
 import styles from "./CtaSection.module.css";
 
 type CtaSectionProps = {
@@ -31,23 +32,29 @@ export function CtaSection({
   return (
     <section className={cx("container", styles.section)}>
       <Reveal duration={0.7}>
-        <div className={cx(styles.card, isDark ? styles.dark : styles.light)}>
-          <div className={styles.inner}>
-            <h2 className={isDark ? styles.titleDark : styles.titleLight}>
-              {title}
-            </h2>
-            <p className={isDark ? styles.textDark : styles.textLight}>{text}</p>
-            <Button
-              href={action.href}
-              variant={isDark ? "accent" : "dark"}
-              size="lg"
-              icon={action.icon ?? "arrow_outward"}
-              iconSize={19}
-            >
-              {action.label}
-            </Button>
+        <LiquidWobble intensity={0.85}>
+          <div className={cx(styles.card, isDark ? styles.dark : styles.light)}>
+            <span className={cx(styles.orb, styles.orbLime)} aria-hidden />
+            <span className={cx(styles.orb, styles.orbTeal)} aria-hidden />
+            <div className={styles.inner}>
+              <h2 className={isDark ? styles.titleDark : styles.titleLight}>
+                {title}
+              </h2>
+              <p className={isDark ? styles.textDark : styles.textLight}>
+                {text}
+              </p>
+              <Button
+                href={action.href}
+                variant={isDark ? "accent" : "dark"}
+                size="lg"
+                icon={action.icon ?? "arrow_outward"}
+                iconSize={19}
+              >
+                {action.label}
+              </Button>
+            </div>
           </div>
-        </div>
+        </LiquidWobble>
       </Reveal>
     </section>
   );

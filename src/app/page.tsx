@@ -3,9 +3,9 @@ import { LiquidWobble } from "@/components/motion/LiquidWobble";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { CtaSection } from "@/components/sections/CtaSection";
+import { FeaturedWork } from "@/components/sections/FeaturedWork";
 import { ProcessSection } from "@/components/sections/ProcessSection";
 import { Button } from "@/components/ui/Button";
-import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -33,22 +33,6 @@ const heroBars = [
     delay: "0.4s",
   },
   { h: 70, fill: "#e7f0e3", delay: "0.47s" },
-];
-
-const featuredBars = [40, 62, 52, 80, 68, 94].map((h, i) => ({
-  h,
-  fill:
-    i === 3
-      ? "linear-gradient(180deg,#9fce22,#3bb85e)"
-      : i === 5
-        ? "linear-gradient(180deg,#8ec21a,#2fd3c4)"
-        : "#dfeed6",
-}));
-
-const featuredStats = [
-  { value: "71%", label: "Faster loads", color: "#a9e022" },
-  { value: "2.4M", label: "Daily events", color: "#3bd6c0" },
-  { value: "$4.1M", label: "New ARR", color: "#63d17f" },
 ];
 
 export default function HomePage() {
@@ -251,75 +235,7 @@ export default function HomePage() {
       </section>
 
       {/* FEATURED WORK */}
-      <section className={styles.featured}>
-        <div className="container">
-          <Reveal duration={0.7} className={styles.featuredBand}>
-            <div className={styles.featuredBlob} aria-hidden />
-            <div className={styles.featuredGrid}>
-              <div className={styles.featuredCopy}>
-                <Eyebrow tone="light">Featured work</Eyebrow>
-                <h2 className={styles.featuredTitle}>
-                  A logistics platform rebuilt for 10× scale.
-                </h2>
-                <p className={styles.featuredText}>
-                  We re-architected a legacy operations suite into a real-time
-                  platform handling millions of daily events — cutting load
-                  times by 71% and unlocking a new revenue line.
-                </p>
-                <div className={styles.featuredStats}>
-                  {featuredStats.map((stat) => (
-                    <div key={stat.label}>
-                      <div
-                        className={styles.fStatValue}
-                        style={{ color: stat.color }}
-                      >
-                        <CountUp value={stat.value} />
-                      </div>
-                      <div className={styles.fStatLabel}>{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
-                <Button href="/work" variant="accent" icon="arrow_forward">
-                  Read the case study
-                </Button>
-              </div>
-
-              <div className={styles.featuredMockWrap}>
-                <div className={styles.featuredMock}>
-                  <div className={styles.fmHead}>
-                    <span className={styles.fmTitle}>Operations</span>
-                    <span className={styles.fmLive}>
-                      <span className={styles.fmLiveDot} />
-                      Live
-                    </span>
-                  </div>
-                  <div className={styles.fmGrid}>
-                    <div className={styles.fmCell}>
-                      <div className={styles.fmCellLabel}>Throughput</div>
-                      <div className={styles.fmCellValue}>28.4k/s</div>
-                    </div>
-                    <div className={styles.fmCell}>
-                      <div className={styles.fmCellLabel}>Latency</div>
-                      <div className={styles.fmCellValue}>42ms</div>
-                    </div>
-                  </div>
-                  <div className={styles.fmChartWrap}>
-                    <div className={styles.fmChart}>
-                      {featuredBars.map((bar, i) => (
-                        <span
-                          key={i}
-                          className={styles.fmBar}
-                          style={{ height: `${bar.h}%`, background: bar.fill }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <FeaturedWork />
 
       {/* TESTIMONIALS */}
       <section className={styles.testimonials}>
