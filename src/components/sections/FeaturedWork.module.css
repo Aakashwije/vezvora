@@ -206,16 +206,9 @@
 }
 
 .fmCellValue {
-  display: block;
-  overflow: hidden;
   font-size: 17px;
   font-weight: 700;
   margin-top: 2px;
-  font-variant-numeric: tabular-nums;
-}
-
-.fmCellValueInner {
-  display: inline-block;
 }
 
 .fmChartWrap {

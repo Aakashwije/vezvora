@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
-  AnimatePresence,
   motion,
   useMotionTemplate,
   useMotionValue,
@@ -12,6 +11,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { CountUp } from "@/components/motion/CountUp";
 import { Eyebrow } from "@/components/ui/Eyebrow";
+import { LiveMetric } from "@/components/motion/LiveMetric";
 import { Reveal } from "@/components/motion/Reveal";
 import styles from "./FeaturedWork.module.css";
 
@@ -36,53 +36,6 @@ const TILT = 3.2;
 
 const formatThroughput = (v: number) => `${v.toFixed(1)}k/s`;
 const formatLatency = (v: number) => `${Math.round(v)}ms`;
-
-type LiveMetricProps = {
-  base: number;
-  /** Max random deviation from `base` while streaming. */
-  jitter: number;
-  format: (v: number) => string;
-  active: boolean;
-};
-
-/**
- * Dashboard readout that streams new values upward like a live network
- * feed while `active`, and rests at its base value otherwise.
- */
-function LiveMetric({ base, jitter, format, active }: LiveMetricProps) {
-  const [streamed, setStreamed] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!active) return;
-    const id = setInterval(() => {
-      setStreamed(format(base + (Math.random() * 2 - 1) * jitter));
-    }, 180);
-    return () => {
-      clearInterval(id);
-      setStreamed(null);
-    };
-  }, [active, base, jitter, format]);
-
-  // Rest at the base value; only show streamed readings while hovered.
-  const display = (active && streamed) || format(base);
-
-  return (
-    <span className={styles.fmCellValue}>
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={display}
-          className={styles.fmCellValueInner}
-          initial={{ y: 8, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -8, opacity: 0 }}
-          transition={{ duration: 0.16, ease: "easeOut" }}
-        >
-          {display}
-        </motion.span>
-      </AnimatePresence>
-    </span>
-  );
-}
 
 /**
  * "Featured work" — dark case-study band with cursor-tracked 3D tilt.
@@ -214,6 +167,7 @@ export function FeaturedWork() {
                         jitter={0.8}
                         format={formatThroughput}
                         active={hovered && !reduceMotion}
+                        className={styles.fmCellValue}
                       />
                     </div>
                     <div className={styles.fmCell}>
@@ -223,6 +177,7 @@ export function FeaturedWork() {
                         jitter={4}
                         format={formatLatency}
                         active={hovered && !reduceMotion}
+                        className={styles.fmCellValue}
                       />
                     </div>
                   </div>

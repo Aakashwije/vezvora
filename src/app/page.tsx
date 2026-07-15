@@ -1,9 +1,9 @@
 import { CountUp } from "@/components/motion/CountUp";
-import { LiquidWobble } from "@/components/motion/LiquidWobble";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { CtaSection } from "@/components/sections/CtaSection";
 import { FeaturedWork } from "@/components/sections/FeaturedWork";
+import { HeroMock } from "@/components/sections/HeroMock";
 import { ProcessSection } from "@/components/sections/ProcessSection";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -20,20 +20,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 import styles from "./page.module.css";
-
-const heroBars = [
-  { h: 42, fill: "#eff3ec", delay: "0.05s" },
-  { h: 58, fill: "#e7f0e3", delay: "0.12s" },
-  { h: 50, fill: "#eff3ec", delay: "0.19s" },
-  { h: 73, fill: "linear-gradient(180deg,#9fce22,#3bb85e)", delay: "0.26s" },
-  { h: 64, fill: "#e7f0e3", delay: "0.33s" },
-  {
-    h: 88,
-    fill: "linear-gradient(180deg,#8ec21a,#28b85f 55%,#2fd3c4)",
-    delay: "0.4s",
-  },
-  { h: 70, fill: "#e7f0e3", delay: "0.47s" },
-];
 
 export default function HomePage() {
   return (
@@ -122,61 +108,7 @@ export default function HomePage() {
           </Stagger>
 
           {/* Dashboard mock */}
-          <Reveal
-            mode="mount"
-            delay={0.45}
-            duration={0.8}
-            className={styles.mock}
-          >
-            <LiquidWobble>
-              <div className={styles.mockCard}>
-                <div className={styles.mockTop}>
-                  <div className={styles.dots}>
-                    <span className={styles.dot} />
-                    <span className={styles.dot} />
-                    <span className={styles.dot} />
-                  </div>
-                  <span className={styles.mockUrl}>www.vezvora.com</span>
-                </div>
-                <div className={styles.mockBody}>
-                  <div className={styles.mockHead}>
-                    <div>
-                      <div className={styles.mockKpiLabel}>Monthly growth</div>
-                      <div className={styles.mockKpiValue}>+124.8%</div>
-                    </div>
-                    <span className={styles.mockDelta}>
-                      <Icon name="arrow_upward" size={15} />
-                      18.2%
-                    </span>
-                  </div>
-                  <div className={styles.chart}>
-                    {heroBars.map((bar, i) => (
-                      <span
-                        key={i}
-                        className={styles.chartBar}
-                        style={{
-                          height: `${bar.h}%`,
-                          background: bar.fill,
-                          animationDelay: bar.delay,
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <div className={styles.mockDivider} />
-                  <div className={styles.miniStats}>
-                    <div className={styles.miniStat}>
-                      <div className={styles.miniLabel}>Active users</div>
-                      <div className={styles.miniValue}>48,209</div>
-                    </div>
-                    <div className={styles.miniStat}>
-                      <div className={styles.miniLabel}>Uptime</div>
-                      <div className={styles.miniValue}>99.98%</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </LiquidWobble>
-          </Reveal>
+          <HeroMock className={styles.mock} />
         </div>
       </section>
 
