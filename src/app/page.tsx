@@ -3,6 +3,7 @@ import { LiquidWobble } from "@/components/motion/LiquidWobble";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { CtaSection } from "@/components/sections/CtaSection";
+import { ProcessSection } from "@/components/sections/ProcessSection";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Icon } from "@/components/ui/Icon";
@@ -387,27 +388,7 @@ export default function HomePage() {
       </section>
 
       {/* PROCESS */}
-      <section className={styles.process}>
-        <div className="container">
-          <Reveal>
-            <SectionHeading
-              className={styles.processHead}
-              eyebrow="How we work"
-              title="A process engineered for momentum."
-            />
-          </Reveal>
-          <Reveal variant="drawLine" className={styles.processLine} />
-          <Stagger className={styles.processGrid} stagger={0.1}>
-            {processSteps.map((step) => (
-              <StaggerItem key={step.num} className={styles.processCell}>
-                <div className={styles.processNum}>{step.num}</div>
-                <h3 className={styles.processTitle}>{step.title}</h3>
-                <p className={styles.processDesc}>{step.desc}</p>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </div>
-      </section>
+      <ProcessSection steps={processSteps} />
 
       {/* CTA */}
       <CtaSection
