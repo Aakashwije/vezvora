@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { jakarta, inter } from "@/lib/fonts";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -43,9 +42,7 @@ export default function RootLayout({
     <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
       <body>
         <MotionProvider>
-          <Navbar />
-          <main id="main">{children}</main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </MotionProvider>
       </body>
     </html>
