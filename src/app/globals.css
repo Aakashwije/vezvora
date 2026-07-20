@@ -5,10 +5,14 @@
  */
 
 :root {
+  color-scheme: light;
+
   /* Surfaces */
   --bg: #fafbf8;
   --surface: #ffffff;
   --surface-muted: #fafbf8;
+  --surface-highlight: #f6fcef;
+  --surface-glass: rgba(255, 255, 255, 0.7);
 
   /* Ink / text */
   --ink: #23282f;
@@ -22,6 +26,7 @@
   --border-2: #e6e9e5;
   --border-strong: #dde1dc;
   --border-soft: #f0f2ee;
+  --border-accent-soft: #cfe6c2;
 
   /* Brand */
   --green: #28b85f;
@@ -31,6 +36,8 @@
   --lime-bright: #c6e85a;
   --teal: #2fd3c4;
   --ink-on-accent: #0e2a1c;
+  --always-white: #ffffff;
+  --always-dark: #111418;
 
   /* Gradients */
   --grad-accent: linear-gradient(120deg, #8ec21a, #28b85f 55%, #2fd3c4);
@@ -51,6 +58,19 @@
   --shadow-sm: 0 2px 10px rgba(35, 40, 47, 0.04);
   --shadow-card: 0 18px 40px -26px rgba(35, 45, 50, 0.18);
   --shadow-lg: 0 30px 60px -34px rgba(35, 45, 50, 0.2);
+  --shadow-color: rgba(35, 45, 50, 0.16);
+
+  /* Translucent chrome and controls */
+  --nav-bg: rgba(250, 251, 248, 0.78);
+  --nav-mobile-bg: rgba(250, 251, 248, 0.98);
+  --nav-border: rgba(236, 238, 234, 0.9);
+  --nav-shadow: rgba(35, 45, 50, 0.14);
+  --label: #6e7976;
+  --placeholder: #8b9691;
+  --grid-line: rgba(35, 40, 47, 0.045);
+  --button-dark-bg: #23282f;
+  --button-dark-hover: #111418;
+  --button-dark-ink: #ffffff;
 
   /* Layout */
   --container: 1280px;
@@ -59,6 +79,54 @@
   /* Fonts (wired via next/font in src/lib/fonts.ts) */
   --font-display: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-ui: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #090e0c;
+  --surface: #121a16;
+  --surface-muted: #0e1512;
+  --surface-highlight: #162219;
+  --surface-glass: rgba(18, 26, 22, 0.78);
+
+  --ink: #f3f7f4;
+  --ink-soft: #d4ddd7;
+  --muted: #a8b5ad;
+  --faint: #929f97;
+  --faint-2: #87938c;
+
+  --border: #243029;
+  --border-2: #2a3730;
+  --border-strong: #3b4a42;
+  --border-soft: #1c2822;
+  --border-accent-soft: #3d684a;
+
+  --green: #45d47b;
+  --green-deep: #73df99;
+  --green-hover: #83e7a5;
+  --lime: #c1e63b;
+  --lime-bright: #d0ee68;
+  --teal: #4cddcf;
+
+  --grad-soft: linear-gradient(135deg, #17251b, #132620);
+  --grad-dark: linear-gradient(140deg, #101a15, #18221d 55%, #102021);
+
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.22);
+  --shadow-card: 0 20px 46px -24px rgba(0, 0, 0, 0.62);
+  --shadow-lg: 0 30px 64px -28px rgba(0, 0, 0, 0.72);
+  --shadow-color: rgba(0, 0, 0, 0.42);
+
+  --nav-bg: rgba(9, 14, 12, 0.8);
+  --nav-mobile-bg: rgba(9, 14, 12, 0.98);
+  --nav-border: rgba(42, 55, 48, 0.9);
+  --nav-shadow: rgba(0, 0, 0, 0.55);
+  --label: #a4b0a9;
+  --placeholder: #7f8c84;
+  --grid-line: rgba(225, 238, 230, 0.055);
+  --button-dark-bg: #eef5f0;
+  --button-dark-hover: #ffffff;
+  --button-dark-ink: #101713;
 }
 
 *,
@@ -81,6 +149,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 a {
@@ -147,16 +218,6 @@ img {
   }
   100% {
     transform: translate3d(14px, -14px, 0) scale(0.98);
-  }
-}
-
-/* Gentle drift for abstract brand shapes */
-@keyframes shapeDrift {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(-8deg);
-  }
-  100% {
-    transform: translate3d(-18px, 26px, 0) rotate(4deg);
   }
 }
 

@@ -14,9 +14,9 @@
 
 /* Glassmorphism once the page is scrolled */
 .scrolled {
-  background: rgba(250, 251, 248, 0.78);
-  border-bottom-color: rgba(236, 238, 234, 0.9);
-  box-shadow: 0 8px 30px -18px rgba(35, 45, 50, 0.14);
+  background: var(--nav-bg);
+  border-bottom-color: var(--nav-border);
+  box-shadow: 0 8px 30px -18px var(--nav-shadow);
 }
 
 .inner {
@@ -76,12 +76,13 @@
   background: var(--grad-accent);
 }
 
-.cta {
+.actions {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
-.toggle {
+.menuToggle {
   display: none;
   align-items: center;
   justify-content: center;
@@ -98,16 +99,16 @@
 .mobile {
   display: none;
   overflow: hidden;
-  background: rgba(250, 251, 248, 0.98);
+  background: var(--nav-mobile-bg);
   border-top: 1px solid var(--border);
 }
 
 @media (max-width: 880px) {
   .links,
-  .cta {
+  .actions {
     display: none;
   }
-  .toggle {
+  .menuToggle {
     display: inline-flex;
   }
   .mobile {

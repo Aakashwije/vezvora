@@ -227,7 +227,7 @@
   background: repeating-linear-gradient(
     180deg,
     transparent 0 16px,
-    rgba(35, 40, 47, 0.045) 16px 17px
+    var(--grid-line) 16px 17px
   );
 }
 

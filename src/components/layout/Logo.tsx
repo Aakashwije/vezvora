@@ -16,16 +16,16 @@ type LogoProps = {
 export function Logo({ size = "md", className }: LogoProps) {
   return (
     <span className={cx(styles.logo, size === "sm" && styles.sm, className)}>
-      {/* Brand "V" mark, cropped from the supplied lockup (public/logo.png). */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/logo-mark.png"
-        alt=""
-        aria-hidden="true"
-        width={720}
-        height={580}
-        className={styles.mark}
-      />
+      <span className={styles.markFrame} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo-mark.png"
+          alt=""
+          width={720}
+          height={580}
+          className={styles.mark}
+        />
+      </span>
       <span className={styles.word}>
         VEZ<span className={styles.grad}>VORA</span>
       </span>

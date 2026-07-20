@@ -65,7 +65,7 @@
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #6e7976;
+  color: var(--label);
   margin-bottom: 7px;
 }
 .control {
@@ -83,7 +83,7 @@
     box-shadow 0.2s ease;
 }
 .control::placeholder {
-  color: #a4aca8;
+  color: var(--placeholder);
 }
 .control:focus {
   border-color: var(--green);

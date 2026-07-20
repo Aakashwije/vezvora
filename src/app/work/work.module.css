@@ -79,7 +79,7 @@
     box-shadow 0.25s ease;
 }
 .card:hover {
-  border-color: #cfe6c2;
+  border-color: var(--border-accent-soft);
   box-shadow: 0 26px 52px -26px rgba(40, 184, 95, 0.24);
 }
 .thumb {

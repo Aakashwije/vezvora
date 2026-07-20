@@ -27,34 +27,15 @@ export default function HomePage() {
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroBlob} aria-hidden />
-        <svg
-          className={styles.heroShape}
-          viewBox="0 0 48 48"
-          fill="none"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient
-              id="heroChevron"
-              x1="6"
-              y1="42"
-              x2="42"
-              y2="6"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stopColor="#8EC21A" />
-              <stop offset="0.55" stopColor="#28B85F" />
-              <stop offset="1" stopColor="#2FD3C4" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M8 12 L24 34 L40 12"
-            stroke="url(#heroChevron)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <div className={styles.heroSignal}>
+          <span className={styles.heroSignalIcon} aria-hidden>
+            <Icon name="shield" size={18} />
+          </span>
+          <span>
+            <strong>Production-ready</strong>
+            <small>Secure, scalable, monitored</small>
+          </span>
+        </div>
         <div className={`container ${styles.heroGrid}`}>
           <Stagger mode="mount" stagger={0.1} delay={0.15}>
             <StaggerItem className={styles.badge}>
