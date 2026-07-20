@@ -69,6 +69,14 @@ export const testimonials: Testimonial[] = [
     featured: true,
   },
   {
+    company: "UD Travels",
+    logo: "/ud.png",
+    name: "Umesh Dilanka",
+    role: "Founder",
+    quote:
+      "Vezvora created a clear and engaging travel website that helps visitors explore our Sri Lankan experiences and contact us with confidence. It presents our services professionally, makes trip planning easier to understand, and has given UD Travels a stronger digital presence for attracting new enquiries.",
+  },
+  {
     company: "Elitewing Travels",
     logo: "/elitewing.jpg",
     name: "Thisean Bandara",
