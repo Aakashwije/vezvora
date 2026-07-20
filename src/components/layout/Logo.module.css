@@ -4,10 +4,28 @@
   gap: 11px;
 }
 
+.markFrame {
+  --mark-height: 34px;
+
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: calc(var(--mark-height) * 1.27);
+  height: var(--mark-height);
+}
+
 .mark {
-  height: 34px;
+  height: var(--mark-height);
   width: auto;
   display: block;
+  transition: filter 0.25s ease;
+}
+
+:global(html[data-theme="dark"]) .mark {
+  filter:
+    saturate(1.08)
+    brightness(1.08)
+    drop-shadow(0 0 7px rgba(47, 211, 196, 0.2));
 }
 
 .word {
@@ -27,8 +45,8 @@
 }
 
 /* Compact variant (footer) */
-.sm .mark {
-  height: 28px;
+.sm .markFrame {
+  --mark-height: 28px;
 }
 .sm .word {
   font-size: 17px;

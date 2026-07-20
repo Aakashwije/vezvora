@@ -82,11 +82,11 @@
 }
 
 .dark {
-  background: var(--ink);
-  color: #fff;
+  background: var(--button-dark-bg);
+  color: var(--button-dark-ink);
 }
 .dark:hover {
-  background: #111418;
+  background: var(--button-dark-hover);
   box-shadow: 0 10px 26px -8px rgba(17, 20, 24, 0.35);
 }
 
@@ -96,13 +96,13 @@
   color: var(--ink);
 }
 .outline:hover {
-  border-color: #cfe6c2;
+  border-color: var(--border-accent-soft);
   box-shadow: 0 8px 22px -12px rgba(35, 45, 50, 0.18);
 }
 
 .light {
-  background: #fff;
-  color: var(--ink);
+  background: var(--always-white);
+  color: var(--always-dark);
 }
 .light:hover {
   box-shadow: 0 10px 26px -10px rgba(255, 255, 255, 0.35);

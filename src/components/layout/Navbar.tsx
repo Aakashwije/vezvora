@@ -15,6 +15,7 @@ import { navLinks } from "@/lib/site";
 import { cx } from "@/lib/cx";
 import { EASE } from "@/lib/animations";
 import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Logo } from "./Logo";
 import styles from "./Navbar.module.css";
 
@@ -104,7 +105,8 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className={styles.cta}>
+        <div className={styles.actions}>
+          <ThemeToggle />
           <Button href="/contact" variant="dark" size="sm" icon="arrow_outward" iconSize={17}>
             Book a call
           </Button>
@@ -112,7 +114,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className={styles.toggle}
+          className={styles.menuToggle}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -143,6 +145,9 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
+              <motion.div variants={menuItemVariants}>
+                <ThemeToggle />
+              </motion.div>
               <motion.div variants={menuItemVariants}>
                 <Button
                   href="/contact"

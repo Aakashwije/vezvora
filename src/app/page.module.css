@@ -21,17 +21,50 @@
   pointer-events: none;
   animation: orbFloat 18s ease-in-out infinite alternate;
 }
-/* Abstract brand chevron drifting slowly behind the hero */
-.heroShape {
+/* Useful delivery signal floating beside the product preview */
+.heroSignal {
   position: absolute;
-  top: 6%;
-  right: 4%;
-  width: 220px;
-  height: 220px;
-  opacity: 0.06;
+  top: 78px;
+  right: max(var(--gutter), calc((100vw - var(--container)) / 2 - 8px));
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 14px 11px 11px;
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px);
   pointer-events: none;
-  z-index: 0;
-  animation: shapeDrift 16s ease-in-out infinite alternate;
+  animation: floaty 7s ease-in-out infinite;
+}
+.heroSignalIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--grad-soft);
+  color: var(--green-deep);
+}
+.heroSignal strong,
+.heroSignal small {
+  display: block;
+}
+.heroSignal strong {
+  color: var(--ink);
+  font-size: 12.5px;
+  line-height: 1.2;
+}
+.heroSignal small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  line-height: 1.2;
 }
 .heroGrid {
   position: relative;
@@ -188,6 +221,32 @@
   transform: scale(1.75);
 }
 
+/* Keep client artwork crisp in dark mode without changing the light design. */
+:global(html[data-theme="dark"]) .trust {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(40, 184, 95, 0.035) 48%,
+    rgba(47, 211, 196, 0.045) 72%,
+    transparent
+  );
+}
+
+:global(html[data-theme="dark"]) .trustLogo {
+  background: #f7f9f7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 0 0 1px rgba(9, 20, 14, 0.05),
+    0 18px 34px -22px rgba(0, 0, 0, 0.9);
+}
+
+:global(html[data-theme="dark"]) .trustLogo:hover {
+  background: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(40, 184, 95, 0.12),
+    0 18px 38px -20px rgba(40, 184, 95, 0.42);
+}
+
 @keyframes trust-logo-float {
   0%,
   100% {
@@ -223,7 +282,7 @@
     box-shadow 0.25s ease;
 }
 .serviceCard:hover {
-  border-color: #cfe6c2;
+  border-color: var(--border-accent-soft);
   box-shadow: 0 24px 48px -24px rgba(40, 184, 95, 0.22);
 }
 .serviceIcon {
@@ -284,8 +343,8 @@
   box-shadow: var(--shadow-card);
 }
 .testimonialFeatured {
-  border-color: #9fce22;
-  background: linear-gradient(145deg, #fbfff5, #f3fbf1);
+  border-color: var(--lime);
+  background: var(--surface-highlight);
   box-shadow: 0 28px 52px -28px rgba(40, 184, 95, 0.42);
 }
 .testimonialTop {
@@ -354,6 +413,9 @@
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 980px) {
+  .heroSignal {
+    display: none;
+  }
   .heroGrid {
     grid-template-columns: 1fr;
     gap: 44px;

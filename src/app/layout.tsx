@@ -2,8 +2,22 @@ import type { Metadata } from "next";
 import { jakarta, inter } from "@/lib/fonts";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
+
+const themeInitScript = `
+  try {
+    const savedTheme = localStorage.getItem("vezvora-theme");
+    const theme = savedTheme === "light" || savedTheme === "dark"
+      ? savedTheme
+      : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  } catch (_) {
+    document.documentElement.dataset.theme = "light";
+  }
+`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(`https://${siteConfig.domain}`),
@@ -39,11 +53,20 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`${jakarta.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
-        <MotionProvider>
-          <SiteChrome>{children}</SiteChrome>
-        </MotionProvider>
+        <ThemeProvider>
+          <MotionProvider>
+            <SiteChrome>{children}</SiteChrome>
+          </MotionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
