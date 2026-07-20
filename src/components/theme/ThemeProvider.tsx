@@ -36,7 +36,12 @@ function subscribeToTheme(onStoreChange: () => void) {
   const media = window.matchMedia("(prefers-color-scheme: dark)");
   const handleThemeChange = () => onStoreChange();
   const syncWithSystem = (event: MediaQueryListEvent) => {
-    if (window.localStorage.getItem("vezvora-theme")) return;
+    try {
+      if (window.localStorage.getItem("vezvora-theme")) return;
+    } catch {
+      // Storage can be unavailable in restricted browsing contexts.
+    }
+
     applyTheme(event.matches ? "dark" : "light");
     onStoreChange();
   };
@@ -58,7 +63,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback((nextTheme: Theme) => {
     applyTheme(nextTheme);
-    window.localStorage.setItem("vezvora-theme", nextTheme);
+    try {
+      window.localStorage.setItem("vezvora-theme", nextTheme);
+    } catch {
+      // The in-memory theme still updates when persistence is unavailable.
+    }
     window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }, []);
 

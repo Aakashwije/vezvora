@@ -6,12 +6,12 @@
 
 .markFrame {
   --mark-height: 34px;
+
   position: relative;
   display: block;
   flex: 0 0 auto;
   width: calc(var(--mark-height) * 1.27);
   height: var(--mark-height);
-  overflow: hidden;
 }
 
 .mark {
