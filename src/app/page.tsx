@@ -27,15 +27,6 @@ export default function HomePage() {
       {/* HERO */}
       <section className={styles.hero}>
         <div className={styles.heroBlob} aria-hidden />
-        <div className={styles.heroSignal}>
-          <span className={styles.heroSignalIcon} aria-hidden>
-            <Icon name="shield" size={18} />
-          </span>
-          <span>
-            <strong>Production-ready</strong>
-            <small>Secure, scalable, monitored</small>
-          </span>
-        </div>
         <div className={`container ${styles.heroGrid}`}>
           <Stagger mode="mount" stagger={0.1} delay={0.15}>
             <StaggerItem className={styles.badge}>
@@ -179,7 +170,7 @@ export default function HomePage() {
                       fill
                       sizes="88px"
                       className={`${styles.testimonialLogoImage} ${
-                        index === 2 ? styles.testimonialLogoImageLarge : ""
+                        index >= 2 ? styles.testimonialLogoImageLarge : ""
                       }`}
                     />
                   </span>
