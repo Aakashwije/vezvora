@@ -9,9 +9,9 @@ type LogoProps = {
 /**
  * Brand lockup: the Vezvora "V" mark + wordmark.
  *
- * The mark lives at `public/logo.svg`. To use the exact brand raster instead,
- * drop the file in `public/` and point the `src` below at it (e.g. `/vezvora.png`) —
- * everything else stays the same.
+ * The mark lives at `public/logo-mark.webp`. To swap in a different brand asset,
+ * drop the file in `public/` and point the `src` below at it — everything else
+ * stays the same.
  */
 export function Logo({ size = "md", className }: LogoProps) {
   return (
@@ -19,7 +19,7 @@ export function Logo({ size = "md", className }: LogoProps) {
       <span className={styles.markFrame} aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/logo-mark.png"
+          src="/logo-mark.webp"
           alt=""
           width={720}
           height={580}

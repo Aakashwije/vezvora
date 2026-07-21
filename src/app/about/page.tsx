@@ -49,7 +49,7 @@ export default function AboutPage() {
         </Stagger>
         <Reveal mode="mount" variant="scaleIn" delay={0.35} className={styles.visual}>
           <Image
-            src="/team.png"
+            src="/team.webp"
             alt="The Vezvora team"
             fill
             priority

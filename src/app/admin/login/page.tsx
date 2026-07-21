@@ -17,7 +17,7 @@ export default function LoginPage() {
       <div className={styles.card}>
         <div className={styles.brand}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-mark.png" alt="" className={styles.brandMark} width={34} height={27} />
+          <img src="/logo-mark.webp" alt="" className={styles.brandMark} width={34} height={27} />
           <div>
             <div className={styles.brandName}>VEZVORA</div>
             <div className={styles.brandTag}>Console</div>
