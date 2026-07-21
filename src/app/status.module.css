@@ -1,0 +1,112 @@
+/* Shared layout for full-page status screens: 404, error, loading. */
+.wrap {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Soft brand glow behind the message. */
+.blob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 720px;
+  height: 720px;
+  max-width: 120vw;
+  transform: translate(-50%, -60%);
+  background: radial-gradient(
+    circle,
+    rgba(40, 184, 95, 0.12) 0%,
+    rgba(47, 211, 196, 0.06) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  text-align: center;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.code {
+  font-family: var(--font-display);
+  font-size: clamp(84px, 18vw, 168px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  margin-bottom: 8px;
+}
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  margin-bottom: 4px;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.text {
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 12px 0 28px;
+  max-width: 46ch;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--border-strong);
+  border-top-color: var(--green);
+  animation: statusSpin 0.8s linear infinite;
+}
+
+.loadingLabel {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-top: 20px;
+}
+
+@keyframes statusSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}

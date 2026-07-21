@@ -3,6 +3,8 @@ import { jakarta, inter } from "@/lib/fonts";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { Analytics } from "@/components/analytics/Analytics";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -60,6 +62,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <JsonLd />
       </head>
       <body>
         <ThemeProvider>
@@ -67,6 +70,7 @@ export default function RootLayout({
             <SiteChrome>{children}</SiteChrome>
           </MotionProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

@@ -85,7 +85,7 @@ export function Sidebar({ user }: { user: AdminUser }) {
     <aside className={styles.sidebar}>
       <Link href="/admin" className={styles.sideBrand}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-mark.png" alt="" className={styles.sideMark} width={32} height={26} />
+        <img src="/logo-mark.webp" alt="" className={styles.sideMark} width={32} height={26} />
         <span className={styles.sideBrandText}>
           <span className={styles.sideBrandName}>VEZVORA</span>
           <span className={styles.sideBrandTag}>Console</span>
