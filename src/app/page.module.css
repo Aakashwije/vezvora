@@ -130,7 +130,6 @@
   gap: 44px;
   flex-wrap: wrap;
   align-items: center;
-  perspective: 900px;
 }
 .trustLogo {
   position: relative;
@@ -142,7 +141,6 @@
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.7);
   box-shadow: 0 10px 28px -20px rgba(35, 45, 50, 0.65);
-  transform-style: preserve-3d;
   will-change: transform;
   transition:
     transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
@@ -160,7 +158,7 @@
 }
 .trustLogo:hover {
   background: #fff;
-  transform: translateY(-8px) scale(1.08) rotateX(8deg);
+  transform: translateY(-8px) scale(1.08);
   box-shadow:
     0 24px 40px -16px rgba(40, 184, 95, 0.65),
     0 0 0 1px rgba(40, 184, 95, 0.25),
