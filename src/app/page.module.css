@@ -289,7 +289,6 @@
 .testimonialFeatured {
   border-color: var(--lime);
   background: var(--surface-highlight);
-  box-shadow: 0 28px 52px -28px rgba(40, 184, 95, 0.42);
 }
 .testimonialTop {
   display: flex;
