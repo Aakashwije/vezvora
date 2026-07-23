@@ -1,6 +1,9 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { CountUp } from "@/components/motion/CountUp";
+import { Reveal } from "@/components/motion/Reveal";
+import { Button } from "@/components/ui/Button";
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import {
   motion,
   useMotionTemplate,
@@ -8,10 +11,7 @@ import {
   useReducedMotion,
   useSpring,
 } from "motion/react";
-import { Button } from "@/components/ui/Button";
-import { CountUp } from "@/components/motion/CountUp";
-import { Eyebrow } from "@/components/ui/Eyebrow";
-import { Reveal } from "@/components/motion/Reveal";
+import { useCallback, useState } from "react";
 import styles from "./FeaturedWork.module.css";
 
 const bars = [40, 62, 52, 80, 68, 94].map((h, i) => ({
@@ -25,9 +25,9 @@ const bars = [40, 62, 52, 80, 68, 94].map((h, i) => ({
 }));
 
 const stats = [
-  { value: "71%", label: "Faster loads", color: "#a9e022" },
-  { value: "2.4M", label: "Daily events", color: "#3bd6c0" },
-  { value: "$4.1M", label: "New ARR", color: "#63d17f" },
+  { value: "100+", label: "Orders each day", color: "#a9e022" },
+  { value: "3", label: "Storefront languages", color: "#3bd6c0" },
+  { value: "24/7", label: "Operations visibility", color: "#63d17f" },
 ];
 
 /** Max card tilt, degrees. */
@@ -105,13 +105,14 @@ export function FeaturedWork() {
               <div className={styles.copy}>
                 <Eyebrow tone="light">Featured work</Eyebrow>
                 <h2 className={styles.title}>
-                  A logistics platform rebuilt for{" "}
-                  <span className="gradientText">10× scale</span>.
+                  Intimate Hygiene, built for{" "}
+                  <span className="gradientText">every order.</span>
                 </h2>
                 <p className={styles.text}>
-                  We re-architected a legacy operations suite into a real-time
-                  platform handling millions of daily events — cutting load
-                  times by 71% and unlocking a new revenue line.
+                  We transformed a WhatsApp-first hygiene business into a
+                  full-stack commerce platform with cash-on-delivery checkout,
+                  tri-lingual shopping, real-time analytics, and a complete
+                  operations console.
                 </p>
                 <div className={styles.stats}>
                   {stats.map((stat) => (
@@ -127,7 +128,7 @@ export function FeaturedWork() {
                   ))}
                 </div>
                 <Button
-                  href="/work"
+                  href="/work/intimate-hygiene"
                   variant="accent"
                   icon="arrow_forward"
                   className={styles.cta}
@@ -148,7 +149,7 @@ export function FeaturedWork() {
                   transition={{ type: "spring", stiffness: 180, damping: 21 }}
                 >
                   <div className={styles.fmHead}>
-                    <span className={styles.fmTitle}>Operations</span>
+                    <span className={styles.fmTitle}>Order operations</span>
                     <span className={styles.fmLive}>
                       <span className={styles.fmLiveDot} />
                       Live
@@ -156,12 +157,14 @@ export function FeaturedWork() {
                   </div>
                   <div className={styles.fmGrid}>
                     <div className={styles.fmCell}>
-                      <div className={styles.fmCellLabel}>Throughput</div>
-                      <div className={styles.fmCellValue}>28.4k/s</div>
+                      <div className={styles.fmCellLabel}>
+                        Today&apos;s orders
+                      </div>
+                      <div className={styles.fmCellValue}>128</div>
                     </div>
                     <div className={styles.fmCell}>
-                      <div className={styles.fmCellLabel}>Latency</div>
-                      <div className={styles.fmCellValue}>42ms</div>
+                      <div className={styles.fmCellLabel}>Fulfilled</div>
+                      <div className={styles.fmCellValue}>96%</div>
                     </div>
                   </div>
                   <div className={styles.fmChartWrap}>

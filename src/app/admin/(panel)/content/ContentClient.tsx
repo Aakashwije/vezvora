@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowUp, ArrowDown, Pencil, Trash2, Star, FolderKanban } from "lucide-react";
-import { PageHeader } from "@/components/admin/PageHeader";
+import styles from "@/components/admin/admin.module.css";
 import { Drawer } from "@/components/admin/Drawer";
+import { PageHeader } from "@/components/admin/PageHeader";
 import { Button } from "@/components/ui/Button";
-import { useProjects, projectsRepo } from "@/lib/admin/store";
 import { projectFilters } from "@/content/work";
+import { projectsRepo, useProjects } from "@/lib/admin/store";
 import type { ManagedProject } from "@/lib/admin/types";
 import { cx } from "@/lib/cx";
-import styles from "@/components/admin/admin.module.css";
+import {
+  ArrowDown,
+  ArrowUp,
+  FolderKanban,
+  Pencil,
+  Star,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
 
 const categories = projectFilters.filter((f) => f !== "All");
 
@@ -30,7 +37,10 @@ export function ContentClient() {
 
   return (
     <>
-      <PageHeader title="Work" subtitle={`${projects.length} projects in the portfolio`}>
+      <PageHeader
+        title="Work"
+        subtitle={`${projects.length} projects in the portfolio`}
+      >
         <Button variant="accent" size="sm" icon="add" onClick={openNew}>
           Add project
         </Button>
@@ -41,9 +51,14 @@ export function ContentClient() {
           <div className={styles.card} style={{ padding: 0 }}>
             {ordered.map((project, i) => (
               <div key={project.id} className={styles.projectRow}>
-                <span className={styles.projectSwatch} style={{ background: project.gradient }} />
+                <span
+                  className={styles.projectSwatch}
+                  style={{ background: project.gradient }}
+                />
                 <div className={styles.projectInfo}>
-                  <div className={styles.projectName}>{project.name || "Untitled project"}</div>
+                  <div className={styles.projectName}>
+                    {project.name || "Untitled project"}
+                  </div>
                   <div className={styles.projectMeta}>
                     {project.category} · {project.tag}
                     {project.tech.length > 0 && ` · ${project.tech.join(", ")}`}
@@ -52,11 +67,17 @@ export function ContentClient() {
                 <div className={styles.projectActions}>
                   <button
                     type="button"
-                    className={cx(styles.featureToggle, project.featured && styles.featureToggleOn)}
+                    className={cx(
+                      styles.featureToggle,
+                      project.featured && styles.featureToggleOn,
+                    )}
                     onClick={() => projectsRepo.toggleFeatured(project.id)}
                     title="Toggle featured"
                   >
-                    <Star size={13} fill={project.featured ? "currentColor" : "none"} />
+                    <Star
+                      size={13}
+                      fill={project.featured ? "currentColor" : "none"}
+                    />
                     Featured
                   </button>
                   <button
@@ -109,7 +130,11 @@ export function ContentClient() {
       <Drawer
         open={Boolean(draft)}
         onClose={() => setDraft(null)}
-        title={draft && projects.some((p) => p.id === draft.id) ? "Edit project" : "New project"}
+        title={
+          draft && projects.some((p) => p.id === draft.id)
+            ? "Edit project"
+            : "New project"
+        }
         subtitle="Shown on the public Work page."
         footer={
           <>
@@ -131,7 +156,7 @@ export function ContentClient() {
                   className={styles.input}
                   value={draft.name}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                  placeholder="Aura Pay Mobile"
+                  placeholder="Intimate Hygiene"
                 />
               </div>
               <div className={styles.field}>
@@ -140,7 +165,7 @@ export function ContentClient() {
                   className={styles.input}
                   value={draft.tag}
                   onChange={(e) => setDraft({ ...draft, tag: e.target.value })}
-                  placeholder="Fintech"
+                  placeholder="E-commerce"
                 />
               </div>
             </div>
@@ -150,7 +175,9 @@ export function ContentClient() {
               <select
                 className={styles.select}
                 value={draft.category}
-                onChange={(e) => setDraft({ ...draft, category: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, category: e.target.value })
+                }
               >
                 {categories.map((c) => (
                   <option key={c}>{c}</option>
@@ -176,10 +203,13 @@ export function ContentClient() {
                 onChange={(e) =>
                   setDraft({
                     ...draft,
-                    tech: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
+                    tech: e.target.value
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter(Boolean),
                   })
                 }
-                placeholder="React Native, Node.js"
+                placeholder="React 19, Vite 8, Supabase, Tailwind CSS 4"
               />
             </div>
 
@@ -188,17 +218,28 @@ export function ContentClient() {
               <input
                 className={styles.input}
                 value={draft.gradient}
-                onChange={(e) => setDraft({ ...draft, gradient: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, gradient: e.target.value })
+                }
               />
               <span
                 className={styles.projectSwatch}
-                style={{ background: draft.gradient, width: "100%", height: 64, marginTop: 10, borderRadius: 12 }}
+                style={{
+                  background: draft.gradient,
+                  width: "100%",
+                  height: 64,
+                  marginTop: 10,
+                  borderRadius: 12,
+                }}
               />
             </div>
 
             <button
               type="button"
-              className={cx(styles.featureToggle, draft.featured && styles.featureToggleOn)}
+              className={cx(
+                styles.featureToggle,
+                draft.featured && styles.featureToggleOn,
+              )}
               onClick={() => setDraft({ ...draft, featured: !draft.featured })}
             >
               <Star size={13} fill={draft.featured ? "currentColor" : "none"} />
