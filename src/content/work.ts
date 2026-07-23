@@ -116,4 +116,18 @@ export const projects: Project[] = [
       alt: "Sri Lanka Squash logo",
     },
   },
+  {
+    name: "Techni",
+    tag: "Field-service marketplace",
+    icon: "smartphone",
+    gradient: "linear-gradient(135deg,#0a2158,#2563eb 58%,#5ba8ff)",
+    desc: "A mobile worker platform that helps service professionals complete secure onboarding, manage job requests, navigate to customers, and monitor earnings in one place.",
+    tech: ["Flutter", "Firebase", "Node.js", "Express", "Google Maps"],
+    category: "Mobile Apps",
+    caseStudyHref: "/work/techni",
+    logo: {
+      src: "/techni.png",
+      alt: "Techni logo",
+    },
+  },
 ];
