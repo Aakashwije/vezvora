@@ -59,7 +59,10 @@ export default function TechniCaseStudyPage() {
             <div>
               <Eyebrow>Case study · Field-service marketplace</Eyebrow>
               <h1 className={styles.title}>
-                Making every service call easier to <span className="gradientText">accept, reach, and complete.</span>
+                Making every service call easier to{" "}
+                <span className="gradientText">
+                  accept, reach, and complete.
+                </span>
               </h1>
               <p className={styles.lead}>
                 Techni gives service professionals a single mobile workspace for
@@ -103,16 +106,18 @@ export default function TechniCaseStudyPage() {
             <h2>Field professionals need more than a queue of job requests.</h2>
           </div>
           <p>
-            From verification to arriving on site and recording a completed
-            job, workers need a clear workflow that keeps customer details,
-            location, status, and earnings within reach. Techni connects those
-            moments without asking workers to jump between tools.
+            From verification to arriving on site and recording a completed job,
+            workers need a clear workflow that keeps customer details, location,
+            status, and earnings within reach. Techni connects those moments
+            without asking workers to jump between tools.
           </p>
         </div>
 
         <div className={styles.solution}>
           <Eyebrow>The solution</Eyebrow>
-          <h2>A mobile workday built around the people delivering the service.</h2>
+          <h2>
+            A mobile workday built around the people delivering the service.
+          </h2>
           <div className={styles.capabilityGrid}>
             {capabilities.map((capability, index) => (
               <article key={capability} className={styles.capability}>
@@ -125,7 +130,9 @@ export default function TechniCaseStudyPage() {
 
         <section className={styles.stackSection}>
           <Eyebrow>Tech stack</Eyebrow>
-          <h2>Built for reliable mobile work and secure, connected operations.</h2>
+          <h2>
+            Built for reliable mobile work and secure, connected operations.
+          </h2>
           <div className={styles.techList}>
             {technology.map((item) => (
               <span key={item}>{item}</span>
