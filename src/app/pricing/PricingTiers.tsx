@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { cx } from "@/lib/cx";
 import { EASE } from "@/lib/animations";
-import { pricingTiers } from "@/content/pricing";
+import { useCursorShadow } from "@/lib/useCursorShadow";
+import { pricingTiers, type PricingTier } from "@/content/pricing";
 import styles from "./pricing.module.css";
 
 const tierClass = {
@@ -45,6 +46,42 @@ const featureVariants: Variants = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: EASE } },
 };
 
+/** Pricing card with a green shadow, cast around the card, that leans toward the cursor on hover. */
+function TierCard({ tier }: { tier: PricingTier }) {
+  const { boxShadow, onMouseMove, onMouseEnter, onMouseLeave } = useCursorShadow();
+
+  return (
+    <motion.div
+      className={cx(styles.tier, tierClass[tier.variant])}
+      variants={cardVariants}
+      whileHover={{ y: -5, transition: { duration: 0.25, ease: EASE } }}
+      style={{ boxShadow }}
+      onMouseMove={onMouseMove}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {tier.featured && <span className={styles.badge}>Most popular</span>}
+      <h3 className={styles.name}>{tier.name}</h3>
+      <p className={styles.blurb}>{tier.blurb}</p>
+      <div className={styles.priceRow}>
+        <div className={styles.priceLabel}>{tier.priceLabel}</div>
+        <div className={styles.price}>{tier.price}</div>
+      </div>
+      <div className={styles.features}>
+        {tier.features.map((feature) => (
+          <motion.div key={feature} className={styles.feature} variants={featureVariants}>
+            <Icon name="check_circle" size={19} className={styles.featureIcon} />
+            {feature}
+          </motion.div>
+        ))}
+      </div>
+      <Button href="/contact" variant={tierButton[tier.variant]} block>
+        {tier.cta}
+      </Button>
+    </motion.div>
+  );
+}
+
 export function PricingTiers() {
   return (
     <motion.section
@@ -55,31 +92,7 @@ export function PricingTiers() {
       viewport={{ once: true, amount: 0.15 }}
     >
       {pricingTiers.map((tier) => (
-        <motion.div
-          key={tier.name}
-          className={cx(styles.tier, tierClass[tier.variant])}
-          variants={cardVariants}
-          whileHover={{ y: -5, transition: { duration: 0.25, ease: EASE } }}
-        >
-          {tier.featured && <span className={styles.badge}>Most popular</span>}
-          <h3 className={styles.name}>{tier.name}</h3>
-          <p className={styles.blurb}>{tier.blurb}</p>
-          <div className={styles.priceRow}>
-            <div className={styles.priceLabel}>{tier.priceLabel}</div>
-            <div className={styles.price}>{tier.price}</div>
-          </div>
-          <div className={styles.features}>
-            {tier.features.map((feature) => (
-              <motion.div key={feature} className={styles.feature} variants={featureVariants}>
-                <Icon name="check_circle" size={19} className={styles.featureIcon} />
-                {feature}
-              </motion.div>
-            ))}
-          </div>
-          <Button href="/contact" variant={tierButton[tier.variant]} block>
-            {tier.cta}
-          </Button>
-        </motion.div>
+        <TierCard key={tier.name} tier={tier} />
       ))}
     </motion.section>
   );

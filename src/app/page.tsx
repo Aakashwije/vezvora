@@ -5,6 +5,7 @@ import { CtaSection } from "@/components/sections/CtaSection";
 import { FeaturedWork } from "@/components/sections/FeaturedWork";
 import { HeroMock } from "@/components/sections/HeroMock";
 import { ProcessSection } from "@/components/sections/ProcessSection";
+import { TestimonialCard } from "@/components/sections/TestimonialCard";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { IconBadge } from "@/components/ui/IconBadge";
@@ -154,54 +155,11 @@ export default function HomePage() {
           </Reveal>
           <Stagger className={styles.testimonialsGrid} stagger={0.12}>
             {testimonials.map((testimonial, index) => (
-              <StaggerItem
+              <TestimonialCard
                 key={testimonial.company}
-                as="article"
-                className={`${styles.testimonialCard} ${
-                  testimonial.featured ? styles.testimonialFeatured : ""
-                }`}
-                hoverLift
-              >
-                <div className={styles.testimonialTop}>
-                  <span className={styles.testimonialLogo}>
-                    <Image
-                      src={testimonial.logo}
-                      alt={`${testimonial.company} logo`}
-                      fill
-                      sizes="88px"
-                      className={`${styles.testimonialLogoImage} ${
-                        index >= 2 ? styles.testimonialLogoImageLarge : ""
-                      }`}
-                    />
-                  </span>
-                  {testimonial.draft && (
-                    <span className={styles.testimonialDraft}>Draft copy</span>
-                  )}
-                </div>
-                <blockquote className={styles.testimonialQuote}>
-                  “
-                  {testimonial.quote
-                    .split(/(90%|100\+|praise the convincing experience)/)
-                    .map((part, partIndex) =>
-                      part === "90%" ||
-                      part === "100+" ||
-                      part === "praise the convincing experience" ? (
-                      <mark key={partIndex} className={styles.testimonialHighlight}>
-                        {part}
-                      </mark>
-                    ) : (
-                      <Fragment key={partIndex}>{part}</Fragment>
-                    ),
-                    )}
-                  ”
-                </blockquote>
-                <div className={styles.testimonialPerson}>
-                  <strong>{testimonial.name}</strong>
-                  <span>
-                    {testimonial.role} · {testimonial.company}
-                  </span>
-                </div>
-              </StaggerItem>
+                testimonial={testimonial}
+                large={index >= 2}
+              />
             ))}
           </Stagger>
         </div>

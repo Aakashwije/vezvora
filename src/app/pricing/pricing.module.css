@@ -60,17 +60,26 @@
   border: 1.5px solid var(--border);
   background: var(--surface);
   box-shadow: 0 20px 44px -32px rgba(35, 45, 50, 0.2);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.tier:hover {
+  border-color: rgba(40, 184, 95, 0.4);
+  box-shadow:
+    0 30px 60px -24px rgba(40, 184, 95, 0.45),
+    0 0 0 1px rgba(40, 184, 95, 0.2);
 }
 .tierFeatured {
   border-color: #9fce22;
-  box-shadow: 0 30px 56px -28px rgba(40, 184, 95, 0.35);
-  /* Subtle breathing glow on the highlighted tier */
-  animation: glowPulse 6s ease-in-out infinite;
 }
 .tierDark {
   background: var(--grad-dark);
   border-color: #23282f;
   box-shadow: 0 30px 56px -30px rgba(35, 45, 50, 0.4);
+}
+.tierDark:hover {
+  border-color: rgba(40, 184, 95, 0.5);
 }
 
 .badge {

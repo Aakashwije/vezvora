@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { motion } from "motion/react";
+import type { MouseEventHandler, ReactNode } from "react";
+import { motion, type MotionStyle } from "motion/react";
 import {
   cardHover,
   createVariant,
@@ -66,6 +66,10 @@ type StaggerItemProps = {
   as?: keyof typeof tags;
   /** Adds a smooth hover lift (used for cards). */
   hoverLift?: boolean;
+  style?: MotionStyle;
+  onMouseMove?: MouseEventHandler<HTMLElement>;
+  onMouseEnter?: MouseEventHandler<HTMLElement>;
+  onMouseLeave?: MouseEventHandler<HTMLElement>;
 };
 
 export function StaggerItem({
@@ -75,6 +79,10 @@ export function StaggerItem({
   duration,
   as = "div",
   hoverLift = false,
+  style,
+  onMouseMove,
+  onMouseEnter,
+  onMouseLeave,
 }: StaggerItemProps) {
   const Comp = tags[as];
   return (
@@ -82,6 +90,10 @@ export function StaggerItem({
       className={className}
       variants={createVariant(variant, { duration })}
       whileHover={hoverLift ? cardHover : undefined}
+      style={style}
+      onMouseMove={onMouseMove}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </Comp>
