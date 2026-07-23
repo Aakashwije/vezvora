@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
-import { cx } from "@/lib/cx";
-import { EASE } from "@/lib/animations";
 import { projectFilters, projects, type ProjectFilter } from "@/content/work";
+import { EASE } from "@/lib/animations";
+import { cx } from "@/lib/cx";
+import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import styles from "./work.module.css";
 
 const PAGE_SIZE = 4;
@@ -33,7 +35,11 @@ export function WorkGallery() {
 
   return (
     <>
-      <div className={styles.filters} role="tablist" aria-label="Filter projects">
+      <div
+        className={styles.filters}
+        role="tablist"
+        aria-label="Filter projects"
+      >
         {projectFilters.map((filter) => {
           const isActive = filter === active;
           return (
@@ -75,30 +81,69 @@ export function WorkGallery() {
                     delay: Math.min(index * 0.06, 0.3),
                   },
                 }}
-                exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.2, ease: EASE } }}
-                whileHover={{ y: -5, transition: { duration: 0.25, ease: EASE } }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.97,
+                  transition: { duration: 0.2, ease: EASE },
+                }}
+                whileHover={{
+                  y: -5,
+                  transition: { duration: 0.25, ease: EASE },
+                }}
                 className={styles.card}
               >
-                <div className={styles.thumb} style={{ background: project.gradient }}>
+                <div
+                  className={styles.thumb}
+                  style={{ background: project.gradient }}
+                >
                   <span className={styles.thumbPattern} aria-hidden />
-                  <Icon name={project.icon} size={52} className={styles.thumbIcon} />
+                  <Icon
+                    name={project.icon}
+                    size={52}
+                    className={styles.thumbIcon}
+                  />
                   <span className={styles.tag}>{project.tag}</span>
                 </div>
                 <div className={styles.body}>
                   <h3 className={styles.name}>{project.name}</h3>
                   <p className={styles.desc}>{project.desc}</p>
                   <div className={styles.meta}>
-                    <div className={styles.tech}>
-                      {project.tech.map((tech) => (
-                        <span key={tech} className={styles.techChip}>
-                          {tech}
-                        </span>
-                      ))}
+                    <div className={styles.stack}>
+                      <div className={styles.tech}>
+                        {project.tech.map((tech) => (
+                          <span key={tech} className={styles.techChip}>
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      {project.logo && (
+                        <div className={styles.clientLogo}>
+                          <span className={styles.clientLogoLabel}>
+                            Built for
+                          </span>
+                          <Image
+                            src={project.logo.src}
+                            alt={project.logo.alt}
+                            width={252}
+                            height={75}
+                            className={styles.clientLogoImage}
+                          />
+                        </div>
+                      )}
                     </div>
-                    <a href="#" className={styles.caseLink}>
-                      Case study
-                      <Icon name="arrow_forward" size={16} />
-                    </a>
+                    {project.caseStudyHref ? (
+                      <Link
+                        href={project.caseStudyHref}
+                        className={styles.caseLink}
+                      >
+                        Case study
+                        <Icon name="arrow_forward" size={16} />
+                      </Link>
+                    ) : (
+                      <span className={styles.caseLinkUnavailable}>
+                        Case study soon
+                      </span>
+                    )}
                   </div>
                 </div>
               </motion.article>
