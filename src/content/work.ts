@@ -23,6 +23,11 @@ export type Project = {
     src: string;
     alt: string;
   };
+  /**
+   * Optional in-app screenshots shown as a swipeable carousel on the tile
+   * thumbnail, in display order. Falls back to the gradient + icon when omitted.
+   */
+  screenshots?: string[];
 };
 
 export const projects: Project[] = [
@@ -67,6 +72,11 @@ export const projects: Project[] = [
       src: "/elitewing.jpg",
       alt: "EliteWing Travels logo",
     },
+    screenshots: Array.from(
+      { length: 10 },
+      (_, index) =>
+        `/work/elitewing-travels-extra/elitewing-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "UD Travels",

@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ProjectThumb } from "./ProjectThumb";
 import styles from "./work.module.css";
 
 const PAGE_SIZE = 4;
@@ -92,18 +93,13 @@ export function WorkGallery() {
                 }}
                 className={styles.card}
               >
-                <div
-                  className={styles.thumb}
-                  style={{ background: project.gradient }}
-                >
-                  <span className={styles.thumbPattern} aria-hidden />
-                  <Icon
-                    name={project.icon}
-                    size={52}
-                    className={styles.thumbIcon}
-                  />
-                  <span className={styles.tag}>{project.tag}</span>
-                </div>
+                <ProjectThumb
+                  name={project.name}
+                  tag={project.tag}
+                  icon={project.icon}
+                  gradient={project.gradient}
+                  screenshots={project.screenshots}
+                />
                 <div className={styles.body}>
                   <h3 className={styles.name}>{project.name}</h3>
                   <p className={styles.desc}>{project.desc}</p>
