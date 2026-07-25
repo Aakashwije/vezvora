@@ -102,7 +102,21 @@ export function WorkGallery() {
                   screenshotFit={project.screenshotFit}
                 />
                 <div className={styles.body}>
-                  <h3 className={styles.name}>{project.name}</h3>
+                  <div className={styles.nameRow}>
+                    <h3 className={styles.name}>{project.name}</h3>
+                    {project.websiteUrl && (
+                      <a
+                        href={project.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.websiteLink}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {project.websiteUrl.replace(/^https?:\/\//, "")}
+                        <Icon name="external" size={12} />
+                      </a>
+                    )}
+                  </div>
                   <p className={styles.desc}>{project.desc}</p>
                   <div className={styles.meta}>
                     <div className={styles.stack}>

@@ -19,6 +19,8 @@ export type Project = {
   tech: string[];
   category: Exclude<ProjectFilter, "All">;
   caseStudyHref?: string;
+  /** Optional link to the live project website, shown above the project name. */
+  websiteUrl?: string;
   logo?: {
     src: string;
     alt: string;
@@ -85,6 +87,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
     category: "Web Platforms",
     caseStudyHref: "/work/elitewing-travels",
+    websiteUrl: "https://www.elitewingtravels.com",
     logo: {
       src: "/elitewing.jpg",
       alt: "EliteWing Travels logo",
