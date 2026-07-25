@@ -136,6 +136,11 @@ export const projects: Project[] = [
       src: "/matheesha_logo.png",
       alt: "Matheesha Wijesekara logo",
     },
+    screenshots: Array.from(
+      { length: 11 },
+      (_, index) =>
+        `/work/matheesha-wijesekara-extra/matheesha-wijesekara-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "Sri Lanka Squash Player Management System",
@@ -150,6 +155,11 @@ export const projects: Project[] = [
       src: "/SL_SQUASH.jpeg",
       alt: "Sri Lanka Squash logo",
     },
+    screenshots: Array.from(
+      { length: 12 },
+      (_, index) =>
+        `/work/sri-lanka-squash-player-management-extra/sri-lanka-squash-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "Techni",
