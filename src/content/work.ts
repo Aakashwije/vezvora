@@ -48,6 +48,7 @@ export const projects: Project[] = [
     tech: ["React 19", "Vite 8", "Supabase", "Tailwind CSS 4"],
     category: "Web Platforms",
     caseStudyHref: "/work/intimate-hygiene",
+    websiteUrl: "https://www.intimatehygiene.lk/home",
     logo: {
       src: "/Intimate.png",
       alt: "Intimate Hygiene Enterprises logo",
