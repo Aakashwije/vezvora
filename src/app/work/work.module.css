@@ -3,6 +3,8 @@
 }
 .heroInner {
   max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
 }
 .h1 {
   font-size: 60px;
@@ -20,6 +22,7 @@
 .filters {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 36px;
 }
@@ -88,6 +91,90 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+/* Swipeable screenshot carousel (native scroll-snap; arrows/dots are a
+   pointer-friendly extra on top) */
+.thumbTrack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.thumbTrack::-webkit-scrollbar {
+  display: none;
+}
+.thumbSlide {
+  position: relative;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.thumbImage {
+  object-fit: cover;
+}
+.thumbNav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(10, 15, 20, 0.4);
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease;
+}
+.thumb:hover .thumbNav,
+.thumbNav:focus-visible {
+  opacity: 1;
+}
+.thumbNav:hover {
+  background: rgba(10, 15, 20, 0.6);
+}
+.thumbNavPrev {
+  left: 10px;
+}
+.thumbNavNext {
+  right: 10px;
+}
+.thumbDots {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 12px;
+  display: flex;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+.thumbDot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+.thumbDotActive {
+  background: #fff;
+  transform: scale(1.35);
 }
 .thumbPattern {
   position: absolute;

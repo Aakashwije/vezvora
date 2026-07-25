@@ -23,6 +23,11 @@ export type Project = {
     src: string;
     alt: string;
   };
+  /**
+   * Optional in-app screenshots shown as a swipeable carousel on the tile
+   * thumbnail, in display order. Falls back to the gradient + icon when omitted.
+   */
+  screenshots?: string[];
 };
 
 export const projects: Project[] = [
@@ -39,6 +44,11 @@ export const projects: Project[] = [
       src: "/Intimate.png",
       alt: "Intimate Hygiene Enterprises logo",
     },
+    screenshots: Array.from(
+      { length: 14 },
+      (_, index) =>
+        `/work/intimate-hygiene-extra/intimate-hygiene-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "ProcuraX",
@@ -67,6 +77,14 @@ export const projects: Project[] = [
       src: "/elitewing.jpg",
       alt: "EliteWing Travels logo",
     },
+    screenshots: [
+      "/work/elitewing-travels-extra/elitewing-travels.webp",
+      ...Array.from(
+        { length: 10 },
+        (_, index) =>
+          `/work/elitewing-travels-extra/elitewing-${String(index + 1).padStart(2, "0")}.webp`,
+      ),
+    ],
   },
   {
     name: "UD Travels",
@@ -81,6 +99,11 @@ export const projects: Project[] = [
       src: "/ud.png",
       alt: "UD Travels logo",
     },
+    screenshots: Array.from(
+      { length: 10 },
+      (_, index) =>
+        `/work/ud-travels-extra/ud-travels-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "Matheesha Wijesekara Portfolio",
