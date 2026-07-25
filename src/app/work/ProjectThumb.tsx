@@ -3,6 +3,7 @@
 import { Icon, type IconName } from "@/components/ui/Icon";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { cx } from "@/lib/cx";
 import styles from "./work.module.css";
 
 type ProjectThumbProps = {
@@ -11,6 +12,7 @@ type ProjectThumbProps = {
   icon: IconName;
   gradient: string;
   screenshots?: string[];
+  screenshotFit?: "cover" | "contain";
 };
 
 export function ProjectThumb({
@@ -19,6 +21,7 @@ export function ProjectThumb({
   icon,
   gradient,
   screenshots,
+  screenshotFit = "cover",
 }: ProjectThumbProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -61,7 +64,10 @@ export function ProjectThumb({
                 alt={`${name} screenshot ${index + 1}`}
                 fill
                 sizes="(max-width: 720px) 100vw, 50vw"
-                className={styles.thumbImage}
+                className={cx(
+                  styles.thumbImage,
+                  screenshotFit === "contain" && styles.thumbImageContain,
+                )}
               />
             </div>
           ))}

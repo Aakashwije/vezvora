@@ -19,6 +19,8 @@ export type Project = {
   tech: string[];
   category: Exclude<ProjectFilter, "All">;
   caseStudyHref?: string;
+  /** Optional link to the live project website, shown above the project name. */
+  websiteUrl?: string;
   logo?: {
     src: string;
     alt: string;
@@ -28,6 +30,12 @@ export type Project = {
    * thumbnail, in display order. Falls back to the gradient + icon when omitted.
    */
   screenshots?: string[];
+  /**
+   * How screenshots fit the 16:9 tile. "contain" (for portrait/mobile
+   * screenshots) letterboxes the image and lets the tile's gradient show
+   * through on the sides instead of cropping. Defaults to "cover".
+   */
+  screenshotFit?: "cover" | "contain";
 };
 
 export const projects: Project[] = [
@@ -40,6 +48,7 @@ export const projects: Project[] = [
     tech: ["React 19", "Vite 8", "Supabase", "Tailwind CSS 4"],
     category: "Web Platforms",
     caseStudyHref: "/work/intimate-hygiene",
+    websiteUrl: "https://www.intimatehygiene.lk/home",
     logo: {
       src: "/Intimate.png",
       alt: "Intimate Hygiene Enterprises logo",
@@ -63,6 +72,12 @@ export const projects: Project[] = [
       src: "/ICC.jpeg",
       alt: "International Construction Consortium logo",
     },
+    screenshots: Array.from(
+      { length: 9 },
+      (_, index) =>
+        `/work/procurax-extra/procurax-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
+    screenshotFit: "contain",
   },
   {
     name: "EliteWing Travels",
@@ -73,6 +88,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
     category: "Web Platforms",
     caseStudyHref: "/work/elitewing-travels",
+    websiteUrl: "https://www.elitewingtravels.com",
     logo: {
       src: "/elitewing.jpg",
       alt: "EliteWing Travels logo",
@@ -95,6 +111,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "React", "CSS Modules", "Server Actions"],
     category: "Web Platforms",
     caseStudyHref: "/work/ud-travels",
+    websiteUrl: "https://www.udtravels.lk",
     logo: {
       src: "/ud.png",
       alt: "UD Travels logo",
@@ -120,10 +137,16 @@ export const projects: Project[] = [
     ],
     category: "Web Platforms",
     caseStudyHref: "/work/matheesha-wijesekara",
+    websiteUrl: "https://matheesha-portfolio.vercel.app/",
     logo: {
       src: "/matheesha_logo.png",
       alt: "Matheesha Wijesekara logo",
     },
+    screenshots: Array.from(
+      { length: 11 },
+      (_, index) =>
+        `/work/matheesha-wijesekara-extra/matheesha-wijesekara-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "Sri Lanka Squash Player Management System",
@@ -134,10 +157,16 @@ export const projects: Project[] = [
     tech: ["React", "Vite", "Firebase", "Gemini AI", "Recharts"],
     category: "Management Systems",
     caseStudyHref: "/work/sri-lanka-squash-player-management",
+    websiteUrl: "https://smpsl-jant.vercel.app/",
     logo: {
       src: "/SL_SQUASH.jpeg",
       alt: "Sri Lanka Squash logo",
     },
+    screenshots: Array.from(
+      { length: 12 },
+      (_, index) =>
+        `/work/sri-lanka-squash-player-management-extra/sri-lanka-squash-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
   },
   {
     name: "Techni",
@@ -152,5 +181,11 @@ export const projects: Project[] = [
       src: "/techni.png",
       alt: "Techni logo",
     },
+    screenshots: Array.from(
+      { length: 8 },
+      (_, index) =>
+        `/work/techni-extra/techni-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
+    screenshotFit: "contain",
   },
 ];
