@@ -69,6 +69,12 @@ export const projects: Project[] = [
       src: "/ICC.jpeg",
       alt: "International Construction Consortium logo",
     },
+    screenshots: Array.from(
+      { length: 9 },
+      (_, index) =>
+        `/work/procurax-extra/procurax-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
+    screenshotFit: "contain",
   },
   {
     name: "EliteWing Travels",
