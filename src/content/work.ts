@@ -136,6 +136,7 @@ export const projects: Project[] = [
     ],
     category: "Web Platforms",
     caseStudyHref: "/work/matheesha-wijesekara",
+    websiteUrl: "https://matheesha-portfolio.vercel.app/",
     logo: {
       src: "/matheesha_logo.png",
       alt: "Matheesha Wijesekara logo",
@@ -155,6 +156,7 @@ export const projects: Project[] = [
     tech: ["React", "Vite", "Firebase", "Gemini AI", "Recharts"],
     category: "Management Systems",
     caseStudyHref: "/work/sri-lanka-squash-player-management",
+    websiteUrl: "https://smpsl-jant.vercel.app/",
     logo: {
       src: "/SL_SQUASH.jpeg",
       alt: "Sri Lanka Squash logo",
