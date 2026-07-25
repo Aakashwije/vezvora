@@ -122,7 +122,6 @@
    letterboxing onto the gradient background on the left/right. */
 .thumbImageContain {
   object-fit: contain;
-  padding: 22px 0;
 }
 .thumbNav {
   position: absolute;
