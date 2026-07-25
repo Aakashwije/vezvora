@@ -110,6 +110,7 @@ export const projects: Project[] = [
     tech: ["Next.js", "React", "CSS Modules", "Server Actions"],
     category: "Web Platforms",
     caseStudyHref: "/work/ud-travels",
+    websiteUrl: "https://www.udtravels.lk",
     logo: {
       src: "/ud.png",
       alt: "UD Travels logo",
