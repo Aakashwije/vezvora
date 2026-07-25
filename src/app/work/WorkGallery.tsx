@@ -99,6 +99,7 @@ export function WorkGallery() {
                   icon={project.icon}
                   gradient={project.gradient}
                   screenshots={project.screenshots}
+                  screenshotFit={project.screenshotFit}
                 />
                 <div className={styles.body}>
                   <h3 className={styles.name}>{project.name}</h3>

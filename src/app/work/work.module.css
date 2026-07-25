@@ -118,6 +118,12 @@
 .thumbImage {
   object-fit: cover;
 }
+/* Portrait/mobile screenshots: fit inside the tile instead of cropping,
+   letterboxing onto the gradient background on the left/right. */
+.thumbImageContain {
+  object-fit: contain;
+  padding: 22px 0;
+}
 .thumbNav {
   position: absolute;
   top: 50%;

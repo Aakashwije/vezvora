@@ -28,6 +28,12 @@ export type Project = {
    * thumbnail, in display order. Falls back to the gradient + icon when omitted.
    */
   screenshots?: string[];
+  /**
+   * How screenshots fit the 16:9 tile. "contain" (for portrait/mobile
+   * screenshots) letterboxes the image and lets the tile's gradient show
+   * through on the sides instead of cropping. Defaults to "cover".
+   */
+  screenshotFit?: "cover" | "contain";
 };
 
 export const projects: Project[] = [
@@ -152,5 +158,11 @@ export const projects: Project[] = [
       src: "/techni.png",
       alt: "Techni logo",
     },
+    screenshots: Array.from(
+      { length: 8 },
+      (_, index) =>
+        `/work/techni-extra/techni-${String(index + 1).padStart(2, "0")}.webp`,
+    ),
+    screenshotFit: "contain",
   },
 ];
