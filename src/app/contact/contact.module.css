@@ -1,12 +1,12 @@
 .hero {
-  padding: 64px 0 44px;
+  padding: clamp(44px, 6vw, 64px) 0 44px;
   max-width: 760px;
 }
 .h1 {
-  font-size: 56px;
+  font-size: clamp(38px, 5vw, 56px);
   line-height: 1.05;
   font-weight: 800;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   margin: 14px 0 18px;
 }
 .lead {
@@ -32,6 +32,17 @@
   border-radius: 24px;
   padding: 38px;
   box-shadow: var(--shadow-card);
+}
+.formCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 42%, rgba(47, 211, 196, 0.07), transparent 58%);
+  opacity: 0;
+  pointer-events: none;
+}
+.formCard:focus-within::after {
+  animation: surfaceSweep 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .formBlob {
   position: absolute;
@@ -135,7 +146,7 @@
 .sideTitle {
   font-size: 20px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   margin-bottom: 22px;
 }
 .channels {
@@ -237,12 +248,26 @@
     padding: 44px 0 32px;
   }
   .h1 {
-    font-size: 38px;
+    line-height: 1.08;
   }
   .formCard {
     padding: 26px;
+    border-radius: 20px;
   }
   .row2 {
     grid-template-columns: 1fr;
+  }
+  .submit {
+    width: 100%;
+  }
+  .sideCard,
+  .responseCard {
+    border-radius: 18px;
+  }
+  .sideCard {
+    padding: 24px;
+  }
+  .whatsappLink {
+    align-items: flex-start;
   }
 }

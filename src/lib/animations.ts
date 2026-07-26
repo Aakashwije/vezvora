@@ -1,4 +1,4 @@
-import type { Variants } from "motion/react";
+import type { TargetAndTransition, Variants } from "motion/react";
 
 /**
  * Global motion system — all durations, easing, and reusable variants live
@@ -13,13 +13,13 @@ export const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export const DURATION = {
   /** Micro interactions (hovers, taps). */
-  micro: 0.2,
+  micro: 0.18,
   /** Card hover transitions. */
-  hover: 0.25,
+  hover: 0.32,
   /** Scroll-reveal of sections. */
-  reveal: 0.6,
+  reveal: 0.72,
   /** Hero entrance. */
-  hero: 0.8,
+  hero: 0.92,
 } as const;
 
 /* ---------------------------------------------------------------- */
@@ -27,10 +27,11 @@ export const DURATION = {
 /* ---------------------------------------------------------------- */
 
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 30, scale: 0.985 },
   visible: {
     opacity: 1,
     y: 0,
+    scale: 1,
     transition: { duration: DURATION.reveal, ease: EASE },
   },
 };
@@ -41,10 +42,11 @@ export const fadeIn: Variants = {
 };
 
 export const scaleIn: Variants = {
-  hidden: { opacity: 0, scale: 0.94 },
+  hidden: { opacity: 0, scale: 0.92, y: 12 },
   visible: {
     opacity: 1,
     scale: 1,
+    y: 0,
     transition: { duration: 0.55, ease: EASE },
   },
 };
@@ -69,14 +71,16 @@ export const staggerContainer = (stagger = 0.08, delay = 0): Variants => ({
 /* Interaction presets                                               */
 /* ---------------------------------------------------------------- */
 
-export const cardHover = {
-  y: -5,
-  transition: { duration: DURATION.hover, ease: EASE },
+export const cardHover: TargetAndTransition = {
+  y: -7,
+  scale: 1.012,
+  transition: { type: "spring", stiffness: 280, damping: 22, mass: 0.7 },
 };
 
-export const buttonHover = {
+export const buttonHover: TargetAndTransition = {
   y: -2,
-  transition: { duration: DURATION.micro, ease: EASE },
+  scale: 1.01,
+  transition: { type: "spring", stiffness: 360, damping: 24, mass: 0.55 },
 };
 
 export const pageTransition = {
@@ -107,8 +111,8 @@ export function createVariant(
       return { hidden: { opacity: 0 }, visible: { opacity: 1, transition } };
     case "scaleIn":
       return {
-        hidden: { opacity: 0, scale: 0.94 },
-        visible: { opacity: 1, scale: 1, transition },
+        hidden: { opacity: 0, scale: 0.92, y: 12 },
+        visible: { opacity: 1, scale: 1, y: 0, transition },
       };
     case "slideInLeft":
       return {
@@ -128,8 +132,8 @@ export function createVariant(
     case "fadeUp":
     default:
       return {
-        hidden: { opacity: 0, y: 24 },
-        visible: { opacity: 1, y: 0, transition },
+        hidden: { opacity: 0, y: 30, scale: 0.985 },
+        visible: { opacity: 1, y: 0, scale: 1, transition },
       };
   }
 }

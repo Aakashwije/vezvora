@@ -39,7 +39,7 @@
   margin: 16px 0 20px;
   font-size: clamp(42px, 6vw, 72px);
   line-height: 1.03;
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
 }
 
 .lead {
@@ -93,7 +93,7 @@
   color: var(--lime-bright);
   font-size: 32px;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: 0;
 }
 
 .outcome span {
@@ -120,7 +120,7 @@
   margin-top: 14px;
   font-size: clamp(28px, 3.2vw, 42px);
   line-height: 1.15;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
 }
 
 .introGrid p {
@@ -229,6 +229,17 @@
     grid-template-columns: 1fr;
     gap: 36px;
   }
+  .title {
+    font-size: clamp(36px, 12vw, 48px);
+    line-height: 1.08;
+  }
+  .lead {
+    font-size: 16px;
+  }
+  .logoPanel {
+    padding: 20px;
+    border-radius: 20px;
+  }
 
   .outcomesGrid,
   .capabilityGrid {
@@ -257,6 +268,10 @@
 
   .solution {
     padding: 32px 22px;
+    border-radius: 20px;
+  }
+  .capability {
+    padding: 22px;
   }
 
   .stackSection {
