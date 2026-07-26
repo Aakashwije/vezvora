@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/logo-mark.png" alt="Vezvora" width="140" />
+<img src="public/logo-mark.webp" alt="Vezvora" width="140" />
 
 # VEZVORA
 
@@ -45,16 +45,17 @@ distribution, or use of any part of this codebase is strictly prohibited.*
 ## 🔍 Overview
 
 VEZVORA is a fully static, high-performance marketing site built on the
-**Next.js App Router**. Every route is prerendered at build time, wrapped in a
-single shared chrome (navbar + footer) so the template is pixel-identical on
-every page, and animated with a centralized motion system inspired by premium
-SaaS products.
+**Next.js App Router**. Public marketing routes are prerendered at build time,
+wrapped in a single shared chrome (navbar + footer) so the template is
+pixel-identical on every page, and animated with a centralized motion system
+inspired by premium SaaS products. The private `/admin` console uses dynamic
+server rendering for signed-cookie auth.
 
 **Key characteristics**
 
 | Attribute        | Value                                                        |
 | ---------------- | ------------------------------------------------------------ |
-| Rendering        | 100% static prerendering (SSG) — no runtime data fetching     |
+| Rendering        | Static-first public pages + dynamic admin auth routes          |
 | Styling          | CSS Modules + global design-token layer                       |
 | Motion           | Motion (Framer Motion) 12 with a single variant library       |
 | Accessibility    | Semantic landmarks, `aria-current`, `prefers-reduced-motion`  |
@@ -105,9 +106,9 @@ graph TB
     SSG --> CDN --> HTML
 ```
 
-The site ships **zero server-side runtime logic** — every route is emitted as
-static HTML at build time and can be hosted on any static host or CDN.
-Interactivity is limited to small, deliberate client islands.
+The public site ships as static HTML where possible and is CDN-friendly.
+Server-side runtime logic is limited to the admin auth boundary and server
+actions, which deploy cleanly on Vercel.
 
 ---
 
@@ -253,7 +254,7 @@ graph TD
 vezvora/
 ├── public/
 │   ├── logo.png                 # Full brand lockup (mark + wordmark)
-│   └── logo-mark.png            # Transparent "V" mark (navbar/footer/README)
+│   └── logo-mark.webp           # Transparent "V" mark (navbar/footer/README)
 ├── src/
 │   ├── app/                     # Routes (App Router)
 │   │   ├── layout.tsx           # Root layout — Navbar + Footer chrome
@@ -307,11 +308,12 @@ gated by middleware; the marketing chrome is swapped out via `SiteChrome`.
 | `/admin/content`   | Work CMS — add / edit / reorder / feature-toggle / delete projects       |
 | `/admin/settings`  | Site details, SEO defaults, and team                                     |
 
-**Auth.** `src/middleware.ts` redirects unauthenticated `/admin/*` requests to
+**Auth.** `src/proxy.ts` redirects unauthenticated `/admin/*` requests to
 login; a server action (`src/lib/admin/auth-actions.ts`) validates credentials
-and sets the session cookie. Demo password is `vezvora` (override with
-the `ADMIN_PASSWORD` env var, e.g. in an untracked `.env.local`). Swap the credential check for a real user
-store + hashed passwords for production.
+and sets the session cookie. Admin auth fails closed until `ADMIN_PASSWORD` is
+configured. Set `ADMIN_SESSION_SECRET` as a separate strong random value in
+production. Swap the credential check for a real user store + hashed passwords
+for production.
 
 **Data layer.** The console reads/writes through a small repository interface
 (`src/lib/admin/store.ts` — `leadsRepo`, `projectsRepo`, `settingsRepo`), backed
@@ -391,6 +393,24 @@ npm run build   # static prerender of all routes
 npm run start   # serve the production build
 ```
 
+**Vercel deployment**
+
+1. Import the GitHub repository into Vercel.
+2. Keep the detected framework as **Next.js**. This repo also includes
+   `vercel.json` with `npm install` and `npm run build`.
+3. Add production environment variables:
+
+```bash
+ADMIN_PASSWORD=use-a-strong-password
+ADMIN_SESSION_SECRET=use-a-long-random-secret
+NEXT_PUBLIC_PLAUSIBLE_ENABLED=false
+# NEXT_PUBLIC_PLAUSIBLE_DOMAIN=vezvora.io
+# NEXT_PUBLIC_PLAUSIBLE_HOST=https://plausible.io
+```
+
+4. Deploy. The build output should show static public routes and dynamic
+   `/admin` routes.
+
 ---
 
 ## 📜 Available Scripts
@@ -398,7 +418,7 @@ npm run start   # serve the production build
 | Script          | Description                                  |
 | --------------- | -------------------------------------------- |
 | `npm run dev`   | Start the dev server (Turbopack, HMR)        |
-| `npm run build` | Production build — all routes prerendered    |
+| `npm run build` | Production build for Vercel / Next runtime   |
 | `npm run start` | Serve the production build                   |
 | `npm run lint`  | ESLint (flat config) across the project      |
 
@@ -406,7 +426,7 @@ npm run start   # serve the production build
 
 ## ✅ Quality & Performance
 
-- **Static-first** — every route prerenders; TTFB is CDN-bound
+- **Static-first** — public routes prerender; admin routes stay dynamic for auth
 - **Zero icon fonts / zero external font requests** — SVG icons + self-hosted fonts
 - **Strict TypeScript** and ESLint gates on every build
 - **Reduced-motion compliant** — JS and CSS animation layers both degrade
@@ -422,7 +442,7 @@ The brand mark is wired through a single component —
 | Asset                   | Purpose                                        |
 | ----------------------- | ---------------------------------------------- |
 | `public/logo.png`       | Full lockup — social cards, print, docs        |
-| `public/logo-mark.png`  | Transparent "V" mark — navbar, footer, favicon |
+| `public/logo-mark.webp` | Transparent "V" mark — navbar, footer, favicon |
 
 To rebrand, swap the asset (or its `src`) in one place; every page updates.
 
@@ -443,7 +463,7 @@ VEZVORA. Access is restricted to authorized personnel only.
 ---
 
 <div align="center">
-<img src="public/logo-mark.png" alt="" width="28" />
+<img src="public/logo-mark.webp" alt="" width="28" />
 
 **VEZVORA** — Engineering digital momentum.
 </div>

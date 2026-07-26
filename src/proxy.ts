@@ -9,7 +9,7 @@ const ADMIN_COOKIE = "vz_admin";
  * admin layout and server actions. This is intentionally lightweight so it runs
  * at the edge without the signing secret.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasCookie = Boolean(request.cookies.get(ADMIN_COOKIE)?.value);
   const isLogin = pathname === "/admin/login";
