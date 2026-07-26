@@ -1,7 +1,8 @@
 /* ============ HERO ============ */
 .hero {
   position: relative;
-  padding: 72px 0 40px;
+  padding: clamp(48px, 7vw, 72px) 0 40px;
+  overflow: clip;
 }
 .heroBlob {
   position: absolute;
@@ -55,14 +56,14 @@
   color: var(--ink-soft);
 }
 .h1 {
-  font-size: 66px;
+  font-size: clamp(42px, 5.4vw, 66px);
   line-height: 1.04;
   font-weight: 800;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   margin-bottom: 22px;
 }
 .lead {
-  font-size: 18.5px;
+  font-size: clamp(16px, 1.6vw, 18.5px);
   line-height: 1.62;
   color: var(--muted);
   max-width: 508px;
@@ -81,7 +82,7 @@
 .statValue {
   font-size: 30px;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
 }
 .statSuffix {
   font-size: 18px;
@@ -101,6 +102,8 @@
 /* Dashboard mock */
 .mock {
   position: relative;
+  min-width: 0;
+  width: 100%;
 }
 /* ============ TRUST ============ */
 .trust {
@@ -130,6 +133,7 @@
   gap: 44px;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
 }
 .trustLogo {
   position: relative;
@@ -147,6 +151,14 @@
     background 0.25s ease,
     box-shadow 0.35s ease;
 }
+.trustLogo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.65), transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+}
 .trustLogoImage {
   object-fit: contain;
   padding: 10px 14px;
@@ -163,6 +175,9 @@
     0 24px 40px -16px rgba(40, 184, 95, 0.65),
     0 0 0 1px rgba(40, 184, 95, 0.25),
     0 0 32px 0 rgba(40, 184, 95, 0.35);
+}
+.trustLogo:hover::after {
+  animation: surfaceSweep 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .trustLogo:hover .trustLogoImage {
   transform: scale(1.06);
@@ -201,7 +216,7 @@
 
 /* ============ SERVICES ============ */
 .services {
-  padding: 96px 0 40px;
+  padding: clamp(64px, 8vw, 96px) 0 40px;
 }
 .servicesHead {
   max-width: 640px;
@@ -213,6 +228,8 @@
   gap: 18px;
 }
 .serviceCard {
+  position: relative;
+  overflow: hidden;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -223,9 +240,20 @@
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
+.serviceCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 42%, rgba(47, 211, 196, 0.08), transparent 58%);
+  opacity: 0;
+  pointer-events: none;
+}
 .serviceCard:hover {
   border-color: var(--border-accent-soft);
   box-shadow: 0 24px 48px -24px rgba(40, 184, 95, 0.22);
+}
+.serviceCard:hover::after {
+  animation: surfaceSweep 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .serviceIcon {
   transition: box-shadow 0.3s ease;
@@ -236,7 +264,7 @@
 .serviceTitle {
   font-size: 19px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   margin: 22px 0 9px;
 }
 .serviceDesc {
@@ -275,6 +303,8 @@
   align-items: stretch;
 }
 .testimonialCard {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 330px;
@@ -283,6 +313,17 @@
   border-radius: 22px;
   background: var(--surface);
   box-shadow: var(--shadow-card);
+}
+.testimonialCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 40%, rgba(183, 222, 29, 0.08), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+}
+.testimonialCard:hover::after {
+  animation: surfaceSweep 0.85s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .testimonialFeatured {
   border-color: var(--lime);
@@ -359,7 +400,7 @@
     gap: 44px;
   }
   .h1 {
-    font-size: 52px;
+    max-width: 760px;
   }
   .grid4 {
     grid-template-columns: repeat(2, 1fr);
@@ -367,6 +408,7 @@
   .testimonialsGrid {
     grid-template-columns: 1fr;
     max-width: 620px;
+    margin-inline: auto;
   }
   .testimonialCard {
     min-height: 0;
@@ -375,29 +417,95 @@
 
 @media (max-width: 620px) {
   .hero {
-    padding: 44px 0 24px;
+    padding: 42px 0 24px;
+  }
+  .heroBlob {
+    top: 30px;
+    right: -190px;
+    width: 430px;
+    height: 430px;
+    opacity: 0.8;
+  }
+  .badge {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+  .badgeText {
+    white-space: normal;
   }
   .h1 {
-    font-size: 40px;
-    line-height: 1.08;
+    font-size: clamp(32px, 9.4vw, 36px);
+    line-height: 1.09;
+    margin-bottom: 18px;
+  }
+  .lead {
+    margin-bottom: 26px;
+  }
+  .heroActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .heroActions > * {
+    width: 100%;
+    min-width: 0;
   }
   .services {
     padding: 64px 0 24px;
+  }
+  .servicesHead,
+  .testimonialsHead {
+    margin-bottom: 30px;
   }
   .grid4 {
     grid-template-columns: 1fr;
   }
   .stats {
-    gap: 22px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 32px;
+  }
+  .statDivider {
+    display: none;
+  }
+  .statValue {
+    font-size: 24px;
+  }
+  .statLabel {
+    font-size: 12px;
   }
   .trustInner {
-    justify-content: flex-start;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .trustLabel {
+    width: 100%;
+    text-align: center;
+    white-space: normal;
   }
   .trustLogos {
-    gap: 26px;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
   }
   .trustLogo {
-    width: 145px;
+    width: 100%;
     height: 76px;
+    border-radius: 10px;
+  }
+  .serviceCard,
+  .testimonialCard {
+    border-radius: 18px;
+    padding: 22px;
+  }
+  .testimonialQuote {
+    text-align: left;
+  }
+}
+
+@media (max-width: 420px) {
+  .trustLogos {
+    grid-template-columns: 1fr;
   }
 }

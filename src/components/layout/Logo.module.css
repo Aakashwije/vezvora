@@ -2,6 +2,7 @@
   display: inline-flex;
   align-items: center;
   gap: 11px;
+  max-width: 100%;
 }
 
 .markFrame {
@@ -32,7 +33,7 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   color: var(--ink);
 }
 
@@ -50,4 +51,16 @@
 }
 .sm .word {
   font-size: 17px;
+}
+
+@media (max-width: 420px) {
+  .logo {
+    gap: 9px;
+  }
+  .markFrame {
+    --mark-height: 30px;
+  }
+  .word {
+    font-size: 19px;
+  }
 }

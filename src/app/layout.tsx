@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { jakarta, inter } from "@/lib/fonts";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MotionProvider } from "@/components/motion/MotionProvider";
@@ -49,6 +49,11 @@ export const metadata: Metadata = {
     title: "Vezvora — Software that moves your business forward",
     description: siteConfig.description,
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

@@ -102,20 +102,20 @@
 }
 
 .titleLight {
-  font-size: 46px;
+  font-size: clamp(32px, 4.4vw, 46px);
   line-height: 1.08;
   font-weight: 800;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   max-width: 620px;
   margin: 0 auto 18px;
   color: var(--ink);
 }
 
 .titleDark {
-  font-size: 38px;
+  font-size: clamp(28px, 3.8vw, 38px);
   line-height: 1.1;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   color: #fff;
   margin-bottom: 14px;
 }
@@ -145,9 +145,14 @@
     padding: 44px 22px;
   }
   .titleLight {
-    font-size: 32px;
+    max-width: 360px;
   }
   .titleDark {
-    font-size: 28px;
+    max-width: 340px;
+    margin-inline: auto;
+  }
+  .textLight,
+  .textDark {
+    font-size: 16px;
   }
 }

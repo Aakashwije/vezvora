@@ -1,5 +1,5 @@
 .hero {
-  padding: 72px 0 40px;
+  padding: clamp(52px, 7vw, 72px) 0 40px;
 }
 .heroInner {
   max-width: 720px;
@@ -7,10 +7,10 @@
   text-align: center;
 }
 .h1 {
-  font-size: 60px;
+  font-size: clamp(38px, 5vw, 60px);
   line-height: 1.05;
   font-weight: 800;
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   margin: 14px 0 18px;
 }
 .lead {
@@ -38,10 +38,12 @@
   color: var(--muted);
   cursor: pointer;
   transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.2s ease,
     color 0.2s ease;
 }
 .filter:hover {
+  transform: translateY(-1px);
   border-color: var(--border-strong);
 }
 .filterActive,
@@ -71,6 +73,7 @@
   padding-bottom: 20px;
 }
 .card {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 22px;
@@ -80,6 +83,17 @@
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease;
+}
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 42%, rgba(47, 211, 196, 0.07), transparent 58%);
+  opacity: 0;
+  pointer-events: none;
+}
+.card:hover::after {
+  animation: surfaceSweep 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .card:hover {
   border-color: var(--border-accent-soft);
@@ -249,7 +263,7 @@
 .name {
   font-size: 21px;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 .desc {
   font-size: 14.5px;
@@ -336,7 +350,7 @@
 
 @media (max-width: 720px) {
   .h1 {
-    font-size: 38px;
+    line-height: 1.08;
   }
   .grid {
     grid-template-columns: 1fr;
@@ -344,9 +358,47 @@
   .meta {
     align-items: flex-start;
   }
+  .thumbNav {
+    opacity: 1;
+    background: rgba(10, 15, 20, 0.48);
+  }
 }
 @media (max-width: 620px) {
   .hero {
     padding: 52px 0 28px;
+  }
+  .filters {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px var(--gutter) 12px;
+    margin-inline: calc(var(--gutter) * -1);
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .filter {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .card {
+    border-radius: 18px;
+  }
+  .body {
+    padding: 20px;
+  }
+  .meta {
+    flex-direction: column;
+  }
+  .caseLink,
+  .caseLinkUnavailable {
+    align-self: flex-start;
+  }
+  .clientLogoImage {
+    max-width: 130px;
+    height: 64px;
   }
 }
