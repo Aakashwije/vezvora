@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/logo-mark.png" alt="Vezvora" width="140" />
+<img src="public/logo-mark.webp" alt="Vezvora" width="140" />
 
 # VEZVORA
 
@@ -254,7 +254,7 @@ graph TD
 vezvora/
 ├── public/
 │   ├── logo.png                 # Full brand lockup (mark + wordmark)
-│   └── logo-mark.png            # Transparent "V" mark (navbar/footer/README)
+│   └── logo-mark.webp           # Transparent "V" mark (navbar/footer/README)
 ├── src/
 │   ├── app/                     # Routes (App Router)
 │   │   ├── layout.tsx           # Root layout — Navbar + Footer chrome
@@ -442,7 +442,7 @@ The brand mark is wired through a single component —
 | Asset                   | Purpose                                        |
 | ----------------------- | ---------------------------------------------- |
 | `public/logo.png`       | Full lockup — social cards, print, docs        |
-| `public/logo-mark.png`  | Transparent "V" mark — navbar, footer, favicon |
+| `public/logo-mark.webp` | Transparent "V" mark — navbar, footer, favicon |
 
 To rebrand, swap the asset (or its `src`) in one place; every page updates.
 
@@ -463,7 +463,7 @@ VEZVORA. Access is restricted to authorized personnel only.
 ---
 
 <div align="center">
-<img src="public/logo-mark.png" alt="" width="28" />
+<img src="public/logo-mark.webp" alt="" width="28" />
 
 **VEZVORA** — Engineering digital momentum.
 </div>
