@@ -19,6 +19,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "test": "node --experimental-specifier-resolution=node --test tests/**/*.test.ts"
   },
   "dependencies": {
