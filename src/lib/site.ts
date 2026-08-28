@@ -41,15 +41,13 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     title: "Resources",
     links: [
       { label: "Case studies", href: "/work" },
-      { label: "Blog", href: "#" },
-      { label: "Careers", href: "#" },
       { label: "Contact", href: "/contact" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Privacy", href: "#" },
+      { label: "Privacy", href: "/privacy" },
       { label: "Terms", href: "/terms" },
     ],
   },

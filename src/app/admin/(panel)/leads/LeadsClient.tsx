@@ -1,25 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, Inbox } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { Avatar } from "@/components/admin/Avatar";
 import { LeadDrawer } from "@/components/admin/LeadDrawer";
 import { Button } from "@/components/ui/Button";
-import { useLeads, useTeam, memberById } from "@/lib/admin/store";
+import { useTeam, memberById } from "@/lib/admin/store";
 import { STATUS_META, PIPELINE } from "@/lib/admin/status";
 import { leadsToCsv, downloadFile, relativeTime } from "@/lib/admin/format";
-import type { LeadStatus } from "@/lib/admin/types";
+import type { Lead, LeadStatus } from "@/lib/admin/types";
 import { cx } from "@/lib/cx";
 import styles from "@/components/admin/admin.module.css";
 
 type StatusFilter = "all" | LeadStatus;
 
-export function LeadsClient({ currentUser }: { currentUser: string }) {
-  const leads = useLeads();
+export function LeadsClient({ leads }: { leads: Lead[] }) {
+  const router = useRouter();
   const team = useTeam();
+  const [isPending, startTransition] = useTransition();
 
   const searchParams = useSearchParams();
 
@@ -174,7 +175,13 @@ export function LeadsClient({ currentUser }: { currentUser: string }) {
 
       <LeadDrawer
         lead={selectedLead}
-        currentUser={currentUser}
+        disabled={isPending}
+        mutate={(action) => {
+          startTransition(async () => {
+            await action();
+            router.refresh();
+          });
+        }}
         onClose={() => setSelectedId(null)}
         onDeleted={() => setSelectedId(null)}
       />

@@ -311,14 +311,15 @@ gated by middleware; the marketing chrome is swapped out via `SiteChrome`.
 **Auth.** `src/proxy.ts` redirects unauthenticated `/admin/*` requests to
 login; a server action (`src/lib/admin/auth-actions.ts`) validates credentials
 and sets the session cookie. Admin auth fails closed until `ADMIN_PASSWORD` is
-configured. Set `ADMIN_SESSION_SECRET` as a separate strong random value in
-production. Swap the credential check for a real user store + hashed passwords
-for production.
+or `ADMIN_PASSWORD_HASH` is configured. Set `ADMIN_SESSION_SECRET` as a separate
+strong random value in production. `ADMIN_PASSWORD_HASH` accepts
+`scrypt:<saltHex>:<hashHex>` and is preferred over a plain environment password.
 
 **Data layer.** The console reads/writes through a small repository interface
-(`src/lib/admin/store.ts` — `leadsRepo`, `projectsRepo`, `settingsRepo`), backed
-by a reactive localStorage store for this prototype. Components depend only on
-the hooks/mutations, so moving to a real API/DB is an internals-only change.
+(`src/lib/admin/server-store.ts`), backed by server-side JSON persistence at
+`.data/admin-store.json` by default. Set `ADMIN_DATA_DIR` to store the file in a
+durable mounted location. All admin mutations go through authenticated server
+actions in `src/lib/admin/actions.ts`.
 
 Public contact submissions flow straight into the console:
 
@@ -326,12 +327,15 @@ Public contact submissions flow straight into the console:
 sequenceDiagram
     participant V as Visitor
     participant F as Contact form
-    participant R as leadsRepo
+    participant S as submitContact server action
+    participant R as server-store
     participant A as Admin · /admin/leads
     V->>F: Submit inquiry
-    F->>R: leadsRepo.create({ name, email, … })
-    R->>R: persist + notify subscribers
-    A-->>R: useLeads() (reactive)
+    F->>S: FormData
+    S->>S: validate + honeypot + rate limit
+    S->>R: createLead({ name, email, ... })
+    S-->>V: success / validation error
+    A-->>R: listLeads()
     Note over A: New lead appears at top of the inbox
 ```
 
@@ -359,8 +363,8 @@ site follows.
 
 | Face                  | Usage                                   |
 | --------------------- | ---------------------------------------- |
-| **Plus Jakarta Sans** | Display, headlines, body (400–800)       |
-| **Inter**             | Labels, captions, data (400–600)         |
+| System UI stack       | Display, headlines, body                 |
+| Inter/system stack    | Labels, captions, data                   |
 
 ---
 
@@ -401,8 +405,11 @@ npm run start   # serve the production build
 3. Add production environment variables:
 
 ```bash
-ADMIN_PASSWORD=use-a-strong-password
+ADMIN_PASSWORD_HASH=scrypt-salt-and-hash
+# ADMIN_PASSWORD=use-a-strong-password # local/dev fallback only
 ADMIN_SESSION_SECRET=use-a-long-random-secret
+ADMIN_DATA_DIR=/path/to/durable/storage
+CONTACT_WEBHOOK_URL=https://example.com/new-lead-webhook
 NEXT_PUBLIC_PLAUSIBLE_ENABLED=false
 # NEXT_PUBLIC_PLAUSIBLE_DOMAIN=vezvora.io
 # NEXT_PUBLIC_PLAUSIBLE_HOST=https://plausible.io

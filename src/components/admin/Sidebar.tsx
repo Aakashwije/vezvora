@@ -20,7 +20,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cx } from "@/lib/cx";
-import { useLeads } from "@/lib/admin/store";
 import { logout } from "@/lib/admin/auth-actions";
 import type { AdminUser } from "@/lib/admin/session";
 import { Avatar } from "./Avatar";
@@ -73,10 +72,8 @@ const SECTIONS: NavSection[] = [
   },
 ];
 
-export function Sidebar({ user }: { user: AdminUser }) {
+export function Sidebar({ user, newLeads }: { user: AdminUser; newLeads: number }) {
   const pathname = usePathname();
-  const leads = useLeads();
-  const newLeads = leads.filter((l) => l.status === "new").length;
 
   const isActive = (href?: string) =>
     href ? (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href)) : false;

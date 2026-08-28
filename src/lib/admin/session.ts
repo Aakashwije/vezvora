@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "node:crypto";
+export { createAdminPasswordHash, verifyAdminPassword } from "./password";
 
 /**
  * Admin session helpers (server-only).
@@ -26,9 +27,9 @@ export const DEMO_USER: AdminUser = {
   role: "admin",
 };
 
-/** Configured admin password, or null when unset (auth then fails closed). */
-export function adminPassword(): string | null {
-  return process.env.ADMIN_PASSWORD ?? null;
+/** Configured admin password material, or null when unset (auth then fails closed). */
+export function adminPasswordConfigured(): boolean {
+  return Boolean(process.env.ADMIN_PASSWORD_HASH || process.env.ADMIN_PASSWORD);
 }
 
 /** Secret used to sign session tokens (falls back to the password if unset). */
