@@ -1,43 +1,32 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useActionState, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Button } from "@/components/ui/Button";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { cx } from "@/lib/cx";
 import { EASE } from "@/lib/animations";
-import { leadsRepo } from "@/lib/admin/store";
 import { projectTypes, budgetRanges } from "@/content/contact";
+import { submitContact, type ContactFormState } from "./actions";
 import styles from "./contact.module.css";
 
-type Status = "idle" | "sending" | "success";
+const initialState: ContactFormState = {};
 
 export function ContactForm() {
-  const [status, setStatus] = useState<Status>("idle");
+  const [dismissedSuccess, setDismissedSuccess] = useState(false);
+  const [state, formAction, pending] = useActionState(submitContact, initialState);
+  const success = Boolean(state.ok && !dismissedSuccess);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    // Capture the submission as a lead so it lands in the admin inbox.
-    // (Swap leadsRepo for an API route when the backend is ready.)
-    const data = new FormData(event.currentTarget);
-    leadsRepo.create({
-      name: String(data.get("name") ?? ""),
-      email: String(data.get("email") ?? ""),
-      company: String(data.get("company") ?? ""),
-      projectType: String(data.get("projectType") ?? ""),
-      budget: String(data.get("budget") ?? ""),
-      message: String(data.get("message") ?? ""),
-      source: "Contact page",
-    });
-    setStatus("sending");
-    window.setTimeout(() => setStatus("success"), 900);
+  function submit(formData: FormData) {
+    setDismissedSuccess(false);
+    formAction(formData);
   }
 
   return (
     <div className={styles.formCard}>
       <span className={styles.formBlob} aria-hidden />
       <AnimatePresence mode="wait" initial={false}>
-        {status === "success" ? (
+        {success ? (
           <motion.div
             key="success"
             className={styles.success}
@@ -57,7 +46,7 @@ export function ContactForm() {
               We&apos;ve received your message and a member of our team will get back
               to you with actionable insights, usually within 12 hours.
             </p>
-            <Button variant="outline" onClick={() => setStatus("idle")}>
+            <Button variant="outline" onClick={() => setDismissedSuccess(true)}>
               Send another message
             </Button>
           </motion.div>
@@ -65,11 +54,16 @@ export function ContactForm() {
           <motion.form
             key="form"
             className={styles.form}
-            onSubmit={handleSubmit}
+            action={submit}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.3, ease: EASE } }}
             exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
           >
+            <div className={styles.honeypot} aria-hidden>
+              <label htmlFor="website">Website</label>
+              <input id="website" name="website" tabIndex={-1} autoComplete="off" />
+            </div>
+
             <div className={styles.row2}>
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="name">
@@ -115,6 +109,20 @@ export function ContactForm() {
               />
             </div>
 
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="phone">
+                Phone
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                className={styles.control}
+                placeholder="+94 77 123 4567"
+                autoComplete="tel"
+              />
+            </div>
+
             <div className={styles.row2}>
               <div className={styles.field}>
                 <label className={styles.label} htmlFor="projectType">
@@ -156,12 +164,17 @@ export function ContactForm() {
               type="submit"
               variant="accent"
               size="lg"
-              icon={status === "sending" ? undefined : "arrow_forward"}
+              icon={pending ? undefined : "arrow_forward"}
               className={styles.submit}
-              disabled={status === "sending"}
+              disabled={pending}
             >
-              {status === "sending" ? "Sending…" : "Submit inquiry"}
+              {pending ? "Sending..." : "Submit inquiry"}
             </Button>
+            {state.error && (
+              <p className={styles.formError} role="alert">
+                {state.error}
+              </p>
+            )}
           </motion.form>
         )}
       </AnimatePresence>

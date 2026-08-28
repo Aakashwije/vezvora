@@ -5,7 +5,13 @@ import { Drawer } from "@/components/admin/Drawer";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { projectFilters } from "@/content/work";
-import { projectsRepo, useProjects } from "@/lib/admin/store";
+import {
+  blankProjectAction,
+  removeProjectAction,
+  reorderProjectAction,
+  saveProjectAction,
+  toggleProjectFeaturedAction,
+} from "@/lib/admin/actions";
 import type { ManagedProject } from "@/lib/admin/types";
 import { cx } from "@/lib/cx";
 import {
@@ -16,23 +22,37 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
 const categories = projectFilters.filter((f) => f !== "All");
 
-export function ContentClient() {
-  const projects = useProjects();
+export function ContentClient({ projects }: { projects: ManagedProject[] }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const ordered = [...projects].sort((a, b) => a.order - b.order);
   const [draft, setDraft] = useState<ManagedProject | null>(null);
 
   function openNew() {
-    setDraft(projectsRepo.blankProject());
+    startTransition(async () => {
+      setDraft(await blankProjectAction());
+    });
   }
 
   function save() {
     if (!draft || !draft.name.trim()) return;
-    projectsRepo.save(draft);
-    setDraft(null);
+    startTransition(async () => {
+      await saveProjectAction(draft);
+      setDraft(null);
+      router.refresh();
+    });
+  }
+
+  function mutate(action: () => Promise<void>) {
+    startTransition(async () => {
+      await action();
+      router.refresh();
+    });
   }
 
   return (
@@ -41,7 +61,7 @@ export function ContentClient() {
         title="Work"
         subtitle={`${projects.length} projects in the portfolio`}
       >
-        <Button variant="accent" size="sm" icon="add" onClick={openNew}>
+        <Button variant="accent" size="sm" icon="add" onClick={openNew} disabled={isPending}>
           Add project
         </Button>
       </PageHeader>
@@ -71,7 +91,8 @@ export function ContentClient() {
                       styles.featureToggle,
                       project.featured && styles.featureToggleOn,
                     )}
-                    onClick={() => projectsRepo.toggleFeatured(project.id)}
+                    onClick={() => mutate(() => toggleProjectFeaturedAction(project.id))}
+                    disabled={isPending}
                     title="Toggle featured"
                   >
                     <Star
@@ -83,8 +104,8 @@ export function ContentClient() {
                   <button
                     type="button"
                     className={styles.reorderBtn}
-                    onClick={() => projectsRepo.reorder(project.id, -1)}
-                    disabled={i === 0}
+                    onClick={() => mutate(() => reorderProjectAction(project.id, -1))}
+                    disabled={isPending || i === 0}
                     aria-label="Move up"
                   >
                     <ArrowUp size={15} />
@@ -92,8 +113,8 @@ export function ContentClient() {
                   <button
                     type="button"
                     className={styles.reorderBtn}
-                    onClick={() => projectsRepo.reorder(project.id, 1)}
-                    disabled={i === ordered.length - 1}
+                    onClick={() => mutate(() => reorderProjectAction(project.id, 1))}
+                    disabled={isPending || i === ordered.length - 1}
                     aria-label="Move down"
                   >
                     <ArrowDown size={15} />
@@ -109,7 +130,8 @@ export function ContentClient() {
                   <button
                     type="button"
                     className={styles.reorderBtn}
-                    onClick={() => projectsRepo.remove(project.id)}
+                    onClick={() => mutate(() => removeProjectAction(project.id))}
+                    disabled={isPending}
                     aria-label="Delete"
                     style={{ color: "#ba1a1a" }}
                   >
@@ -138,8 +160,8 @@ export function ContentClient() {
         subtitle="Shown on the public Work page."
         footer={
           <>
-            <Button variant="accent" size="sm" onClick={save}>
-              Save project
+                <Button variant="accent" size="sm" onClick={save} disabled={isPending}>
+                  {isPending ? "Saving..." : "Save project"}
             </Button>
             <Button variant="outline" size="sm" onClick={() => setDraft(null)}>
               Cancel

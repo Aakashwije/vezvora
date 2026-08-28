@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { jakarta, inter } from "@/lib/fonts";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
@@ -62,7 +61,6 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <head>

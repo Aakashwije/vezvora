@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Avatar } from "@/components/admin/Avatar";
 import { Button } from "@/components/ui/Button";
-import { useSettings, useTeam, settingsRepo } from "@/lib/admin/store";
+import { saveSettingsAction } from "@/lib/admin/actions";
+import { useTeam } from "@/lib/admin/store";
 import type { SiteSettings } from "@/lib/admin/types";
 import styles from "@/components/admin/admin.module.css";
 
-export function SettingsClient() {
-  const settings = useSettings();
+export function SettingsClient({ settings }: { settings: SiteSettings }) {
+  const router = useRouter();
   const team = useTeam();
+  const [isPending, startTransition] = useTransition();
   // Overlay of unsaved edits on top of the (possibly hydrating) store value —
   // avoids syncing a full local copy in an effect.
   const [edits, setEdits] = useState<Partial<SiteSettings>>({});
@@ -25,9 +28,12 @@ export function SettingsClient() {
   }
 
   function save() {
-    settingsRepo.save(draft);
-    setEdits({});
-    setSaved(true);
+    startTransition(async () => {
+      await saveSettingsAction(draft);
+      setEdits({});
+      setSaved(true);
+      router.refresh();
+    });
   }
 
   return (
@@ -98,8 +104,8 @@ export function SettingsClient() {
             </div>
 
             <div className={styles.formActions}>
-              <Button variant="accent" size="sm" onClick={save}>
-                Save changes
+              <Button variant="accent" size="sm" onClick={save} disabled={isPending}>
+                {isPending ? "Saving..." : "Save changes"}
               </Button>
               {saved && (
                 <span className={styles.savedNote}>

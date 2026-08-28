@@ -14,6 +14,9 @@
 # production
 /build
 
+# server-side local persistence
+/.data/
+
 # misc
 .DS_Store
 *.pem

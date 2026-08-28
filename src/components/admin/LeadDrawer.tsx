@@ -5,7 +5,13 @@ import { MessageCircle, Mail, Trash2 } from "lucide-react";
 import { Drawer } from "./Drawer";
 import { StatusPill } from "./StatusPill";
 import { Avatar } from "./Avatar";
-import { leadsRepo, useTeam } from "@/lib/admin/store";
+import { useTeam } from "@/lib/admin/store";
+import {
+  addLeadNoteAction,
+  assignLeadAction,
+  removeLeadAction,
+  updateLeadStatusAction,
+} from "@/lib/admin/actions";
 import { STATUS_META, PIPELINE } from "@/lib/admin/status";
 import { formatDateTime, relativeTime } from "@/lib/admin/format";
 import type { Lead } from "@/lib/admin/types";
@@ -14,19 +20,26 @@ import styles from "./admin.module.css";
 
 type LeadDrawerProps = {
   lead: Lead | null;
-  currentUser: string;
+  disabled?: boolean;
+  mutate: (action: () => Promise<void>) => void;
   onClose: () => void;
   onDeleted: () => void;
 };
 
-export function LeadDrawer({ lead, currentUser, onClose, onDeleted }: LeadDrawerProps) {
+export function LeadDrawer({
+  lead,
+  disabled,
+  mutate,
+  onClose,
+  onDeleted,
+}: LeadDrawerProps) {
   const team = useTeam();
   const [noteBody, setNoteBody] = useState("");
 
   function submitNote() {
     const body = noteBody.trim();
     if (!body || !lead) return;
-    leadsRepo.addNote(lead.id, currentUser, body);
+    mutate(() => addLeadNoteAction(lead.id, body));
     setNoteBody("");
   }
 
@@ -58,9 +71,10 @@ export function LeadDrawer({ lead, currentUser, onClose, onDeleted }: LeadDrawer
             type="button"
             className={styles.iconBtn}
             onClick={() => {
-              leadsRepo.remove(lead.id);
+              mutate(() => removeLeadAction(lead.id));
               onDeleted();
             }}
+            disabled={disabled}
             style={{ width: "auto", padding: "0 14px", gap: 8, color: "#ba1a1a" }}
           >
             <Trash2 size={16} /> Delete lead
@@ -101,7 +115,8 @@ export function LeadDrawer({ lead, currentUser, onClose, onDeleted }: LeadDrawer
               key={status}
               type="button"
               className={styles.statusOpt}
-              onClick={() => leadsRepo.setStatus(lead.id, status)}
+              onClick={() => mutate(() => updateLeadStatusAction(lead.id, status))}
+              disabled={disabled}
               style={
                 active
                   ? { color: meta.color, background: meta.bg, borderColor: "transparent" }
@@ -120,7 +135,8 @@ export function LeadDrawer({ lead, currentUser, onClose, onDeleted }: LeadDrawer
         <select
           className={styles.select}
           value={lead.assigneeId ?? ""}
-          onChange={(e) => leadsRepo.assign(lead.id, e.target.value || null)}
+          onChange={(e) => mutate(() => assignLeadAction(lead.id, e.target.value || null))}
+          disabled={disabled}
         >
           <option value="">Unassigned</option>
           {team.map((m) => (
@@ -195,7 +211,7 @@ export function LeadDrawer({ lead, currentUser, onClose, onDeleted }: LeadDrawer
             type="button"
             className={cx(styles.replyBtn, styles.replyEmail)}
             onClick={submitNote}
-            disabled={!noteBody.trim()}
+            disabled={disabled || !noteBody.trim()}
             style={!noteBody.trim() ? { opacity: 0.5 } : undefined}
           >
             Add note

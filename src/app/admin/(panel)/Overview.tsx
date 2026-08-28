@@ -8,14 +8,14 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import { StatCard } from "@/components/admin/StatCard";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { Avatar } from "@/components/admin/Avatar";
-import { useLeads, memberById } from "@/lib/admin/store";
+import { memberById } from "@/lib/admin/store";
 import { STATUS_META, PIPELINE } from "@/lib/admin/status";
 import { relativeTime } from "@/lib/admin/format";
+import type { Lead } from "@/lib/admin/types";
 import styles from "@/components/admin/admin.module.css";
 
-export function Overview() {
+export function Overview({ leads }: { leads: Lead[] }) {
   const router = useRouter();
-  const leads = useLeads();
 
   const stats = useMemo(() => {
     const total = leads.length;
