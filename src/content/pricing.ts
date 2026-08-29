@@ -14,7 +14,7 @@ export const pricingTiers: PricingTier[] = [
     name: "Website Launch",
     blurb: "A polished website built for your business.",
     priceLabel: "Starting from",
-    price: "LKR 55,000",
+    price: "LKR 90,000",
     features: [
       "Responsive design",
       "Up to 5 core pages",
@@ -30,7 +30,7 @@ export const pricingTiers: PricingTier[] = [
     name: "App Launch",
     blurb: "Get your first product to market.",
     priceLabel: "Starting from",
-    price: "LKR 70,000",
+    price: "LKR 100,000",
     features: [
       "Single platform (iOS or Android)",
       "UI/UX design",
@@ -44,7 +44,7 @@ export const pricingTiers: PricingTier[] = [
     name: "POS Growth",
     blurb: "Modern point-of-sale systems.",
     priceLabel: "Starting from",
-    price: "LKR 90,000",
+    price: "LKR 110,000",
     features: [
       "Inventory management",
       "Payment gateway integration",

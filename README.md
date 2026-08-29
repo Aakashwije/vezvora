@@ -316,10 +316,11 @@ strong random value in production. `ADMIN_PASSWORD_HASH` accepts
 `scrypt:<saltHex>:<hashHex>` and is preferred over a plain environment password.
 
 **Data layer.** The console reads/writes through a small repository interface
-(`src/lib/admin/server-store.ts`), backed by server-side JSON persistence at
-`.data/admin-store.json` by default. Set `ADMIN_DATA_DIR` to store the file in a
-durable mounted location. All admin mutations go through authenticated server
-actions in `src/lib/admin/actions.ts`.
+(`src/lib/admin/server-store.ts`). Local development uses server-side JSON at
+`.data/admin-store.json`. Vercel deployments use Upstash Redis when either the
+`UPSTASH_REDIS_REST_*` or `KV_REST_API_*` credential pair is configured. All
+admin mutations go through authenticated server actions in
+`src/lib/admin/actions.ts`.
 
 Public contact submissions flow straight into the console:
 
@@ -372,7 +373,7 @@ site follows.
 
 **Prerequisites**
 
-- Node.js **≥ 20**
+- Node.js **24.x**
 - npm **≥ 10**
 
 **Setup**
@@ -400,23 +401,32 @@ npm run start   # serve the production build
 **Vercel deployment**
 
 1. Import the GitHub repository into Vercel.
-2. Keep the detected framework as **Next.js**. This repo also includes
-   `vercel.json` with `npm install` and `npm run build`.
-3. Add production environment variables:
+2. Keep the detected framework as **Next.js**. The included `vercel.json` uses
+   the committed lockfile through `npm ci` and runs `npm run build`.
+3. In the Vercel project, open **Storage**, add the **Upstash Redis** Marketplace
+   integration, connect it to Production and Preview, then redeploy. It injects
+   the `KV_REST_API_URL` and `KV_REST_API_TOKEN` credentials used by the app.
+4. Add production environment variables:
 
 ```bash
 ADMIN_PASSWORD_HASH=scrypt-salt-and-hash
 # ADMIN_PASSWORD=use-a-strong-password # local/dev fallback only
 ADMIN_SESSION_SECRET=use-a-long-random-secret
-ADMIN_DATA_DIR=/path/to/durable/storage
 CONTACT_WEBHOOK_URL=https://example.com/new-lead-webhook
 NEXT_PUBLIC_PLAUSIBLE_ENABLED=false
 # NEXT_PUBLIC_PLAUSIBLE_DOMAIN=vezvora.io
 # NEXT_PUBLIC_PLAUSIBLE_HOST=https://plausible.io
 ```
 
-4. Deploy. The build output should show static public routes and dynamic
+5. Deploy. The build output should show static public routes and dynamic
    `/admin` routes.
+
+Copy `.env.example` to `.env.local` for local configuration. Generate a secure
+admin password hash without putting the plain password in source control:
+
+```bash
+node --input-type=module -e "import { scryptSync, randomBytes } from 'node:crypto'; const salt=randomBytes(16); const hash=scryptSync(process.argv[1], salt, 64); console.log('scrypt:'+salt.toString('hex')+':'+hash.toString('hex'))" "your-password"
+```
 
 ---
 
