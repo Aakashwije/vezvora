@@ -33,6 +33,7 @@ distribution, or use of any part of this codebase is strictly prohibited.*
 - [Animation System](#-animation-system)
 - [Project Structure](#-project-structure)
 - [Routes](#-routes)
+- [Instant Estimate Quotations](#-instant-estimate-quotations)
 - [Design System](#-design-system)
 - [Getting Started](#-getting-started)
 - [Available Scripts](#-available-scripts)
@@ -291,6 +292,7 @@ vezvora/
 | `/pricing`  | Pricing   | Three tiers, "Most popular" glow, discovery-sprint note      |
 | `/about`    | About     | Mission hero, animated stats band, operating principles      |
 | `/contact`  | Contact   | Validated inquiry form with sending → success lifecycle      |
+| `/quotation`| Estimate  | Five-step estimator that prices a project and emails a PDF quotation |
 
 ---
 
@@ -339,6 +341,128 @@ sequenceDiagram
     A-->>R: listLeads()
     Note over A: New lead appears at top of the inbox
 ```
+
+---
+
+## 🧾 Instant Estimate Quotations
+
+A public estimator at **`/quotation`** (linked from `/pricing` and the footer)
+collects a project brief, prices it server-side, stores the quotation, notifies
+an administrator, and emails the customer a PDF quotation after a review window.
+
+### Flow
+
+```
+Customer submits  →  validate + rate-limit  →  price (server-only rate card)
+       ↓
+save status pending_review  →  render PDF  →  notify admin  →  schedule job (T+10m)
+       ↓
+Admin may edit / approve / hold / cancel / send now      (10-minute window)
+       ↓
+At the deadline the worker reloads the record from the database:
+  pending_review · updated · approved  →  send the latest quotation
+  held · cancelled · sending · sent · failed  →  do nothing
+```
+
+Status workflow: `pending_review → updated → approved → sending → sent`, with
+`held`, `cancelled` and `failed` as the off-ramps. Sending is claimed under a
+per-record lock and stamped with an idempotency key, so a duplicated job, a
+double click, or a QStash retry can never send twice.
+
+### Where the pieces live
+
+| Path | Responsibility |
+| ---- | -------------- |
+| `src/content/quotation-options.ts` | Client-safe option catalogue (labels only, no prices) |
+| `src/lib/quotation/validation.ts`  | Schema validation, normalization, max lengths |
+| `src/lib/quotation/pricing-config.ts` | The rate card, and normalization of stored edits |
+| `src/lib/quotation/pricing.ts`     | Deterministic engine: line items, totals, range, schedule |
+| `src/lib/quotation/store.ts`       | Repository (Upstash Redis / JSON file / in-memory) |
+| `src/lib/quotation/pdf.ts`         | A4 PDF renderer with letterhead background and pagination |
+| `src/lib/quotation/email.ts`       | Resend delivery, branded HTML, PDF attachment |
+| `src/lib/quotation/scheduler.ts`   | QStash publish + signature and cron-secret verification |
+| `src/lib/quotation/dispatch.ts`    | The single send worker every trigger funnels through |
+| `src/app/admin/(panel)/quotations` | Console: list, detail editor, rate-card editor |
+
+### Database / storage
+
+Quotations use the same Upstash Redis instance as the rest of the console, but
+are stored as **one key per record** (`vezvora:quotation:v1:record:<id>`) with
+sorted-set indexes for listing and for the due-job queue, plus `INCR` counters
+for quotation numbers and `SET NX` locks for send claims. Per-record keys are
+what make an administrator's edit and the auto-send worker safe to run at the
+same time.
+
+There is no migration step — the keys are created on first write. Locally, with
+no Redis credentials, the store falls back to `.data/quotations.json`
+(single-process development only). On Vercel without Redis it fails loudly
+rather than writing to an ephemeral filesystem.
+
+### Email setup (Resend)
+
+1. Create a Resend account and verify your sending domain.
+2. Set `RESEND_API_KEY`, `QUOTATION_FROM_EMAIL` (a verified sender),
+   `QUOTATION_REPLY_TO`, and `QUOTATION_ADMIN_EMAIL`.
+
+Without `RESEND_API_KEY` the app does not fail: it logs the message it would
+have sent, so the whole workflow can be exercised locally.
+
+### Scheduled jobs
+
+Two independent mechanisms cover the review delay; both funnel into the same
+idempotent worker, so a quotation covered by both is still sent once.
+
+1. **Upstash QStash** (preferred, precise). Set `QSTASH_TOKEN`,
+   `QSTASH_CURRENT_SIGNING_KEY` and `QSTASH_NEXT_SIGNING_KEY`. Submissions
+   publish a delayed callback to `POST /api/quotations/dispatch`, which verifies
+   the `upstash-signature` header before reading the body and **fails closed**
+   when the keys are absent.
+2. **Vercel Cron** (fallback, always on). `vercel.json` schedules
+   `/api/quotations/cron` every minute; it queries persisted review deadlines and
+   sweeps whatever is due. Vercel injects `CRON_SECRET` automatically; override
+   it with `QUOTATION_CRON_SECRET`. Requests without the bearer secret get 401.
+
+Change the window with `QUOTATION_REVIEW_MINUTES` (default 10, clamped 1–1440).
+
+### Letterhead
+
+Drop the artwork at **`public/quotation/vezvora-letterhead.png`** — see
+`public/quotation/README.md` for the full spec. In short: PNG, A4 proportions,
+clear in the middle. It is drawn as a full-page background on every page,
+including continuation pages, and content is laid out inside a safe area that
+clears the header and footer bands.
+
+To replace it, overwrite that file and redeploy; nothing else changes. Tune the
+safe area with `QUOTATION_PDF_MARGIN_TOP` / `_BOTTOM` / `_LEFT` / `_RIGHT`
+(points) if the new artwork has different bands. If the file is missing the app
+logs a warning and renders a clean fallback layout instead of breaking.
+
+`next.config.mjs` traces `public/quotation/**` into the serverless bundles that
+render PDFs, since static assets are not included in function bundles by default.
+
+### Pricing rules
+
+The rate card is stored in the backend and edited at
+**`/admin/quotations/pricing`** — base price per service, per-platform and
+per-feature rates, integrations, design tiers, scalability, urgency surcharge,
+maintenance, QA and project-management percentages, contingency, tax, discount
+tiers, the schedule model, validity, and payment terms. Saving increments the
+stored version, which is stamped on every quotation generated afterwards;
+existing quotations keep the figures they were produced with. Anything invalid
+in a saved edit falls back to the shipped default rather than producing broken
+prices.
+
+### Security
+
+Server-side validation and normalization, HTML escaping in emails, a honeypot
+field, per-IP rate limiting (`QUOTATION_RATE_LIMIT_MAX`, default 5 per 15
+minutes), maximum input lengths, `requireAdmin()` on every admin action, signed
+job callbacks, atomic send claiming, idempotent delivery, an audit trail on each
+record, generic public error messages, and one-line JSON application logs.
+
+Totals, prices, statuses, quotation numbers and review deadlines are never
+accepted from the client — the browser sends requirements, and the server
+decides everything else.
 
 ---
 
@@ -416,10 +540,26 @@ CONTACT_WEBHOOK_URL=https://example.com/new-lead-webhook
 NEXT_PUBLIC_PLAUSIBLE_ENABLED=false
 # NEXT_PUBLIC_PLAUSIBLE_DOMAIN=vezvora.io
 # NEXT_PUBLIC_PLAUSIBLE_HOST=https://plausible.io
+
+# Instant Estimate quotations — see the section above for details
+RESEND_API_KEY=re_xxxxxxxx
+QUOTATION_FROM_EMAIL="Vezvora <quotations@vezvora.io>"
+QUOTATION_REPLY_TO=vezvoraa@gmail.com
+QUOTATION_ADMIN_EMAIL=vezvoraa@gmail.com
+QUOTATION_REVIEW_MINUTES=10
+QSTASH_TOKEN=
+QSTASH_CURRENT_SIGNING_KEY=
+QSTASH_NEXT_SIGNING_KEY=
 ```
 
-5. Deploy. The build output should show static public routes and dynamic
-   `/admin` routes.
+5. The included `vercel.json` registers the `/api/quotations/cron` schedule.
+   Vercel supplies `CRON_SECRET` to scheduled invocations automatically; add it
+   to the project's environment variables so the route can verify it.
+6. Place the letterhead at `public/quotation/vezvora-letterhead.png` before
+   deploying, or quotations will use the fallback layout.
+
+7. Deploy. The build output should show static public routes and dynamic
+   `/admin`, `/api/quotations/*` routes.
 
 Copy `.env.example` to `.env.local` for local configuration. Generate a secure
 admin password hash without putting the plain password in source control:
@@ -438,6 +578,9 @@ node --input-type=module -e "import { scryptSync, randomBytes } from 'node:crypt
 | `npm run build` | Production build for Vercel / Next runtime   |
 | `npm run start` | Serve the production build                   |
 | `npm run lint`  | ESLint (flat config) across the project      |
+| `npm run typecheck` | TypeScript, no emit                      |
+| `npm test`      | Unit tests (`node --test`)                   |
+| `npm run test:e2e` | Playwright end-to-end suite               |
 
 ---
 

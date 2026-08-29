@@ -244,3 +244,114 @@
     min-width: 0;
   }
 }
+
+/* ---- Instant Estimate section ---- */
+.estimate {
+  padding: 8px 0 90px;
+}
+.estimateCard {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 34px;
+  align-items: center;
+  background: var(--grad-dark);
+  border-radius: 26px;
+  padding: 44px 46px;
+  box-shadow: var(--shadow-lg);
+}
+.estimateBlob {
+  position: absolute;
+  top: -120px;
+  right: -60px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(47, 211, 196, 0.24), transparent 68%);
+  pointer-events: none;
+}
+.estimateBody {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.estimateTitle {
+  font-size: clamp(26px, 3vw, 34px);
+  line-height: 1.14;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--always-white);
+  margin: 12px 0 12px;
+}
+.estimateText {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 46ch;
+}
+.estimateActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 26px;
+}
+.estimateSteps {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  min-width: 0;
+}
+.estimateStep {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.estimateStepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--grad-accent);
+  color: var(--ink-on-accent);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 800;
+}
+.estimateStepText {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .estimateCard {
+    grid-template-columns: 1fr;
+    gap: 26px;
+    padding: 34px 28px;
+  }
+}
+@media (max-width: 620px) {
+  .estimate {
+    padding-bottom: 64px;
+  }
+  .estimateCard {
+    padding: 28px 22px;
+    border-radius: 20px;
+  }
+  .estimateActions > a {
+    width: 100%;
+    justify-content: center;
+  }
+}

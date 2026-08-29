@@ -46,3 +46,10 @@ next-env.d.ts
 CLAUDE.md
 .cursor/
 .aider*
+
+# e2e artifacts
+/.e2e-data/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
