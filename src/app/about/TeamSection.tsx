@@ -10,6 +10,7 @@ type TeamView = "leadership" | "rnd";
 
 export function TeamSection() {
   const [activeView, setActiveView] = useState<TeamView>("leadership");
+  const [flippedMember, setFlippedMember] = useState<string | null>(null);
 
   return (
     <section className={styles.teamSection} aria-labelledby="team-heading">
@@ -55,22 +56,55 @@ export function TeamSection() {
           >
             {leadershipTeam.map((member) => (
               <article key={member.name} className={styles.memberCard}>
-                <div className={styles.portrait}>
-                  {member.image ? (
-                    <Image
-                      src={member.image}
-                      alt={`${member.name}, ${member.title}`}
-                      fill
-                      sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 25vw"
-                      className={styles.portraitImage}
-                    />
-                  ) : (
-                    <div className={styles.portraitPlaceholder} aria-label={`${member.name} portrait to be uploaded`}>
-                      <ImagePlus aria-hidden="true" size={30} strokeWidth={1.6} />
-                      <span>Portrait coming soon</span>
-                    </div>
-                  )}
-                </div>
+                <button
+                  type="button"
+                  className={styles.portrait}
+                  data-flipped={flippedMember === member.name}
+                  aria-pressed={flippedMember === member.name}
+                  aria-label={
+                    flippedMember === member.name
+                      ? `Show ${member.name}'s portrait`
+                      : `Show ${member.name}'s industry background, ${member.company}`
+                  }
+                  onClick={() =>
+                    setFlippedMember((current) => (current === member.name ? null : member.name))
+                  }
+                >
+                  <span className={styles.portraitInner}>
+                    <span className={styles.portraitFront}>
+                      {member.image ? (
+                        <Image
+                          src={member.image}
+                          alt={`${member.name}, ${member.title}`}
+                          fill
+                          sizes="(max-width: 620px) 100vw, (max-width: 1000px) 50vw, 25vw"
+                          className={styles.portraitImage}
+                        />
+                      ) : (
+                        <span
+                          className={styles.portraitPlaceholder}
+                          aria-label={`${member.name} portrait to be uploaded`}
+                        >
+                          <ImagePlus aria-hidden="true" size={30} strokeWidth={1.6} />
+                          <span>Portrait coming soon</span>
+                        </span>
+                      )}
+                    </span>
+                    <span className={styles.companyBack} aria-hidden="true">
+                      <span className={styles.companyLabel}>Industry background</span>
+                      <span className={styles.companyLogoFrame}>
+                        <Image
+                          src={member.companyLogo}
+                          alt=""
+                          fill
+                          sizes="220px"
+                          className={styles.companyLogo}
+                        />
+                      </span>
+                      <span className={styles.companyName}>{member.company}</span>
+                    </span>
+                  </span>
+                </button>
                 <div className={styles.memberDetails}>
                   <div>
                     <h3>{member.name}</h3>
