@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { IconBadge } from "@/components/ui/IconBadge";
@@ -9,6 +8,7 @@ import { CountUp } from "@/components/motion/CountUp";
 import { Reveal } from "@/components/motion/Reveal";
 import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import { aboutStats, aboutValues } from "@/content/about";
+import { TeamSection } from "./TeamSection";
 import styles from "./about.module.css";
 
 export const metadata: Metadata = {
@@ -47,17 +47,9 @@ export default function AboutPage() {
             </Button>
           </StaggerItem>
         </Stagger>
-        <Reveal mode="mount" variant="scaleIn" delay={0.35} className={styles.visual}>
-          <Image
-            src="/team.webp"
-            alt="The Vezvora team"
-            fill
-            priority
-            sizes="(max-width: 900px) 420px, 559px"
-            className={styles.teamImage}
-          />
-        </Reveal>
       </section>
+
+      <TeamSection />
 
       <section className={styles.statsWrap}>
         <div className="container">
