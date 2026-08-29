@@ -432,6 +432,49 @@
   }
 }
 
+@media (hover: none), (pointer: coarse) {
+  .portrait {
+    perspective: none;
+    -webkit-perspective: none;
+  }
+  .portraitInner,
+  .portrait[data-flipped="true"] .portraitInner {
+    transform: none;
+    -webkit-transform: none;
+    transform-style: flat;
+    -webkit-transform-style: flat;
+  }
+  .portraitFront,
+  .companyBack {
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition: opacity 220ms ease, transform 360ms ease;
+  }
+  .portraitFront {
+    z-index: 2;
+    opacity: 1;
+    transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+  }
+  .companyBack {
+    z-index: 1;
+    opacity: 0;
+    transform: rotateY(-90deg);
+    -webkit-transform: rotateY(-90deg);
+  }
+  .portrait[data-flipped="true"] .portraitFront {
+    opacity: 0;
+    transform: rotateY(90deg);
+    -webkit-transform: rotateY(90deg);
+  }
+  .portrait[data-flipped="true"] .companyBack {
+    z-index: 3;
+    opacity: 1;
+    transform: rotateY(0deg);
+    -webkit-transform: rotateY(0deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .portraitInner {
     transition-duration: 0.01ms;
