@@ -3,6 +3,7 @@ import "server-only";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
+import { Redis } from "@upstash/redis";
 import type { Lead, LeadStatus, ManagedProject, SiteSettings } from "./types";
 import { seedProjects, seedSettings } from "./seed";
 
@@ -25,6 +26,16 @@ export type NewLeadInput = {
 
 const DATA_DIR = process.env.ADMIN_DATA_DIR ?? path.join(process.cwd(), ".data");
 const DATA_FILE = path.join(DATA_DIR, "admin-store.json");
+const DATA_KEY = process.env.ADMIN_DATA_KEY ?? "vezvora:admin-store:v1";
+
+const redisUrl =
+  process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const redisToken =
+  process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
+const redis =
+  redisUrl && redisToken
+    ? new Redis({ url: redisUrl, token: redisToken, enableTelemetry: false })
+    : null;
 
 const emptyData = (): AdminData => ({
   leads: [],
@@ -83,6 +94,11 @@ function normalizeData(value: unknown): AdminData {
 }
 
 async function readData(): Promise<AdminData> {
+  if (redis) {
+    const stored = await redis.get<AdminData>(DATA_KEY);
+    return normalizeData(stored);
+  }
+
   try {
     const raw = await readFile(DATA_FILE, "utf8");
     return normalizeData(JSON.parse(raw));
@@ -92,6 +108,17 @@ async function readData(): Promise<AdminData> {
 }
 
 async function writeData(data: AdminData): Promise<void> {
+  if (redis) {
+    await redis.set(DATA_KEY, data);
+    return;
+  }
+
+  if (process.env.VERCEL) {
+    throw new Error(
+      "Persistent storage is not configured. Connect Upstash Redis to this Vercel project.",
+    );
+  }
+
   await mkdir(DATA_DIR, { recursive: true });
   await writeFile(DATA_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
