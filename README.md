@@ -417,10 +417,13 @@ idempotent worker, so a quotation covered by both is still sent once.
    publish a delayed callback to `POST /api/quotations/dispatch`, which verifies
    the `upstash-signature` header before reading the body and **fails closed**
    when the keys are absent.
-2. **Vercel Cron** (fallback, always on). `vercel.json` schedules
-   `/api/quotations/cron` every minute; it queries persisted review deadlines and
-   sweeps whatever is due. Vercel injects `CRON_SECRET` automatically; override
-   it with `QUOTATION_CRON_SECRET`. Requests without the bearer secret get 401.
+2. **Vercel Cron** (daily safety sweep). `vercel.json` schedules
+   `/api/quotations/cron` once per day so the project remains deployable on the
+   Vercel Hobby plan. It catches overdue records but does not guarantee the
+   10-minute deadline. Vercel injects `CRON_SECRET` automatically; override it
+   with `QUOTATION_CRON_SECRET`. Requests without the bearer secret get 401.
+
+QStash is required for the precise 10-minute automatic send on Vercel Hobby.
 
 Change the window with `QUOTATION_REVIEW_MINUTES` (default 10, clamped 1–1440).
 
@@ -552,9 +555,10 @@ QSTASH_CURRENT_SIGNING_KEY=
 QSTASH_NEXT_SIGNING_KEY=
 ```
 
-5. The included `vercel.json` registers the `/api/quotations/cron` schedule.
-   Vercel supplies `CRON_SECRET` to scheduled invocations automatically; add it
-   to the project's environment variables so the route can verify it.
+5. The included `vercel.json` registers a Hobby-compatible daily safety sweep.
+   Configure QStash for the precise 10-minute callback. Vercel supplies
+   `CRON_SECRET` to scheduled invocations automatically; add it to the project's
+   environment variables so the cron route can verify it.
 6. Place the letterhead at `public/quotation/vezvora-letterhead.png` before
    deploying, or quotations will use the fallback layout.
 

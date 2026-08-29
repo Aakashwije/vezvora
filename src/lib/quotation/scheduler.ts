@@ -6,8 +6,8 @@
  *
  *  1. Upstash QStash publishes a delayed HTTP callback — precise, and the
  *     primary path when `QSTASH_TOKEN` is set.
- *  2. A Vercel Cron sweep queries persisted `reviewDeadline`s — the safety net
- *     that also works with no QStash account at all.
+ *  2. A Vercel Cron sweep queries persisted `reviewDeadline`s as a safety net.
+ *     On Vercel Hobby it runs daily, so QStash is required for precise timing.
  *
  * Both funnel into the same worker, which is idempotent, so a quotation covered
  * by both is still only sent once.
