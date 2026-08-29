@@ -141,7 +141,7 @@ export function HeroMock({ className }: { className?: string }) {
               <div className={styles.miniStats}>
                 <div className={styles.miniStat}>
                   <div className={styles.miniLabel}>Active users</div>
-                  <div className={styles.miniValue}>48,209</div>
+                  <div className={styles.miniValue}>4,000</div>
                 </div>
                 <div className={styles.miniStat}>
                   <div className={styles.miniLabel}>Uptime</div>

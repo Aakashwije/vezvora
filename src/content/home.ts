@@ -3,7 +3,7 @@ import type { IconName } from "@/components/ui/Icon";
 export type HeroStat = { value: string; suffix?: string; label: string };
 
 export const heroStats: HeroStat[] = [
-  { value: "140+", label: "Products shipped" },
+  { value: "4,000", label: "Active users" },
   { value: "98%", label: "Client retention" },
   { value: "4.9", suffix: "/5", label: "Avg. rating" },
 ];

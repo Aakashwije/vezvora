@@ -4,9 +4,9 @@ export type AboutStat = { value: string; label: string; tone: string };
 
 /** `tone` maps to a highlight colour used on the dark stats band. */
 export const aboutStats: AboutStat[] = [
-  { value: "50+", label: "Enterprise projects", tone: "#a9e022" },
+  { value: "10+", label: "Enterprise projects", tone: "#a9e022" },
   { value: "99.9%", label: "System uptime", tone: "#3bd6c0" },
-  { value: "12", label: "Global awards", tone: "#63d17f" },
+  { value: "4", label: "Core services", tone: "#63d17f" },
   { value: "24/7", label: "Dedicated support", tone: "#8ee0a0" },
 ];
 
@@ -17,6 +17,8 @@ export type LeadershipMember = {
   title: string;
   image: string | null;
   linkedinUrl: string;
+  company: string;
+  companyLogo: string;
 };
 
 export const leadershipTeam: LeadershipMember[] = [
@@ -25,24 +27,32 @@ export const leadershipTeam: LeadershipMember[] = [
     title: "Co-Founder, CEO & Chief Technology Officer",
     image: "/management-team/senior-management/Aakash.png",
     linkedinUrl: "https://www.linkedin.com/in/aakash-wijesekara-611588318/",
+    company: "WSO2",
+    companyLogo: "/company-logos/wso2.webp",
   },
   {
     name: "Thisen Bandara",
     title: "Co-Founder & Chief Product Officer (CPO)",
     image: "/management-team/senior-management/Thisen.jpeg",
     linkedinUrl: "https://www.linkedin.com/in/thisen-bandara-048924359/",
+    company: "APS Lanka",
+    companyLogo: "/company-logos/aps-lanka.png",
   },
   {
     name: "Ayora Fernando",
     title: "Head of Software Operations & Delivery",
     image: "/management-team/senior-management/Ayora.jpeg",
     linkedinUrl: "https://www.linkedin.com/in/ayora-fernando-73b40134b/",
+    company: "PickMe",
+    companyLogo: "/company-logos/pickme.svg",
   },
   {
     name: "Imesha Meegoda",
     title: "Head of Marketing",
     image: "/management-team/senior-management/imesha.jpeg",
     linkedinUrl: "https://www.linkedin.com/in/imesha-meegoda-180b31352/",
+    company: "Epic Lanka",
+    companyLogo: "/company-logos/epic-lanka.png",
   },
 ];
 
