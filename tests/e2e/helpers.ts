@@ -8,8 +8,19 @@ export function uniqueProjectName(prefix: string): string {
   return `${prefix} ${Date.now().toString(36)}${Math.floor(Math.random() * 1e4)}`;
 }
 
+/**
+ * Which brief to submit.
+ *
+ * `pos` is a large multi-branch platform: the confidence rules withhold it for
+ * manual approval. `website` is an ordinary, well-described brochure site that
+ * clears them and sends automatically. Specs pick whichever path they are
+ * actually about.
+ */
+export type EstimateVariant = "pos" | "website";
+
 type EstimateOptions = {
   projectName: string;
+  variant?: EstimateVariant;
   email?: string;
   contactName?: string;
 };
@@ -20,7 +31,12 @@ type EstimateOptions = {
  */
 export async function completeEstimator(
   page: Page,
-  { projectName, email = "e2e.customer@example.lk", contactName = "Sahan Perera" }: EstimateOptions,
+  {
+    projectName,
+    variant = "pos",
+    email = "e2e.customer@example.lk",
+    contactName = "Sahan Perera",
+  }: EstimateOptions,
 ): Promise<string> {
   await page.goto("/quotation");
   // Scoped to the form: the site footer also has a "Company" landmark.
@@ -37,29 +53,41 @@ export async function completeEstimator(
   // Step 2 — the project
   await expect(page.getByRole("heading", { name: "What are we building?" })).toBeVisible();
   await form.getByLabel("Project or product name").fill(projectName);
-  await form.getByRole("radio", { name: /^POS system/ }).check();
+  await form
+    .getByRole("radio", { name: variant === "pos" ? /^POS system/ : /^Website/ })
+    .check();
   await form
     .getByLabel("Project description")
     .fill(
-      "A point of sale and inventory platform for a twelve branch retail chain. Cashiers need offline billing at the counter with nightly stock synchronisation, head office needs consolidated sales reporting, and finance needs the day's takings posted into the accounting system automatically.",
+      variant === "pos"
+        ? "A point of sale and inventory platform for a twelve branch retail chain. Cashiers need offline billing at the counter with nightly stock synchronisation, head office needs consolidated sales reporting, and finance needs the day's takings posted into the accounting system automatically."
+        : "A marketing website for a tea estate with eight content pages, a photo gallery of the estate and the factory, an enquiry form that emails the sales team, and a simple blog the marketing coordinator can update herself. Content and photography are already prepared and will be supplied at kick-off.",
     );
   await form.getByRole("button", { name: "Continue" }).click();
 
   // Step 3 — scope
   await expect(page.getByRole("heading", { name: "What does it need to do?" })).toBeVisible();
   await form.getByRole("checkbox", { name: "Web browser" }).check();
-  await form.getByRole("checkbox", { name: "POS terminal" }).check();
-  await form.getByRole("checkbox", { name: "Accounts & authentication" }).check();
-  await form.getByRole("checkbox", { name: "Inventory management" }).check();
-  await form.getByRole("checkbox", { name: "Reporting & analytics" }).check();
-  await form.getByRole("checkbox", { name: "Payment gateway" }).check();
+  if (variant === "pos") {
+    await form.getByRole("checkbox", { name: "POS terminal" }).check();
+    await form.getByRole("checkbox", { name: "Accounts & authentication" }).check();
+    await form.getByRole("checkbox", { name: "Inventory management" }).check();
+    await form.getByRole("checkbox", { name: "Reporting & analytics" }).check();
+    await form.getByRole("checkbox", { name: "Payment gateway" }).check();
+  } else {
+    await form.getByRole("checkbox", { name: "Accounts & authentication" }).check();
+    await form.getByRole("checkbox", { name: "Advanced search & filtering" }).check();
+    await form.getByRole("checkbox", { name: "Document & file management" }).check();
+  }
   await form.getByRole("button", { name: "Continue" }).click();
 
   // Step 4 — delivery
   await expect(page.getByRole("heading", { name: "Design, scale, and pace" })).toBeVisible();
   // Option labels include their hint text, so match on the label prefix.
   await form.getByRole("radio", { name: /^Custom design/ }).check();
-  await form.getByLabel("Expected user volume").selectOption("medium");
+  // Kept modest for the website variant so it stays comfortably inside the
+  // value ceiling rather than sitting on the boundary.
+  await form.getByLabel("Expected user volume").selectOption(variant === "pos" ? "medium" : "small");
   await form.getByLabel("Preferred timeline").selectOption("standard");
   await form.getByRole("button", { name: "Continue" }).click();
 

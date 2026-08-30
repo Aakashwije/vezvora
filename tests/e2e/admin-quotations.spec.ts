@@ -2,11 +2,13 @@ import { expect, test } from "@playwright/test";
 import { completeEstimator, loginAsAdmin, uniqueProjectName } from "./helpers";
 
 test.describe("Admin quotation review", () => {
-  test("a submitted request appears in the console with a live review countdown", async ({
+  test("an ordinary request appears in the console with a live review countdown", async ({
     page,
   }) => {
     const projectName = uniqueProjectName("E2E Review");
-    const number = await completeEstimator(page, { projectName });
+    // A modest, well-described brief: the confidence rules clear it, so it is
+    // counting down to an automatic send.
+    const number = await completeEstimator(page, { projectName, variant: "website" });
 
     await loginAsAdmin(page);
     await page.goto("/admin/quotations");
@@ -22,7 +24,48 @@ test.describe("Admin quotation review", () => {
     await row.getByRole("link", { name: "Review" }).click();
     await expect(page.getByRole("heading", { level: 1, name: number })).toBeVisible();
     await expect(page.getByText("Original requirements")).toBeVisible();
-    await expect(page.getByText(/twelve branch retail chain/)).toBeVisible();
+    await expect(page.getByText(/marketing website for a tea estate/)).toBeVisible();
+    await expect(page.getByText("High confidence")).toBeVisible();
+  });
+
+  test("a high-value request is withheld until an administrator approves it", async ({ page }) => {
+    const projectName = uniqueProjectName("E2E Approval");
+    // A twelve-branch POS platform: well above the value ceiling, so it must
+    // not be emailed on its own.
+    const number = await completeEstimator(page, { projectName });
+
+    await loginAsAdmin(page);
+    await page.goto("/admin/quotations");
+
+    await page.getByLabel("Search quotations").fill(number);
+    const row = page.getByRole("row", { name: new RegExp(number) });
+    // No countdown: there is nothing to count down to until it is approved.
+    await expect(row).toContainText("Approval");
+    await expect(row.getByText(/^\d+:\d{2}$/)).toHaveCount(0);
+
+    await row.getByRole("link", { name: "Review" }).click();
+    await expect(page.getByText("This estimate will not be emailed on its own")).toBeVisible();
+    // The reason is repeated in the flag list beneath it, so match the first.
+    await expect(page.getByText(/value ceiling/i).first()).toBeVisible();
+    await expect(page.getByText(/until auto-send/)).toHaveCount(0);
+
+    // Approving releases it, and the review window starts counting down.
+    await page.getByRole("button", { name: "Approve" }).click();
+    await expect(page.getByText("Marked as approved.")).toBeVisible();
+    await expect(page.getByText("This estimate will not be emailed on its own")).toHaveCount(0);
+    await expect(page.getByText(/until auto-send/)).toBeVisible();
+  });
+
+  test("the console can be filtered down to the requests awaiting approval", async ({ page }) => {
+    const projectName = uniqueProjectName("E2E Queue");
+    const number = await completeEstimator(page, { projectName });
+
+    await loginAsAdmin(page);
+    await page.goto("/admin/quotations");
+
+    await page.getByRole("button", { name: /^Needs approval/ }).click();
+    await page.getByLabel("Search quotations").fill(number);
+    await expect(page.getByRole("row", { name: new RegExp(number) })).toBeVisible();
   });
 
   test("an administrator can edit a line item and send the quotation manually", async ({ page }) => {
@@ -57,7 +100,8 @@ test.describe("Admin quotation review", () => {
 
   test("holding a quotation stops the automatic send and can be resumed", async ({ page }) => {
     const projectName = uniqueProjectName("E2E Hold");
-    const number = await completeEstimator(page, { projectName });
+    // A cleared estimate, so the countdown is what the hold has to stop.
+    const number = await completeEstimator(page, { projectName, variant: "website" });
 
     await loginAsAdmin(page);
     await page.goto("/admin/quotations");

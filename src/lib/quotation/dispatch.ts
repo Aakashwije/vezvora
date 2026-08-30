@@ -15,7 +15,7 @@ import type { Mailer } from "./email.ts";
 import { log } from "./log.ts";
 import { renderQuotationPdf } from "./pdf.ts";
 import type { QuotationStore } from "./store.ts";
-import { AUTO_SENDABLE_STATUSES, type QuotationRecord } from "./types.ts";
+import { AUTO_SENDABLE_STATUSES, mayAutoSend, type QuotationRecord } from "./types.ts";
 
 export type DispatchTrigger = "auto" | "manual" | "retry";
 
@@ -25,6 +25,7 @@ export type DispatchSkipReason =
   | "not_sendable"
   | "already_sent"
   | "in_flight"
+  | "requires_approval"
   | "locked";
 
 export type DispatchResult =
@@ -77,6 +78,12 @@ export function canDispatch(
   // trigger === "auto"
   if (!AUTO_SENDABLE_STATUSES.includes(record.status)) {
     return { ok: false, reason: "not_sendable" };
+  }
+  // The confidence rules withhold estimates that are expensive, bespoke or too
+  // thinly described to email unseen. Checked before the deadline so the reason
+  // reported is the meaningful one rather than "not yet due".
+  if (!mayAutoSend(record)) {
+    return { ok: false, reason: "requires_approval" };
   }
   if (now < new Date(record.reviewDeadline).getTime()) {
     return { ok: false, reason: "not_due" };

@@ -7,6 +7,7 @@
 
 import "server-only";
 
+import { assessConfidence } from "./confidence.ts";
 import { RATE_LIMIT, reviewDeadlineFrom, reviewMinutes } from "./config.ts";
 import { mailer } from "./email.ts";
 import { log } from "./log.ts";
@@ -58,6 +59,9 @@ export async function createQuotation(
   const store = options.store ?? quotationStore();
   const config = await store.getPricingConfig();
   const document = calculateQuotation(requirements, config);
+  // Decided here, once, and stored: whether this estimate is ordinary enough to
+  // email at the deadline without an administrator seeing it first.
+  const confidence = assessConfidence(requirements, document, config.autoSend);
   const createdAt = new Date().toISOString();
 
   const record = await store.create({
@@ -90,10 +94,22 @@ export async function createQuotation(
         action: "submitted",
         detail: options.source ?? "Instant estimate",
       },
+      ...(confidence.autoSend
+        ? []
+        : [
+            {
+              id: `ac_${createdAt}_hold`,
+              at: createdAt,
+              actor: "System (confidence rules)",
+              action: "held_for_approval",
+              detail: confidence.reviewReason ?? undefined,
+            },
+          ]),
     ],
     source: options.source ?? "Instant estimate",
     scheduledJobId: null,
     scheduler: "none",
+    confidence,
   });
 
   log.info("quotation_created", {
@@ -102,6 +118,10 @@ export async function createQuotation(
     service: requirements.service,
     total: record.document.totals.total,
     reviewMinutes: reviewMinutes(),
+    confidence: confidence.level,
+    confidenceScore: confidence.score,
+    autoSend: confidence.autoSend,
+    reviewReason: confidence.reviewReason,
   });
 
   // Everything below is best-effort: the customer's submission is already

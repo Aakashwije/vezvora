@@ -21,8 +21,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-specifier-resolution=node --test tests/**/*.test.ts",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:ui": "npm run build && playwright test --ui"
   },
   "dependencies": {
     "@upstash/qstash": "^2.11.3",

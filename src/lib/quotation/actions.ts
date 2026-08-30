@@ -18,7 +18,7 @@ import { log, safeErrorMessage } from "./log.ts";
 import { renderQuotationPdf } from "./pdf.ts";
 import { normalizePricingConfig } from "./pricing-config.ts";
 import { quotationStore } from "./store.ts";
-import type { QuotationRecord, QuotationStatus } from "./types.ts";
+import { isQueuedForAutoSend, type QuotationRecord, type QuotationStatus } from "./types.ts";
 
 export type ActionResult = { ok: true; message: string } | { ok: false; error: string };
 
@@ -41,6 +41,35 @@ function activityEntry(actor: string, action: string, detail?: string) {
 /** Statuses an administrator may set directly (never `sending` or `sent`). */
 const MANUAL_STATUSES: QuotationStatus[] = ["pending_review", "approved", "held", "cancelled"];
 
+/**
+ * Send a quotation whose review window closed while it was waiting on a human.
+ *
+ * The delayed job published at submission has long since fired and been skipped
+ * by the time a withheld quotation is approved, and the cron sweeper runs only
+ * daily on a Vercel Hobby schedule. There is nothing left to wait for once the
+ * deadline has passed, so releasing it dispatches straight away — through the
+ * same idempotent worker every other trigger uses, so a concurrent job or a
+ * double click still cannot send twice.
+ *
+ * Best-effort: a delivery failure leaves the status change intact and the
+ * quotation retriable, rather than losing the administrator's decision.
+ */
+async function sendOnRelease(record: QuotationRecord): Promise<boolean> {
+  try {
+    const result = await dispatchQuotation(
+      { store: quotationStore(), mailer: mailer() },
+      { id: record.id, trigger: "auto", actor: "System (released after deadline)" },
+    );
+    return "sent" in result && result.sent;
+  } catch (error) {
+    log.warn("release_dispatch_failed", {
+      quotationId: record.id,
+      error: safeErrorMessage(error),
+    });
+    return false;
+  }
+}
+
 export async function setQuotationStatusAction(
   id: string,
   status: QuotationStatus,
@@ -50,10 +79,15 @@ export async function setQuotationStatusAction(
     return { ok: false, error: "That status cannot be set manually." };
   }
 
+  // Captured inside the mutator so the comparison uses the record the change
+  // was actually applied to, not a stale read.
+  const before = { queued: false };
+
   try {
     const updated = await quotationStore().update(id, (record) => {
       // A quotation that already went out is final.
       if (record.status === "sent" || record.status === "sending") return null;
+      before.queued = isQueuedForAutoSend(record);
       return {
         ...record,
         status,
@@ -63,8 +97,22 @@ export async function setQuotationStatusAction(
 
     if (!updated) return { ok: false, error: "This quotation can no longer be changed." };
     log.info("admin_status_changed", { quotationId: id, number: updated.number, status, actor: user.name });
+
+    // Approving a withheld quotation, or resuming a held one, puts it back in
+    // the queue. If its window has already closed, release it now.
+    const overdue = new Date(updated.reviewDeadline).getTime() <= Date.now();
+    const released =
+      overdue && !before.queued && isQueuedForAutoSend(updated)
+        ? await sendOnRelease(updated)
+        : false;
+
     revalidateQuotations(id);
-    return { ok: true, message: `Marked as ${status.replace("_", " ")}.` };
+    return {
+      ok: true,
+      message: released
+        ? `Marked as ${status.replace("_", " ")} and emailed to the customer.`
+        : `Marked as ${status.replace("_", " ")}.`,
+    };
   } catch (error) {
     log.error("admin_status_failed", { quotationId: id, error: safeErrorMessage(error) });
     return { ok: false, error: "Could not update the quotation. Please try again." };

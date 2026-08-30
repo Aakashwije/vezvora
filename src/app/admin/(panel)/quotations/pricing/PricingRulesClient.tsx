@@ -73,6 +73,12 @@ export function PricingRulesClient({ config, version }: { config: string; versio
             terms. Percentages are fractions (0.18 = 18%). Saving increments the version stamped on
             new quotations; existing quotations keep the figures they were generated with.
           </p>
+          <p className={q.panelHint}>
+            <strong>autoSend</strong> decides which estimates are emailed without a human first.
+            Raise <code>minScore</code> or lower <code>maxTotal</code> to send fewer automatically;
+            set <code>enabled</code> to <code>false</code> to hold every estimate for approval.
+            Changes apply to new submissions only — a quotation keeps the verdict it was given.
+          </p>
 
           <textarea
             className={q.jsonEditor}

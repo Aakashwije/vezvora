@@ -21,7 +21,8 @@ import {
   normalizePricingConfig,
   type PricingConfig,
 } from "./pricing-config.ts";
-import { AUTO_SENDABLE_STATUSES, type QuotationRecord } from "./types.ts";
+import { normalizeConfidence } from "./confidence.ts";
+import { isQueuedForAutoSend, type QuotationRecord } from "./types.ts";
 
 const NAMESPACE = process.env.QUOTATION_DATA_KEY ?? "vezvora:quotation:v1";
 const LOCK_TTL_MS = 15_000;
@@ -71,8 +72,9 @@ function redisAdapter(redis: Redis): Adapter {
       await redis.set(key.record(record.id), record);
       await redis.zadd(key.index, { score: createdScore, member: record.id });
       // The pending set is the worker's queue: membership mirrors "still awaiting
-      // an automatic send", so a hold or a cancel silently drops out of it.
-      if (AUTO_SENDABLE_STATUSES.includes(record.status)) {
+      // an automatic send", so a hold, a cancel, or a confidence rule that
+      // withholds the estimate silently drops out of it.
+      if (isQueuedForAutoSend(record)) {
         await redis.zadd(key.pending, { score: deadlineScore, member: record.id });
       } else {
         await redis.zrem(key.pending, record.id);
@@ -154,7 +156,7 @@ function memoryAdapter(
       return [...state.records.values()]
         .filter(
           (record) =>
-            AUTO_SENDABLE_STATUSES.includes(record.status) &&
+            isQueuedForAutoSend(record) &&
             new Date(record.reviewDeadline).getTime() <= cutoffMs,
         )
         .sort((a, b) => +new Date(a.reviewDeadline) - +new Date(b.reviewDeadline))
@@ -201,6 +203,16 @@ type FileShape = {
 };
 
 /**
+ * Fill in fields a stored record may predate. Applied on every read path so
+ * neither the console nor the dispatch worker ever sees a partial record —
+ * an unassessed quotation is withheld from automatic sending rather than
+ * crashing or, worse, being sent unreviewed.
+ */
+function hydrate(record: QuotationRecord): QuotationRecord {
+  return { ...record, confidence: normalizeConfidence(record.confidence) };
+}
+
+/**
  * Development backend. Next bundles server actions and route handlers
  * separately, so more than one instance of this module can be alive in a single
  * `next start` process, each with its own cache. The file's modification time is
@@ -223,7 +235,9 @@ function fileAdapter(): Adapter {
       const parsed = JSON.parse(await readFile(file, "utf8")) as FileShape;
       state.records.clear();
       state.counters.clear();
-      for (const record of parsed.records ?? []) state.records.set(record.id, record);
+      // Hydrate on load: a record written before a field existed must not
+      // reach the worker half-formed.
+      for (const record of parsed.records ?? []) state.records.set(record.id, hydrate(record));
       for (const [year, value] of Object.entries(parsed.counters ?? {})) {
         state.counters.set(Number(year), value);
       }
@@ -286,14 +300,20 @@ export class QuotationStore {
     this.#adapter = adapter;
   }
 
+  /** Every read goes through here so hydration is applied exactly once. */
+  async #read(id: string): Promise<QuotationRecord | null> {
+    const record = await this.#adapter.readRecord(id);
+    return record ? hydrate(record) : null;
+  }
+
   async get(id: string): Promise<QuotationRecord | null> {
     if (!isQuotationId(id)) return null;
-    return this.#adapter.readRecord(id);
+    return this.#read(id);
   }
 
   async list(): Promise<QuotationRecord[]> {
     const ids = await this.#adapter.listIds();
-    const records = await Promise.all(ids.map((id) => this.#adapter.readRecord(id)));
+    const records = await Promise.all(ids.map((id) => this.#read(id)));
     return records.filter((record): record is QuotationRecord => record !== null);
   }
 
@@ -331,7 +351,7 @@ export class QuotationStore {
     const acquired = await this.acquire(id, token);
     if (!acquired) throw new Error("Quotation is busy; please retry.");
     try {
-      const current = await this.#adapter.readRecord(id);
+      const current = await this.#read(id);
       if (!current) return null;
       const next = await mutate(current);
       if (!next) return null;
@@ -355,10 +375,9 @@ export class QuotationStore {
   /** Quotations whose review window has elapsed and that may still auto-send. */
   async dueForDispatch(now = Date.now()): Promise<QuotationRecord[]> {
     const ids = await this.#adapter.pendingIdsDueBefore(now);
-    const records = await Promise.all(ids.map((id) => this.#adapter.readRecord(id)));
+    const records = await Promise.all(ids.map((id) => this.#read(id)));
     return records.filter(
-      (record): record is QuotationRecord =>
-        record !== null && AUTO_SENDABLE_STATUSES.includes(record.status),
+      (record): record is QuotationRecord => record !== null && isQueuedForAutoSend(record),
     );
   }
 
