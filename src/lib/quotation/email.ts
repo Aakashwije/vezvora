@@ -10,7 +10,7 @@ import { Resend } from "resend";
 import { siteConfig } from "../site.ts";
 import { adminEmail, appOrigin, fromEmail, replyToEmail, resendConfigured } from "./config.ts";
 import { formatMoney, formatRange } from "./pricing.ts";
-import type { QuotationRecord } from "./types.ts";
+import { mayAutoSend, type QuotationRecord } from "./types.ts";
 
 export type SendResult =
   | { ok: true; provider: string; messageId: string | null }
@@ -167,9 +167,17 @@ function adminEmailHtml(record: QuotationRecord): string {
       ${statRow("Phone", requirements.phone)}
     </table>
 
-    <div style="border:1px solid #f0d9a8;background:#fdf7e8;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#7a5b12;">
+    ${
+      mayAutoSend(record)
+        ? `<div style="border:1px solid #f0d9a8;background:#fdf7e8;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#7a5b12;">
       Auto-send at <strong>${escapeHtml(deadline)}</strong> unless you edit, hold or cancel it first.
-    </div>
+    </div>`
+        : `<div style="border:1px solid #f3c9c9;background:#fdf0f0;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#8c2020;">
+      <strong>This one will not send on its own.</strong><br />
+      ${escapeHtml(record.confidence.reviewReason ?? "Held for manual approval.")}
+      Approve it in the console to release it, or send it manually.
+    </div>`
+    }
 
     <p style="margin:0 0 18px;">
       <a href="${escapeHtml(link)}" style="display:inline-block;background:#23282f;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 20px;border-radius:10px;">
@@ -227,7 +235,9 @@ class ResendMailer implements Mailer {
     return this.send(
       {
         to: [to],
-        subject: `New estimate ${record.number} — ${record.requirements.projectName}`,
+        subject: mayAutoSend(record)
+          ? `New estimate ${record.number} — ${record.requirements.projectName}`
+          : `Approval needed: estimate ${record.number} — ${record.requirements.projectName}`,
         html: adminEmailHtml(record),
         replyTo: record.requirements.email,
       },
@@ -288,7 +298,8 @@ class ConsoleMailer implements Mailer {
 
   async notifyAdmin(record: QuotationRecord): Promise<SendResult> {
     console.info(
-      `[quotation] RESEND_API_KEY not set — would notify admin about ${record.number}.`,
+      `[quotation] RESEND_API_KEY not set — would notify admin about ${record.number}` +
+        `${mayAutoSend(record) ? "" : " (approval needed before it can send)"}.`,
     );
     return { ok: true, provider: "console", messageId: `console-admin-${record.id}` };
   }

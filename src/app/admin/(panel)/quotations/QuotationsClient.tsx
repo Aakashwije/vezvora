@@ -14,13 +14,25 @@ import {
   QUOTATION_PIPELINE,
   QUOTATION_STATUS_META,
   isAwaitingAutoSend,
+  needsApproval,
 } from "@/lib/quotation/status-meta";
 import type { QuotationStatus, QuotationSummary } from "@/lib/quotation/types";
 import { cx } from "@/lib/cx";
 import styles from "@/components/admin/admin.module.css";
 import quotationStyles from "@/components/admin/quotations.module.css";
 
-type StatusFilter = "all" | QuotationStatus;
+/**
+ * "Needs approval" is a view rather than a status: those records sit in
+ * `pending_review` or `updated`, but the confidence rules withheld them, so
+ * they are the queue an administrator actually has to work through.
+ */
+type StatusFilter = "all" | "needs_approval" | QuotationStatus;
+
+const FILTER_LABEL: Record<string, string> = { all: "All", needs_approval: "Needs approval" };
+
+function filterLabel(value: StatusFilter): string {
+  return FILTER_LABEL[value] ?? QUOTATION_STATUS_META[value as QuotationStatus].label;
+}
 
 function money(value: number, currency: string): string {
   try {
@@ -41,7 +53,16 @@ export function QuotationsClient({ quotations }: { quotations: QuotationSummary[
   const [status, setStatus] = useState<StatusFilter>("all");
 
   const awaiting = useMemo(
-    () => quotations.filter((quotation) => isAwaitingAutoSend(quotation.status)).length,
+    () =>
+      quotations.filter((quotation) =>
+        isAwaitingAutoSend(quotation.status, quotation.autoSend),
+      ).length,
+    [quotations],
+  );
+
+  const awaitingApproval = useMemo(
+    () =>
+      quotations.filter((quotation) => needsApproval(quotation.status, quotation.autoSend)).length,
     [quotations],
   );
 
@@ -54,17 +75,26 @@ export function QuotationsClient({ quotations }: { quotations: QuotationSummary[
   }, [awaiting, router]);
 
   const counts = useMemo(() => {
-    const result: Record<string, number> = { all: quotations.length };
+    const result: Record<string, number> = {
+      all: quotations.length,
+      needs_approval: awaitingApproval,
+    };
     for (const value of QUOTATION_PIPELINE) {
       result[value] = quotations.filter((quotation) => quotation.status === value).length;
     }
     return result;
-  }, [quotations]);
+  }, [quotations, awaitingApproval]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return quotations
-      .filter((quotation) => (status === "all" ? true : quotation.status === status))
+      .filter((quotation) => {
+        if (status === "all") return true;
+        if (status === "needs_approval") {
+          return needsApproval(quotation.status, quotation.autoSend);
+        }
+        return quotation.status === status;
+      })
       .filter((quotation) =>
         needle === ""
           ? true
@@ -85,7 +115,7 @@ export function QuotationsClient({ quotations }: { quotations: QuotationSummary[
     <>
       <PageHeader
         title="Quotations"
-        subtitle={`${quotations.length} total · ${awaiting} awaiting review`}
+        subtitle={`${quotations.length} total · ${awaiting} sending automatically · ${awaitingApproval} needing approval`}
       >
         <Button href="/admin/quotations/pricing" variant="outline" size="sm" icon="dollar">
           Pricing rules
@@ -94,14 +124,14 @@ export function QuotationsClient({ quotations }: { quotations: QuotationSummary[
 
       <div className={styles.content}>
         <div className={styles.segment} style={{ marginBottom: 16 }}>
-          {(["all", ...QUOTATION_PIPELINE] as StatusFilter[]).map((value) => (
+          {(["all", "needs_approval", ...QUOTATION_PIPELINE] as StatusFilter[]).map((value) => (
             <button
               key={value}
               type="button"
               className={cx(styles.segItem, status === value && styles.segItemActive)}
               onClick={() => setStatus(value)}
             >
-              {value === "all" ? "All" : QUOTATION_STATUS_META[value].label}
+              {filterLabel(value)}
               <span className={styles.segCount}>{counts[value] ?? 0}</span>
             </button>
           ))}
@@ -175,6 +205,7 @@ export function QuotationsClient({ quotations }: { quotations: QuotationSummary[
                       <QuotationCountdown
                         deadline={quotation.reviewDeadline}
                         status={quotation.status}
+                        autoSend={quotation.autoSend}
                         compact
                       />
                     </td>

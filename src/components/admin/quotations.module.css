@@ -26,6 +26,11 @@
   color: var(--green-deep);
   font-weight: 700;
 }
+/* Withheld by the confidence rules: no timer, a standing call to action. */
+.countdownHold {
+  color: #b26a00;
+  font-weight: 700;
+}
 .countdownDot {
   width: 7px;
   height: 7px;
@@ -170,6 +175,57 @@
   font-weight: 700;
   color: var(--ink);
   margin-bottom: 2px;
+}
+
+/* Confidence + approval */
+.confidenceChip {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.approval {
+  display: flex;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(178, 106, 0, 0.28);
+  background: rgba(178, 106, 0, 0.06);
+}
+.approvalIcon {
+  color: #b26a00;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.approvalBody {
+  min-width: 0;
+}
+.approvalTitle {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.approvalReason {
+  margin: 0;
+  font-size: 13.5px;
+  color: #7a5b12;
+  line-height: 1.5;
+}
+.approvalFlags {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.approvalHint {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--faint-2);
 }
 
 /* Action bar */

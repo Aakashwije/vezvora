@@ -31,6 +31,29 @@ export type DiscountTier = { minSubtotal: number; pct: number; label: string };
 export type ComplexityStep = { minFeatures: number; multiplier: number };
 export type PaymentTerm = { label: string; pct: number };
 
+/**
+ * When an estimate may be emailed without a human seeing it first.
+ *
+ * Ordinary, well-specified, lower-value work goes out automatically at the
+ * review deadline. Anything expensive, bespoke or thinly described waits for an
+ * administrator to approve it. Stored with the rate card so the thresholds can
+ * be tuned from the console without a deploy.
+ */
+export type AutoSendRules = {
+  /** Master switch. When false every estimate waits for manual approval. */
+  enabled: boolean;
+  /** Estimates whose upper bound reaches this value always wait. */
+  maxTotal: number;
+  /** Confidence score (0-100) an estimate must reach to send automatically. */
+  minScore: number;
+  /** Service categories that are inherently bespoke and always wait. */
+  holdServices: ServiceCategory[];
+  minDescriptionChars: number;
+  minFeatures: number;
+  maxIntegrations: number;
+  maxPlatforms: number;
+};
+
 export type PricingConfig = {
   /** Bumped whenever rates change; stamped onto every generated document. */
   version: number;
@@ -76,6 +99,7 @@ export type PricingConfig = {
   roundTo: number;
   validityDays: number;
   paymentSchedule: PaymentTerm[];
+  autoSend: AutoSendRules;
 };
 
 export const DEFAULT_PRICING_CONFIG: PricingConfig = {
@@ -204,6 +228,17 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
     { label: "On development milestone completion", pct: 0.3 },
     { label: "On delivery & handover", pct: 0.2 },
   ],
+  autoSend: {
+    enabled: true,
+    // Above roughly this figure the number itself warrants a conversation.
+    maxTotal: 2_500_000,
+    minScore: 70,
+    holdServices: ["custom_system", "other"],
+    minDescriptionChars: 220,
+    minFeatures: 3,
+    maxIntegrations: 6,
+    maxPlatforms: 3,
+  },
 };
 
 function isFiniteNumber(value: unknown): value is number {
@@ -231,6 +266,36 @@ function mergePct(stored: unknown, fallback: number): number {
 
 function mergePositive(stored: unknown, fallback: number): number {
   return isFiniteNumber(stored) && stored > 0 ? stored : fallback;
+}
+
+/**
+ * Normalise the automatic-send rules. Anything unparseable falls back to the
+ * default, and `enabled` must be an explicit `false` to switch sending off —
+ * a corrupt blob must not disable the workflow by accident.
+ */
+function mergeAutoSend(stored: unknown, fallback: AutoSendRules): AutoSendRules {
+  const source = (stored ?? {}) as Record<string, unknown>;
+  const count = (value: unknown, min: number, max: number, defaultValue: number): number =>
+    isFiniteNumber(value) ? Math.min(Math.max(Math.round(value), min), max) : defaultValue;
+
+  const holdServices = Array.isArray(source.holdServices)
+    ? source.holdServices.filter((entry): entry is ServiceCategory =>
+        SERVICE_CATEGORIES.includes(entry as ServiceCategory),
+      )
+    : fallback.holdServices;
+
+  return {
+    enabled: source.enabled === undefined ? fallback.enabled : source.enabled !== false,
+    maxTotal:
+      isFiniteNumber(source.maxTotal) && source.maxTotal > 0 ? source.maxTotal : fallback.maxTotal,
+    minScore: count(source.minScore, 0, 100, fallback.minScore),
+    // De-duplicated so a repeated entry cannot bloat the stored config.
+    holdServices: [...new Set(holdServices)],
+    minDescriptionChars: count(source.minDescriptionChars, 0, 5_000, fallback.minDescriptionChars),
+    minFeatures: count(source.minFeatures, 0, 64, fallback.minFeatures),
+    maxIntegrations: count(source.maxIntegrations, 0, 64, fallback.maxIntegrations),
+    maxPlatforms: count(source.maxPlatforms, 0, 64, fallback.maxPlatforms),
+  };
 }
 
 /**
@@ -329,5 +394,6 @@ export function normalizePricingConfig(stored: unknown): PricingConfig {
       ? Math.round(source.validityDays)
       : d.validityDays,
     paymentSchedule: paymentSchedule.length ? paymentSchedule : d.paymentSchedule,
+    autoSend: mergeAutoSend(source.autoSend, d.autoSend),
   };
 }

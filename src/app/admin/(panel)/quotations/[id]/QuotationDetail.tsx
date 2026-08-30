@@ -40,8 +40,13 @@ import {
   setQuotationStatusAction,
   type ActionResult,
 } from "@/lib/quotation/actions";
-import { EMAIL_STATE_LABEL, QUOTATION_STATUS_META } from "@/lib/quotation/status-meta";
-import type { QuotationLineItem, QuotationRecord } from "@/lib/quotation/types";
+import {
+  CONFIDENCE_META,
+  EMAIL_STATE_LABEL,
+  QUOTATION_STATUS_META,
+  needsApproval,
+} from "@/lib/quotation/status-meta";
+import { mayAutoSend, type QuotationLineItem, type QuotationRecord } from "@/lib/quotation/types";
 import { cx } from "@/lib/cx";
 import styles from "@/components/admin/admin.module.css";
 import q from "@/components/admin/quotations.module.css";
@@ -108,6 +113,9 @@ export function QuotationDetail({ record }: { record: QuotationRecord }) {
   const currency = record.document.totals.currency;
   const locked = record.status === "sent" || record.status === "sending";
   const meta = QUOTATION_STATUS_META[record.status];
+  const confidence = CONFIDENCE_META[record.confidence.level];
+  const autoSend = mayAutoSend(record);
+  const awaitingApproval = needsApproval(record.status, autoSend);
 
   /* Live preview of the totals an administrator is editing. The server
      recomputes these authoritatively on save — this mirrors its arithmetic,
@@ -228,14 +236,48 @@ export function QuotationDetail({ record }: { record: QuotationRecord }) {
         {/* Status + actions */}
         <div className={q.banner} style={{ marginBottom: 18 }}>
           <QuotationStatusPill status={record.status} />
+          <span
+            className={q.confidenceChip}
+            style={{ color: confidence.color, background: confidence.bg }}
+            title={`Confidence score ${record.confidence.score} out of 100`}
+          >
+            {confidence.label}
+          </span>
           <span className={q.bannerText}>
             <strong className={q.bannerTitle}>{meta.description}</strong>
             Submitted <TimeAgo iso={record.createdAt} /> · Revision {record.revision} · Email{" "}
             {EMAIL_STATE_LABEL[record.email.state].toLowerCase()}
             {record.sentAt ? ` on ${formatDateTime(record.sentAt)}` : ""}
           </span>
-          <QuotationCountdown deadline={record.reviewDeadline} status={record.status} />
+          <QuotationCountdown
+            deadline={record.reviewDeadline}
+            status={record.status}
+            autoSend={autoSend}
+          />
         </div>
+
+        {awaitingApproval && (
+          <div className={q.approval} role="status" style={{ marginBottom: 18 }}>
+            <CircleAlert size={18} className={q.approvalIcon} aria-hidden />
+            <div className={q.approvalBody}>
+              <strong className={q.approvalTitle}>
+                This estimate will not be emailed on its own
+              </strong>
+              <p className={q.approvalReason}>{record.confidence.reviewReason}</p>
+              {record.confidence.flags.length > 0 && (
+                <ul className={q.approvalFlags}>
+                  {record.confidence.flags.map((flag) => (
+                    <li key={flag.code}>{flag.label}</li>
+                  ))}
+                </ul>
+              )}
+              <p className={q.approvalHint}>
+                Approve to release it — it sends at the review deadline, or within moments if that
+                has already passed. Send now emails it immediately.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className={q.actionBar} style={{ marginBottom: 18 }}>
           <button
@@ -275,7 +317,7 @@ export function QuotationDetail({ record }: { record: QuotationRecord }) {
           )}
           <button
             type="button"
-            className={q.action}
+            className={cx(q.action, awaitingApproval && q.actionPrimary)}
             onClick={() => run(() => setQuotationStatusAction(record.id, "approved"))}
             disabled={pending || locked || record.status === "approved"}
           >

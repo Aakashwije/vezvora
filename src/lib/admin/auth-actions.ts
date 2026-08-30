@@ -16,7 +16,8 @@ export type LoginState = { error?: string };
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8 hours
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const MAX_LOGIN_ATTEMPTS = 5;
-const loginAttempts = new Map<string, number[]>();
+/** Failed sign-ins per key. A successful sign-in clears the entry. */
+const loginFailures = new Map<string, number[]>();
 
 /** Only allow redirecting back to an internal admin path. */
 function safeDestination(from: unknown): string {
@@ -33,16 +34,22 @@ async function loginKey(email: string): Promise<string> {
   return `${ip}:${email.toLowerCase()}`;
 }
 
-async function tooManyAttempts(email: string): Promise<boolean> {
-  const key = await loginKey(email);
+function recentFailures(key: string): number[] {
   const now = Date.now();
-  const recent = (loginAttempts.get(key) ?? []).filter((time) => now - time < LOGIN_WINDOW_MS);
-  if (recent.length >= MAX_LOGIN_ATTEMPTS) {
-    loginAttempts.set(key, recent);
-    return true;
-  }
-  loginAttempts.set(key, [...recent, now]);
-  return false;
+  return (loginFailures.get(key) ?? []).filter((time) => now - time < LOGIN_WINDOW_MS);
+}
+
+/**
+ * Throttle brute-force guessing.
+ *
+ * Only failures count. A correct password clears the record, so signing in
+ * repeatedly — a second device, a new browser, a session that expired — is
+ * never what locks an administrator out.
+ */
+function lockedOut(key: string): boolean {
+  const recent = recentFailures(key);
+  loginFailures.set(key, recent);
+  return recent.length >= MAX_LOGIN_ATTEMPTS;
 }
 
 /** Server action: validate credentials and open a signed session cookie. */
@@ -57,14 +64,17 @@ export async function login(
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  if (await tooManyAttempts(email)) {
+  const throttleKey = await loginKey(email);
+  if (lockedOut(throttleKey)) {
     return { error: "Too many sign-in attempts. Please try again later." };
   }
 
   const ok = email.toLowerCase() === DEMO_USER.email && verifyAdminPassword(password);
   if (!ok) {
+    loginFailures.set(throttleKey, [...recentFailures(throttleKey), Date.now()]);
     return { error: "Invalid email or password." };
   }
+  loginFailures.delete(throttleKey);
 
   const token = signSession({
     email: DEMO_USER.email,

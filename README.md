@@ -360,7 +360,7 @@ save status pending_review  →  render PDF  →  notify admin  →  schedule jo
 Admin may edit / approve / hold / cancel / send now      (10-minute window)
        ↓
 At the deadline the worker reloads the record from the database:
-  pending_review · updated · approved  →  send the latest quotation
+  pending_review · updated · approved  →  send, if the confidence rules cleared it
   held · cancelled · sending · sent · failed  →  do nothing
 ```
 
@@ -368,6 +368,52 @@ Status workflow: `pending_review → updated → approved → sending → sent`,
 `held`, `cancelled` and `failed` as the off-ramps. Sending is claimed under a
 per-record lock and stamped with an idempotency key, so a duplicated job, a
 double click, or a QStash retry can never send twice.
+
+### Confidence-based sending
+
+Not every estimate should be emailed unattended. At submission the server
+assesses the brief and records a verdict on the quotation; only estimates that
+clear it are queued for the automatic worker. Everything else waits for an
+administrator, indefinitely — a withheld quotation never enters the send queue,
+so the deadline simply passes without incident.
+
+**Always withheld** (no score can override):
+
+- the estimate's upper bound reaches `autoSend.maxTotal` (default LKR 2,500,000)
+- a bespoke service category (`autoSend.holdServices`, default custom / other)
+- `autoSend.enabled: false`, which withholds every estimate
+
+**Scored signals**, deducted from 100; below `autoSend.minScore` (default 70)
+the estimate waits:
+
+| Signal | Deduction |
+| ------ | --------- |
+| Description shorter than `minDescriptionChars` | 35 — enough on its own |
+| Fewer than `minFeatures` feature areas | 20 |
+| More integrations than `maxIntegrations` | 15 |
+| More platforms than `maxPlatforms` | 15 |
+| Urgent timeline | 10 |
+| Estimate above the customer's stated budget band | 20 |
+
+Confidence *level* describes the estimate; *autoSend* is the separate policy
+question. A large, perfectly specified project scores highly and is still
+withheld, because its size is what warrants a conversation.
+
+**Releasing one.** Pressing **Approve** in the console releases the estimate: it
+sends at the review deadline, or immediately if that has already passed — a
+withheld quotation usually sits well past its window, and the delayed job for it
+has long since fired and been skipped. **Send now** emails it at any point. Both
+go through the same idempotent worker, and both are recorded in the audit
+trail. Withheld requests are listed under the console's *Needs
+approval* filter, the admin notification email is subject-lined
+`Approval needed:`, and the row shows an approval prompt instead of a countdown.
+
+Thresholds live in the rate card at `/admin/quotations/pricing` under
+`autoSend`, so they are tunable without a deploy. A quotation keeps the verdict
+it was given; changing the rules affects new submissions only. A record stored
+before this feature existed, or with a malformed verdict, is treated as
+unassessed and withheld — an estimate is never emailed on the strength of
+missing data.
 
 ### Where the pieces live
 
@@ -377,6 +423,7 @@ double click, or a QStash retry can never send twice.
 | `src/lib/quotation/validation.ts`  | Schema validation, normalization, max lengths |
 | `src/lib/quotation/pricing-config.ts` | The rate card, and normalization of stored edits |
 | `src/lib/quotation/pricing.ts`     | Deterministic engine: line items, totals, range, schedule |
+| `src/lib/quotation/confidence.ts`  | Confidence scoring and the automatic-send rule |
 | `src/lib/quotation/store.ts`       | Repository (Upstash Redis / JSON file / in-memory) |
 | `src/lib/quotation/pdf.ts`         | A4 PDF renderer with letterhead background and pagination |
 | `src/lib/quotation/email.ts`       | Resend delivery, branded HTML, PDF attachment |
@@ -449,7 +496,8 @@ The rate card is stored in the backend and edited at
 **`/admin/quotations/pricing`** — base price per service, per-platform and
 per-feature rates, integrations, design tiers, scalability, urgency surcharge,
 maintenance, QA and project-management percentages, contingency, tax, discount
-tiers, the schedule model, validity, and payment terms. Saving increments the
+tiers, the schedule model, validity, payment terms, and the `autoSend` rules
+that decide which estimates send unattended. Saving increments the
 stored version, which is stamped on every quotation generated afterwards;
 existing quotations keep the figures they were produced with. Anything invalid
 in a saved edit falls back to the shipped default rather than producing broken
@@ -463,9 +511,13 @@ minutes), maximum input lengths, `requireAdmin()` on every admin action, signed
 job callbacks, atomic send claiming, idempotent delivery, an audit trail on each
 record, generic public error messages, and one-line JSON application logs.
 
-Totals, prices, statuses, quotation numbers and review deadlines are never
-accepted from the client — the browser sends requirements, and the server
-decides everything else.
+Totals, prices, statuses, quotation numbers, review deadlines and the
+confidence verdict are never accepted from the client — the browser sends
+requirements, and the server decides everything else.
+
+Sign-in throttling counts **failed** attempts only (5 per 15 minutes per IP and
+email); a correct password clears the record, so signing in repeatedly never
+locks an administrator out.
 
 ---
 
@@ -584,7 +636,7 @@ node --input-type=module -e "import { scryptSync, randomBytes } from 'node:crypt
 | `npm run lint`  | ESLint (flat config) across the project      |
 | `npm run typecheck` | TypeScript, no emit                      |
 | `npm test`      | Unit tests (`node --test`)                   |
-| `npm run test:e2e` | Playwright end-to-end suite               |
+| `npm run test:e2e` | Production build, then the Playwright suite |
 
 ---
 

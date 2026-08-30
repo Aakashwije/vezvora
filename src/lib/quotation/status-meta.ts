@@ -5,6 +5,7 @@
  * so the console's badges look and behave the same as the leads pipeline.
  */
 
+import type { ConfidenceLevel } from "./confidence.ts";
 import type { EmailDelivery, QuotationStatus } from "./types.ts";
 
 export const QUOTATION_STATUS_META: Record<
@@ -79,7 +80,28 @@ export const EMAIL_STATE_LABEL: Record<EmailDelivery["state"], string> = {
   failed: "Failed",
 };
 
-/** True while the record is still counting down to an automatic send. */
-export function isAwaitingAutoSend(status: QuotationStatus): boolean {
+export const CONFIDENCE_META: Record<
+  ConfidenceLevel,
+  { label: string; color: string; bg: string }
+> = {
+  high: { label: "High confidence", color: "#1f8f52", bg: "rgba(40,184,95,0.14)" },
+  medium: { label: "Medium confidence", color: "#b26a00", bg: "rgba(178,106,0,0.12)" },
+  low: { label: "Low confidence", color: "#ba1a1a", bg: "rgba(186,26,26,0.12)" },
+};
+
+/**
+ * True while the record is still counting down to an automatic send.
+ *
+ * `autoSend` is the confidence verdict carried on the record: a quotation can
+ * sit in `pending_review` and never send on its own, because the rules withheld
+ * it pending approval. Those show "needs approval" rather than a running timer.
+ */
+export function isAwaitingAutoSend(status: QuotationStatus, autoSend: boolean): boolean {
+  if (!autoSend) return false;
   return status === "pending_review" || status === "updated" || status === "approved";
+}
+
+/** True when a human must act before anything will be sent. */
+export function needsApproval(status: QuotationStatus, autoSend: boolean): boolean {
+  return !autoSend && (status === "pending_review" || status === "updated");
 }

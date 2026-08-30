@@ -1,9 +1,31 @@
+import type { ConfidenceAssessment } from "../../src/lib/quotation/confidence.ts";
 import { calculateQuotation } from "../../src/lib/quotation/pricing.ts";
 import { DEFAULT_PRICING_CONFIG } from "../../src/lib/quotation/pricing-config.ts";
 import type {
   QuotationRecord,
   QuotationRequirements,
 } from "../../src/lib/quotation/types.ts";
+
+/**
+ * Cleared for automatic sending.
+ *
+ * Deliberately fixed rather than derived from `assessConfidence`, so tests
+ * about dispatch mechanics are not perturbed when the confidence thresholds
+ * change. Tests that exercise the rules themselves set this explicitly.
+ */
+export function clearedConfidence(
+  overrides: Partial<ConfidenceAssessment> = {},
+): ConfidenceAssessment {
+  return {
+    level: "high",
+    score: 100,
+    autoSend: true,
+    flags: [],
+    reviewReason: null,
+    rulesVersion: DEFAULT_PRICING_CONFIG.version,
+    ...overrides,
+  };
+}
 
 export function requirements(
   overrides: Partial<QuotationRequirements> = {},
@@ -64,6 +86,7 @@ export function record(overrides: Partial<QuotationRecord> = {}): QuotationRecor
     source: "Instant estimate",
     scheduledJobId: null,
     scheduler: "none",
+    confidence: clearedConfidence(),
     ...overrides,
   };
 }

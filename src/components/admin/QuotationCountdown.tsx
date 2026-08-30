@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { cx } from "@/lib/cx";
-import { isAwaitingAutoSend } from "@/lib/quotation/status-meta";
+import { isAwaitingAutoSend, needsApproval } from "@/lib/quotation/status-meta";
 import type { QuotationStatus } from "@/lib/quotation/types";
 import styles from "./quotations.module.css";
 
@@ -56,15 +56,30 @@ function format(ms: number): string {
 type Props = {
   deadline: string;
   status: QuotationStatus;
+  /** The confidence verdict: false means nothing sends without approval. */
+  autoSend: boolean;
   /** Compact form for table cells. */
   compact?: boolean;
 };
 
 /** Live review-window countdown shown in the list and on the detail page. */
-export function QuotationCountdown({ deadline, status, compact }: Props) {
+export function QuotationCountdown({ deadline, status, autoSend, compact }: Props) {
   const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  if (!isAwaitingAutoSend(status)) {
+  // Withheld by the confidence rules: there is no deadline to count down to,
+  // because nothing will be sent until somebody approves it.
+  if (needsApproval(status, autoSend)) {
+    return (
+      <span
+        className={cx(styles.countdown, styles.countdownHold)}
+        title="Withheld by the automatic-send rules. Approve it to release the estimate."
+      >
+        {compact ? "Approval" : "Needs approval"}
+      </span>
+    );
+  }
+
+  if (!isAwaitingAutoSend(status, autoSend)) {
     return <span className={cx(styles.countdown, styles.countdownIdle)}>—</span>;
   }
 

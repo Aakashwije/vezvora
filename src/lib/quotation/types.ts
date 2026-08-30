@@ -1,5 +1,6 @@
 /** Domain types for the Instant Estimate quotation system. */
 
+import type { ConfidenceAssessment, ConfidenceLevel } from "./confidence.ts";
 import type {
   BudgetBand,
   DesignScope,
@@ -178,7 +179,28 @@ export type QuotationRecord = {
   /** Job scheduling bookkeeping. */
   scheduledJobId: string | null;
   scheduler: "qstash" | "cron" | "none";
+  /**
+   * Whether this estimate is ordinary enough to email without a human, and
+   * why. Computed once at submission from the rate card in force at the time.
+   */
+  confidence: ConfidenceAssessment;
 };
+
+/**
+ * May the automatic worker send this without a human approving it first?
+ *
+ * `approved` is the administrator's override — approving releases a quotation
+ * the confidence rules withheld. Everything else defers to the stored
+ * assessment, which withholds by default when it is absent.
+ */
+export function mayAutoSend(record: QuotationRecord): boolean {
+  return record.status === "approved" || record.confidence.autoSend;
+}
+
+/** True while the record is genuinely queued for the automatic worker. */
+export function isQueuedForAutoSend(record: QuotationRecord): boolean {
+  return AUTO_SENDABLE_STATUSES.includes(record.status) && mayAutoSend(record);
+}
 
 /** Compact projection used by the admin list view. */
 export type QuotationSummary = Pick<
@@ -201,6 +223,10 @@ export type QuotationSummary = Pick<
   rangeHigh: number;
   total: number;
   emailState: EmailDelivery["state"];
+  confidenceLevel: ConfidenceLevel;
+  /** False when the list row should show "needs approval" instead of a timer. */
+  autoSend: boolean;
+  reviewReason: string | null;
 };
 
 export function toSummary(record: QuotationRecord): QuotationSummary {
@@ -222,5 +248,8 @@ export function toSummary(record: QuotationRecord): QuotationSummary {
     rangeHigh: record.document.totals.rangeHigh,
     total: record.document.totals.total,
     emailState: record.email.state,
+    confidenceLevel: record.confidence.level,
+    autoSend: mayAutoSend(record),
+    reviewReason: record.confidence.reviewReason,
   };
 }

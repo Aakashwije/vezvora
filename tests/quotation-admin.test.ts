@@ -9,7 +9,11 @@ import {
   normalizeEditPatch,
 } from "../src/lib/quotation/admin.ts";
 import { DEFAULT_PRICING_CONFIG } from "../src/lib/quotation/pricing-config.ts";
-import { QUOTATION_STATUS_META, isAwaitingAutoSend } from "../src/lib/quotation/status-meta.ts";
+import {
+  QUOTATION_STATUS_META,
+  isAwaitingAutoSend,
+  needsApproval,
+} from "../src/lib/quotation/status-meta.ts";
 import { QUOTATION_STATUSES, toSummary } from "../src/lib/quotation/types.ts";
 import { record } from "./helpers/fixtures.ts";
 
@@ -334,11 +338,23 @@ test("every status has presentation metadata", () => {
 });
 
 test("only pre-send statuses show a countdown", () => {
-  assert.equal(isAwaitingAutoSend("pending_review"), true);
-  assert.equal(isAwaitingAutoSend("updated"), true);
-  assert.equal(isAwaitingAutoSend("approved"), true);
+  assert.equal(isAwaitingAutoSend("pending_review", true), true);
+  assert.equal(isAwaitingAutoSend("updated", true), true);
+  assert.equal(isAwaitingAutoSend("approved", true), true);
   for (const status of ["held", "cancelled", "sending", "sent", "failed"] as const) {
-    assert.equal(isAwaitingAutoSend(status), false, status);
+    assert.equal(isAwaitingAutoSend(status, true), false, status);
+  }
+});
+
+test("a withheld quotation shows an approval prompt rather than a countdown", () => {
+  assert.equal(isAwaitingAutoSend("pending_review", false), false);
+  assert.equal(needsApproval("pending_review", false), true);
+  assert.equal(needsApproval("updated", false), true);
+  // Approving releases it, so the timer comes back.
+  assert.equal(needsApproval("approved", true), false);
+  // A hold or a cancel is its own decision, not an outstanding approval.
+  for (const status of ["held", "cancelled", "sent", "failed"] as const) {
+    assert.equal(needsApproval(status, false), false, status);
   }
 });
 
