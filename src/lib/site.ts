@@ -13,8 +13,8 @@ export const siteConfig = {
   description:
     "We build the platforms that power tomorrow's leading enterprises.",
   email: "vezvoraa@gmail.com",
-  phone: "+94 71 357 9967",
-  whatsappUrl: "https://wa.me/94713579967",
+  phone: "+94 70 156 6435",
+  whatsappUrl: "https://wa.me/94701566435",
   office: "193/12 , Prasanna Uyana , Mattegoda , Sri Lanka",
 };
 
@@ -40,6 +40,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
   {
     title: "Resources",
     links: [
+      { label: "Instant estimate", href: "/quotation" },
       { label: "Case studies", href: "/work" },
       { label: "Contact", href: "/contact" },
     ],

@@ -13,6 +13,13 @@ export const metadata: Metadata = {
     "Transparent engagements for every stage — fixed-scope starting points or a fully bespoke partnership, always beginning with a clear milestone plan.",
 };
 
+const ESTIMATE_STEPS = [
+  "Describe the product and the platforms it runs on",
+  "Pick the features and integrations you need",
+  "Set your design scope, scale, and timeline",
+  "Receive an itemised PDF quotation by email",
+];
+
 export default function PricingPage() {
   return (
     <>
@@ -39,6 +46,43 @@ export default function PricingPage() {
 
       <div className="container">
         <PricingTiers />
+
+        <section className={styles.estimate} id="instant-estimate">
+          <Reveal>
+            <div className={styles.estimateCard}>
+              <span className={styles.estimateBlob} aria-hidden />
+              <div className={styles.estimateBody}>
+                <Eyebrow tone="light">Instant estimate</Eyebrow>
+                <h2 className={styles.estimateTitle}>
+                  Get an instant estimate for your project.
+                </h2>
+                <p className={styles.estimateText}>
+                  Answer five short questions and our estimator itemises your scope, prices every
+                  platform and feature, and emails you an approximate PDF quotation with a delivery
+                  window — usually within minutes.
+                </p>
+                <div className={styles.estimateActions}>
+                  <Button href="/quotation" variant="accent" size="lg" icon="arrow_forward">
+                    Get an instant estimate
+                  </Button>
+                  <Button href="/contact" variant="outline" size="lg">
+                    Talk to an engineer
+                  </Button>
+                </div>
+              </div>
+              <ol className={styles.estimateSteps}>
+                {ESTIMATE_STEPS.map((step, index) => (
+                  <li key={step} className={styles.estimateStep}>
+                    <span className={styles.estimateStepNum} aria-hidden>
+                      {index + 1}
+                    </span>
+                    <span className={styles.estimateStepText}>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </Reveal>
+        </section>
 
         <section className={styles.noteWrap}>
           <Reveal>

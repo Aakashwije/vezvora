@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Inbox,
+  ReceiptText,
   FolderKanban,
   Layers,
   CircleDollarSign,
@@ -30,7 +31,7 @@ type NavItem = {
   href?: string;
   icon: LucideIcon;
   soon?: boolean;
-  badgeKey?: "newLeads";
+  badgeKey?: "newLeads" | "pendingQuotations";
 };
 
 type NavSection = { title: string; items: NavItem[] };
@@ -42,7 +43,15 @@ const SECTIONS: NavSection[] = [
   },
   {
     title: "Sales",
-    items: [{ label: "Leads", href: "/admin/leads", icon: Inbox, badgeKey: "newLeads" }],
+    items: [
+      { label: "Leads", href: "/admin/leads", icon: Inbox, badgeKey: "newLeads" },
+      {
+        label: "Quotations",
+        href: "/admin/quotations",
+        icon: ReceiptText,
+        badgeKey: "pendingQuotations",
+      },
+    ],
   },
   {
     title: "Content",
@@ -72,7 +81,15 @@ const SECTIONS: NavSection[] = [
   },
 ];
 
-export function Sidebar({ user, newLeads }: { user: AdminUser; newLeads: number }) {
+export function Sidebar({
+  user,
+  newLeads,
+  pendingQuotations,
+}: {
+  user: AdminUser;
+  newLeads: number;
+  pendingQuotations: number;
+}) {
   const pathname = usePathname();
 
   const isActive = (href?: string) =>
@@ -96,7 +113,9 @@ export function Sidebar({ user, newLeads }: { user: AdminUser; newLeads: number 
             {section.items.map((item) => {
               const Glyph = item.icon;
               const active = isActive(item.href);
-              const badge = item.badgeKey === "newLeads" && newLeads > 0 ? newLeads : null;
+              const counts = { newLeads, pendingQuotations };
+              const count = item.badgeKey ? counts[item.badgeKey] : 0;
+              const badge = count > 0 ? count : null;
 
               if (item.soon || !item.href) {
                 return (

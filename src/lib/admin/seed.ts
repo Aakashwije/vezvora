@@ -9,8 +9,8 @@ export const teamMembers: TeamMember[] = [
 
 export const seedSettings: SiteSettings = {
   email: "vezvoraa@gmail.com",
-  phone: "+94 71 357 9967",
-  whatsappUrl: "https://wa.me/94713579967",
+  phone: "+94 70 156 6435",
+  whatsappUrl: "https://wa.me/94701566435",
   office: "193/12, Prasanna Uyana, Mattegoda, Sri Lanka",
   metaTitle: "Vezvora — Software that moves your business forward",
   metaDescription:
