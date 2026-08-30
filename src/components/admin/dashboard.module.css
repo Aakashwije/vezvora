@@ -1,0 +1,483 @@
+/* Dashboard styles.
+   Companion to admin.module.css — the shell, cards, tables and stat tiles
+   still come from there; only the action centre and the range control live
+   here. */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------- Date range control ---------------- */
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rangeGroup {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+.rangeItem {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.rangeItem:hover {
+  color: var(--ink);
+}
+.rangeItemActive {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+}
+.rangeCustom {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rangeDate {
+  padding: 7px 9px;
+  border: 1px solid var(--border-2);
+  border-radius: 9px;
+  background: #fff;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  color: var(--ink);
+  outline: none;
+}
+.rangeDate:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(40, 184, 95, 0.14);
+}
+.rangeDash {
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+/* ---------------- Panels ---------------- */
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 22px;
+}
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.panelTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.panelCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.panelHint {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.feedback {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.feedbackOk {
+  color: var(--green-deep);
+}
+.feedbackError {
+  color: #ba1a1a;
+}
+
+/* ---------------- Action centre ---------------- */
+
+.allClear {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(40, 184, 95, 0.07);
+  border: 1px solid rgba(40, 184, 95, 0.22);
+  color: var(--green-deep);
+}
+.allClear strong {
+  display: block;
+  font-size: 14px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.allClear p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.group {
+  min-width: 0;
+}
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.groupLabel {
+  color: inherit;
+}
+.groupCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 10.5px;
+  letter-spacing: 0;
+}
+.critical {
+  color: #ba1a1a;
+}
+.urgent {
+  color: #b26a00;
+}
+.attention {
+  color: #1d63c9;
+}
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+.row:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card);
+}
+.rowBusy {
+  opacity: 0.55;
+  pointer-events: none;
+}
+.rowMain {
+  min-width: 0;
+}
+.rowTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rowLink {
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.rowLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rowSubtitle {
+  font-size: 12.5px;
+  color: var(--muted);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.rowReason {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--faint-2);
+  line-height: 1.45;
+}
+.rowSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  white-space: nowrap;
+}
+.rowAmount {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.rowAge,
+.rowClock {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+}
+.rowClock {
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.rowClockDue {
+  color: #b26a00;
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 9px;
+  border: 1px solid var(--border-2);
+  background: #fff;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.action:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--surface-muted);
+}
+.action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.actionPrimary {
+  border-color: transparent;
+  background: var(--ink);
+  color: #fff;
+}
+.actionPrimary:hover:not(:disabled) {
+  background: #111418;
+  color: #fff;
+}
+.actionGhost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--green-deep);
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.actionGhost:hover {
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.assign {
+  display: inline-flex;
+}
+.assignSelect {
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border-2);
+  background: #fff;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+  outline: none;
+}
+.assignSelect:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(40, 184, 95, 0.14);
+}
+
+/* ---------------- KPI tiles ---------------- */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.kpi {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+.kpiLabel {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 8px;
+}
+.kpiValue {
+  font-family: var(--font-ui);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.kpiValueMuted {
+  color: var(--faint-2);
+}
+.kpiHint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 1080px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  /* Rows become readable stacks rather than squeezed columns. */
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .rowSide {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+  .rowActions {
+    justify-content: flex-start;
+  }
+  .action,
+  .assignSelect {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .kpiGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .kpi {
+    padding: 12px 13px;
+  }
+  .kpiLabel {
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+  .kpiValue {
+    font-size: 19px;
+  }
+  .kpiHint {
+    font-size: 11.5px;
+    margin-top: 4px;
+  }
+  .panel {
+    padding: 16px 15px;
+  }
+  .range {
+    width: 100%;
+  }
+  .rangeGroup {
+    flex: 1 1 auto;
+  }
+  .rangeItem {
+    flex: 1 1 auto;
+    padding: 7px 8px;
+  }
+}
+
+/* Two-up is kept well down the range: six single-column tiles would push the
+   action centre — the point of the page — below the fold on a phone. */
+@media (max-width: 359px) {
+  .kpiGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

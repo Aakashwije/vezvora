@@ -305,7 +305,7 @@ gated by middleware; the marketing chrome is swapped out via `SiteChrome`.
 | Route              | Purpose                                                                 |
 | ------------------ | ----------------------------------------------------------------------- |
 | `/admin/login`     | Server-action login → `httpOnly` session cookie                          |
-| `/admin`           | Dashboard — KPIs, pipeline funnel, project-type & lead breakdown, recent leads |
+| `/admin`           | Dashboard — action centre, business KPIs, lead & quotation pipelines, recent leads |
 | `/admin/leads`     | Leads inbox — search, status/owner filters, pipeline, detail drawer (notes, assignment, WhatsApp/email quick-reply), CSV export |
 | `/admin/content`   | Work CMS — add / edit / reorder / feature-toggle / delete projects       |
 | `/admin/settings`  | Site details, SEO defaults, and team                                     |
@@ -323,6 +323,34 @@ strong random value in production. `ADMIN_PASSWORD_HASH` accepts
 `UPSTASH_REDIS_REST_*` or `KV_REST_API_*` credential pair is configured. All
 admin mutations go through authenticated server actions in
 `src/lib/admin/actions.ts`.
+
+### Dashboard
+
+The overview answers two questions: *what needs me right now*, and *how is the
+business doing*. Both are aggregated on the server in `src/lib/admin/dashboard.ts`
+— the browser receives figures, not raw records to recompute.
+
+**Action centre.** One queue of everything waiting on a person, ordered by
+severity and then oldest-first, because the item that has waited longest is the
+one most likely to be forgotten.
+
+| Group | What it catches |
+| ----- | --------------- |
+| Failed delivery | A quotation the provider rejected |
+| Needs approval | A quotation the confidence rules withheld |
+| Sending soon | A cleared quotation inside ten minutes of its deadline |
+| Unassigned leads | A new enquiry with no owner |
+| Leads without follow-up | Contacted or qualified, untouched for five days |
+
+Each row carries its decision inline — Review, Approve, Hold, Send, Retry, or
+an owner picker — so routine cases never need the record opened. A quotation
+contributes at most one row: an approval outranks its own countdown.
+
+**KPIs** respect the period control (7 / 30 / 90 days, or a custom range), which
+lives in the URL so it survives a refresh and can be sent to a colleague.
+Pipeline value is deliberately a snapshot of everything unsent rather than a
+range figure. *Lead to quotation* joins the two systems on the customer's email
+address — the only identity both currently carry.
 
 Public contact submissions flow straight into the console:
 

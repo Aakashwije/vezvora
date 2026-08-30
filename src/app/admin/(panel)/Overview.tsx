@@ -4,90 +4,159 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { ActionCentre } from "@/components/admin/ActionCentre";
+import { DateRangeControl } from "@/components/admin/DateRangeControl";
 import { PageHeader } from "@/components/admin/PageHeader";
-import { StatCard } from "@/components/admin/StatCard";
 import { StatusPill } from "@/components/admin/StatusPill";
 import { Avatar } from "@/components/admin/Avatar";
+import { TimeAgo } from "@/components/admin/TimeAgo";
 import { memberById } from "@/lib/admin/store";
 import { STATUS_META, PIPELINE } from "@/lib/admin/status";
-import { relativeTime } from "@/lib/admin/format";
-import type { Lead } from "@/lib/admin/types";
+import {
+  compactMoney,
+  formatDuration,
+  type ActionGroup,
+  type DashboardKpis,
+  type DateRange,
+} from "@/lib/admin/dashboard";
+import type { Lead, TeamMember } from "@/lib/admin/types";
+import { QUOTATION_PIPELINE, QUOTATION_STATUS_META } from "@/lib/quotation/status-meta";
+import type { QuotationSummary } from "@/lib/quotation/types";
 import styles from "@/components/admin/admin.module.css";
+import d from "@/components/admin/dashboard.module.css";
 
-export function Overview({ leads }: { leads: Lead[] }) {
+type Props = {
+  leads: Lead[];
+  quotations: QuotationSummary[];
+  kpis: DashboardKpis;
+  groups: ActionGroup[];
+  range: DateRange;
+  team: TeamMember[];
+};
+
+type Tile = { label: string; value: string; hint?: string; muted?: boolean };
+
+export function Overview({ leads, quotations, kpis, groups, range, team }: Props) {
   const router = useRouter();
 
-  const stats = useMemo(() => {
-    const total = leads.length;
-    const newLeads = leads.filter((l) => l.status === "new").length;
-    const open = leads.filter((l) => ["new", "contacted", "qualified"].includes(l.status)).length;
-    const won = leads.filter((l) => l.status === "won").length;
-    const decided = leads.filter((l) => l.status === "won" || l.status === "lost").length;
-    const winRate = decided ? Math.round((won / decided) * 100) : 0;
+  const tiles = useMemo<Tile[]>(
+    () => [
+      {
+        label: "New leads",
+        value: String(kpis.newLeads),
+        hint: range.label.toLowerCase(),
+      },
+      {
+        label: "Pipeline value",
+        value: compactMoney(kpis.pendingValue, kpis.currency),
+        hint: `${kpis.pendingCount} quotation${kpis.pendingCount === 1 ? "" : "s"} not yet sent`,
+      },
+      {
+        label: "Quotations sent",
+        value: String(kpis.quotationsSent),
+        hint: range.label.toLowerCase(),
+      },
+      {
+        label: "Average project value",
+        value: kpis.quotationsRaised
+          ? compactMoney(kpis.averageValue, kpis.currency)
+          : "—",
+        muted: kpis.quotationsRaised === 0,
+        hint: kpis.quotationsRaised
+          ? `across ${kpis.quotationsRaised} estimate${kpis.quotationsRaised === 1 ? "" : "s"}`
+          : "no estimates in this period",
+      },
+      {
+        label: "Lead to quotation",
+        value: kpis.conversionPct === null ? "—" : `${kpis.conversionPct}%`,
+        muted: kpis.conversionPct === null,
+        hint:
+          kpis.conversionPct === null
+            ? "no leads in this period"
+            : `${kpis.convertedLeads} of ${kpis.newLeads} went on to request an estimate`,
+      },
+      {
+        label: "Average response time",
+        value:
+          kpis.averageResponseMinutes === null
+            ? "—"
+            : formatDuration(kpis.averageResponseMinutes),
+        muted: kpis.averageResponseMinutes === null,
+        hint:
+          kpis.averageResponseMinutes === null
+            ? "nothing reviewed in this period"
+            : `first action on ${kpis.respondedCount} estimate${kpis.respondedCount === 1 ? "" : "s"}`,
+      },
+    ],
+    [kpis, range.label],
+  );
 
-    const byStatus = PIPELINE.map((s) => ({
-      status: s,
-      count: leads.filter((l) => l.status === s).length,
-    }));
-
-    const typeMap = new Map<string, number>();
-    for (const l of leads) typeMap.set(l.projectType, (typeMap.get(l.projectType) ?? 0) + 1);
-    const byType = [...typeMap.entries()]
-      .map(([label, count]) => ({ label, count }))
-      .sort((a, b) => b.count - a.count);
-
-    return { total, newLeads, open, won, winRate, byStatus, byType };
-  }, [leads]);
-
-  const recent = useMemo(
+  const leadPipeline = useMemo(
     () =>
-      [...leads]
-        .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
-        .slice(0, 6),
+      PIPELINE.map((status) => ({
+        status,
+        count: leads.filter((lead) => lead.status === status).length,
+      })),
     [leads],
   );
 
-  const maxStatus = Math.max(1, ...stats.byStatus.map((s) => s.count));
-  const maxType = Math.max(1, ...stats.byType.map((t) => t.count));
+  const quotationPipeline = useMemo(
+    () =>
+      QUOTATION_PIPELINE.map((status) => ({
+        status,
+        count: quotations.filter((quotation) => quotation.status === status).length,
+      })).filter((entry) => entry.count > 0),
+    [quotations],
+  );
+
+  const recent = useMemo(
+    () => [...leads].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)).slice(0, 6),
+    [leads],
+  );
+
+  const maxLead = Math.max(1, ...leadPipeline.map((entry) => entry.count));
+  const maxQuotation = Math.max(1, ...quotationPipeline.map((entry) => entry.count));
 
   return (
     <>
-      <PageHeader title="Dashboard" subtitle="Your leads and pipeline at a glance." />
+      <PageHeader title="Dashboard" subtitle={`Reporting on the ${range.label.toLowerCase()}.`}>
+        <DateRangeControl range={range} />
+      </PageHeader>
+
       <div className={styles.content}>
-        <div className={`${styles.grid} ${styles.cols4}`} style={{ marginBottom: 18 }}>
-          <StatCard icon="inbox" label="Total leads" value={stats.total} />
-          <StatCard
-            icon="bolt"
-            label="New leads"
-            value={stats.newLeads}
-            delta={stats.newLeads > 0 ? "needs action" : undefined}
-          />
-          <StatCard icon="filter" label="Open in pipeline" value={stats.open} />
-          <StatCard
-            icon="check_circle"
-            label="Won"
-            value={stats.won}
-            delta={`${stats.winRate}% win rate`}
-          />
+        <div className={d.kpiGrid} style={{ marginBottom: 18 }}>
+          {tiles.map((tile) => (
+            <div key={tile.label} className={d.kpi}>
+              <span className={d.kpiLabel}>{tile.label}</span>
+              <div className={`${d.kpiValue} ${tile.muted ? d.kpiValueMuted : ""}`}>
+                {tile.value}
+              </div>
+              {tile.hint && <p className={d.kpiHint}>{tile.hint}</p>}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginBottom: 18 }}>
+          <ActionCentre groups={groups} team={team} />
         </div>
 
         <div className={`${styles.grid} ${styles.cols2}`} style={{ marginBottom: 18 }}>
           <div className={styles.card}>
             <div className={styles.cardHead}>
-              <span className={styles.cardTitle}>Pipeline</span>
+              <span className={styles.cardTitle}>Lead pipeline</span>
               <Link href="/admin/leads" className={styles.cardLink}>
                 View leads <ChevronRight size={14} />
               </Link>
             </div>
             <div className={styles.funnel}>
-              {stats.byStatus.map(({ status, count }) => (
+              {leadPipeline.map(({ status, count }) => (
                 <div key={status} className={styles.funnelRow}>
                   <span className={styles.funnelLabel}>{STATUS_META[status].label}</span>
                   <span className={styles.funnelTrack}>
                     <span
                       className={styles.funnelFill}
                       style={{
-                        width: `${(count / maxStatus) * 100}%`,
+                        width: `${(count / maxLead) * 100}%`,
                         background: STATUS_META[status].color,
                       }}
                     />
@@ -100,22 +169,34 @@ export function Overview({ leads }: { leads: Lead[] }) {
 
           <div className={styles.card}>
             <div className={styles.cardHead}>
-              <span className={styles.cardTitle}>By project type</span>
+              <span className={styles.cardTitle}>Quotation pipeline</span>
+              <Link href="/admin/quotations" className={styles.cardLink}>
+                View quotations <ChevronRight size={14} />
+              </Link>
             </div>
-            <div className={styles.funnel}>
-              {stats.byType.map(({ label, count }) => (
-                <div key={label} className={styles.funnelRow}>
-                  <span className={styles.funnelLabel}>{label}</span>
-                  <span className={styles.funnelTrack}>
-                    <span
-                      className={styles.funnelFill}
-                      style={{ width: `${(count / maxType) * 100}%`, background: "var(--grad-accent)" }}
-                    />
-                  </span>
-                  <span className={styles.funnelValue}>{count}</span>
-                </div>
-              ))}
-            </div>
+            {quotationPipeline.length > 0 ? (
+              <div className={styles.funnel}>
+                {quotationPipeline.map(({ status, count }) => (
+                  <div key={status} className={styles.funnelRow}>
+                    <span className={styles.funnelLabel}>
+                      {QUOTATION_STATUS_META[status].label}
+                    </span>
+                    <span className={styles.funnelTrack}>
+                      <span
+                        className={styles.funnelFill}
+                        style={{
+                          width: `${(count / maxQuotation) * 100}%`,
+                          background: QUOTATION_STATUS_META[status].color,
+                        }}
+                      />
+                    </span>
+                    <span className={styles.funnelValue}>{count}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className={d.panelHint}>No estimates have been submitted yet.</p>
+            )}
           </div>
         </div>
 
@@ -160,7 +241,9 @@ export function Overview({ leads }: { leads: Lead[] }) {
                           <span className={styles.rowMuted}>Unassigned</span>
                         )}
                       </td>
-                      <td className={styles.rowMuted}>{relativeTime(lead.createdAt)}</td>
+                      <td className={styles.rowMuted}>
+                        <TimeAgo iso={lead.createdAt} />
+                      </td>
                     </tr>
                   );
                 })}
