@@ -1,50 +1,10 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { cx } from "@/lib/cx";
 import { isAwaitingAutoSend, needsApproval } from "@/lib/quotation/status-meta";
 import type { QuotationStatus } from "@/lib/quotation/types";
+import { useSecondClock } from "./clock";
 import styles from "./quotations.module.css";
-
-/**
- * One shared per-second clock for every countdown on the page.
- *
- * Exposed through `useSyncExternalStore` rather than a `useEffect` + `setState`
- * pair: the server snapshot is `null`, so the first paint matches the server
- * exactly and React swaps in the live time after hydration — no mismatch and no
- * cascading render.
- */
-let snapshot = 0;
-let interval: ReturnType<typeof setInterval> | null = null;
-const listeners = new Set<() => void>();
-
-function subscribe(listener: () => void): () => void {
-  listeners.add(listener);
-  if (!interval) {
-    snapshot = Date.now();
-    interval = setInterval(() => {
-      snapshot = Date.now();
-      for (const notify of listeners) notify();
-    }, 1000);
-  }
-  return () => {
-    listeners.delete(listener);
-    if (listeners.size === 0 && interval) {
-      clearInterval(interval);
-      interval = null;
-    }
-  };
-}
-
-function getSnapshot(): number {
-  // Seed on the first client read so the countdown is correct immediately.
-  if (snapshot === 0) snapshot = Date.now();
-  return snapshot;
-}
-
-function getServerSnapshot(): number | null {
-  return null;
-}
 
 function format(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
@@ -64,7 +24,7 @@ type Props = {
 
 /** Live review-window countdown shown in the list and on the detail page. */
 export function QuotationCountdown({ deadline, status, autoSend, compact }: Props) {
-  const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const now = useSecondClock();
 
   // Withheld by the confidence rules: there is no deadline to count down to,
   // because nothing will be sent until somebody approves it.

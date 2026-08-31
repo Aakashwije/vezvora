@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { completeEstimator, uniqueProjectName } from "./helpers";
+import { completeEstimator, loginAsAdmin, uniqueProjectName } from "./helpers";
 
 test.describe("Responsive behaviour", () => {
   test("the estimator is usable on a phone without horizontal scrolling", async ({ page }) => {
@@ -43,5 +43,26 @@ test.describe("Responsive behaviour", () => {
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
     );
     expect(overflows).toBe(false);
+  });
+
+  test("the dashboard action centre stacks rather than compressing on a phone", async ({
+    page,
+  }) => {
+    await completeEstimator(page, { projectName: uniqueProjectName("E2E Mob Dash") });
+    await loginAsAdmin(page);
+    await page.goto("/admin");
+
+    const overflows = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    );
+    expect(overflows, "the dashboard must not scroll sideways").toBe(false);
+
+    // Each queued row keeps its actions reachable at a thumb-sized width.
+    const row = page.getByRole("listitem").first();
+    await expect(row).toBeVisible();
+    const button = row.getByRole("link", { name: /Review/ });
+    const box = await button.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThan(60);
   });
 });
